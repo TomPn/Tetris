@@ -6,7 +6,7 @@ class Block;
 class Cell{
     char c;
     int x,y;
-    Cell * top, bottom, left, right;
+    Cell * top, * bottom, * left, *right;
     bool isBlind;
     Block * myBlock;
     public:
