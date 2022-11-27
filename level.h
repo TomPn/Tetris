@@ -9,7 +9,7 @@ class Level{
     public:
     Level():file{""},scriptfile1{""},scriptfile2{""},randomBool{false},scriptfileBool{false},seedBool{false},seed{0} {}
     virtual ~Level();
-    void setScriptfile(bool scriptfile,string file1,string file2);
+    void setScriptfile(bool scriptfile,std::string file1,std::string file2);
     void setSeed(unsigned int seed);
     virtual Block CreateNextBlock() = 0;
     void setRandom(bool random);
