@@ -19,7 +19,7 @@ class Game: public Subject{
         void rotate(bool clockwise);
         void drop();
         void IJL(char blockType);
-        void getState(int row, int col);
+        char getState(int row, int col) const override;
         void noRandom(std::string file);
         void random();
         void levelUp();
