@@ -24,7 +24,8 @@ Board::Board(int level, std::string L0File, bool noRandomBool, std::string noRan
     : level{level}, score{0}, blockCount{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false}, L0File{L0File}, noRandomBool{noRandomBool}, noRandomFile{noRandomFile},
       seedBool{seedBool}, seed{seed}
 {
-    std::vector<std::vector<Cell *>> cells;
+
+    std::vector<std::vector<Cell *>> cells(rows, std::vector<Cell *> (cols, nullptr));
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < cols; j++)
@@ -36,25 +37,25 @@ Board::Board(int level, std::string L0File, bool noRandomBool, std::string noRan
     {
         for (int j = 0; j < cols; j++)
         {
-            if (cells[i][j]->getX() != 0)
+            if (cells[i][j]->getY() != 0)
             {
                 cells[i][j]->setNeighbour('t', cells[i - 1][j]);
             }
-            else if (cells[i][j]->getX() != rows - 1)
+            else if (cells[i][j]->getY() != rows - 1)
             {
                 cells[i][j]->setNeighbour('b', cells[i + 1][j]);
             }
-            else if (cells[i][j]->getY() != 0)
+            else if (cells[i][j]->getX() != 0)
             {
                 cells[i][j]->setNeighbour('l', cells[i][j - 1]);
             }
-            else if (cells[i][j]->getY() != cols - 1)
+            else if (cells[i][j]->getX() != cols - 1)
             {
                 cells[i][j]->setNeighbour('r', cells[i][j + 1]);
             }
         }
     }
-    this->cells = cells;
+    this->cells = cells; // could be wrong
 
     Level *tempLevel;
     if (level == 0)
@@ -116,18 +117,13 @@ void Board::drop()
     while (down())
     {
     }
-    std::vector<int> clearResult = checkClear();
-    int addScore = (level + clearResult[0]) * (level + clearResult[0]);
-    for (int i = 3; i < clearResult.size(); i++)
-    {
-        addScore += (i + 1) * (i + 1);
-    }
-    setScore(getScore() + addScore);
-    if (addScore >= 2)
+    int clearResult = checkClear();
+
+    if (clearResult >= 2)
     {
         setTrigger(true);
     }
-    if (addScore == 0)
+    if (clearResult == 0)
     {
         blockCount += 1;
     }
@@ -164,7 +160,7 @@ void Board::moveForRotate(Cell *cellPtr, int newRow, int newCol)
     cells[newRow][newCol]->setChar(cellPtr->getChar(false));
     cells[newRow][newCol]->setBlock(cellPtr->getBlock());
     cellPtr->setChar(' ');
-    cells[newRow][newCol]->setBlock(nullptr);
+    cellPtr->setBlock(nullptr);
 }
 
 void Board::rotate(bool clockwise)
@@ -406,14 +402,10 @@ char Board::charAt(int row, int col)
     return cells[row][col]->getChar(isBlind);
 }
 
-std::vector<int> Board::checkClear()
+int Board::checkClear()
 {
     int clear = 0;
-    int deleteBlock = 0;
     bool rowClear;
-    std::vector<int> returnValue;
-    returnValue.emplace_back(clear);
-    returnValue.emplace_back(deleteBlock);
 
     for (int i = 0; i < rows - 2; i++)
     {
@@ -438,8 +430,7 @@ std::vector<int> Board::checkClear()
                         Block *currBlock = cells[i2][j2]->getBlock();
                         if (currBlock->getAlive() == 1)
                         {
-                            deleteBlock++;
-                            returnValue.emplace_back(currBlock->getLevel());
+                            score += (currBlock->getLevel() + 1) * (currBlock->getLevel() + 1); 
                             delete currBlock;
                             cells[i2][j2]->setBlock(nullptr);
                         }
@@ -458,10 +449,10 @@ std::vector<int> Board::checkClear()
             }
         }
     }
-    returnValue[0] = clear;
-    returnValue[1] = deleteBlock;
-    return returnValue;
+    score += (level + clear) * (level + clear); 
+    return clear;
 }
+
 
 void Board::setCurrBlock(char blockType)
 {
