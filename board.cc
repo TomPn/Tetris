@@ -12,9 +12,9 @@
 const int rows = 20;
 const int cols = 11;
 
-Board::Board(int level, int score, int blockCount, bool isBlind, bool isHeavy, bool isForce,
+Board::Board(int level, int score, int blockCount, bool trigger, bool isBlind, bool isHeavy, bool isForce,
              Board* opponentBoard, Block* currBlock, Block* nextBlock, Level* currLevel) :
-             level{level}, score{score}, blockCount{blockCount}, isBlind{isBlind}, isHeavy{isHeavy}, isForce{isForce},
+             level{level}, score{score}, blockCount{blockCount}, trigger{trigger}, isBlind{isBlind}, isHeavy{isHeavy}, isForce{isForce},
              opponentBoard{opponentBoard}, currBlock{currBlock}, nextBlock{nextBlock}, currLevel{currLevel} {
     std::vector<std::vector<Cell*>> cells; 
     for (int i = 0; i < rows; i++) {
@@ -39,13 +39,17 @@ Board::Board(int level, int score, int blockCount, bool isBlind, bool isHeavy, b
 }
 
 
-void Board::right(bool isHeavy) {
-    currBlock->right(isHeavy);
+void Board::right(bool isHeavy, int mult) {
+    for (int i = 0; i < mult; i++) {
+        currBlock->right(isHeavy);
+    }
 }
 
 
-void Board::left(bool isHeavy) {
-    currBlock->left(isHeavy);
+void Board::left(bool isHeavy, int mult) {
+    for (int i = 0; i < mult; i++) {
+        currBlock->left(isHeavy);
+    }
 }
 
 
@@ -59,8 +63,13 @@ void Board::rotate(bool clockwise) {
 }
 
 
-void Board::drop() {
-    
+bool Board::getTrigger() {
+    return trigger;
+}
+
+
+void Board::setTrigger(bool trigger) {
+    this->trigger = trigger;
 }
 
 
@@ -117,6 +126,10 @@ int Board::getScore() {
     return score;
 }
 
+int Board::getLevel() {
+    return level;
+}
+
 
 char Board::charAt(int row, int col) {
     return cells[row][col]->getChar(isBlind);
@@ -156,6 +169,7 @@ int Board::checkClear() {
             }
         }
     }
+    return clear;
 }
 
 

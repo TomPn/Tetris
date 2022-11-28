@@ -12,6 +12,7 @@ class Board {
     int level;
     int score;
     int blockCount;
+    bool trigger;
     bool isBlind;
     bool isHeavy;
     bool isForce;
@@ -25,10 +26,10 @@ class Board {
     void addstar();
 
     public:
-        Board(int level, int score, int blockCount, bool isBlind, bool isHeavy, bool isForce,
+        Board(int level, int score, int blockCount, bool trigger, bool isBlind, bool isHeavy, bool isForce,
              Board* opponentBoard, Block* currBlock, Block* nextBlock, Level* currLevel);
-        void right(bool isHeavy);
-        void left(bool isHeavy);
+        void right(bool isHeavy, int mult);
+        void left(bool isHeavy, int mult);
         bool down();
         void rotate(bool clockwise);
         void drop();
@@ -36,10 +37,13 @@ class Board {
         void levelUp();
         void setBlind();
         void setHeavy();
+        bool getTrigger();
+        void setTrigger(bool trigger);
         void setForce(char blockType);
         void IJL(char blockType);
         void setCurrBlock(char blockType);
         int getScore();
+        int getLevel();
         char charAt(int row, int col);
 
 };
