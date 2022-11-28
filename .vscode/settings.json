@@ -62,12 +62,11 @@
         "unordered_map": "cpp",
         "utility": "cpp",
         "vector": "cpp",
-        "*.tcc": "cpp",
+        "__tree": "cpp",
         "deque": "cpp",
-        "memory_resource": "cpp",
-        "numeric": "cpp",
-        "random": "cpp",
         "fstream": "cpp",
-        "map": "cpp"
+        "iomanip": "cpp",
+        "map": "cpp",
+        "stack": "cpp"
     }
 }

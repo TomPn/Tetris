@@ -81,8 +81,11 @@ bool Block::down()
     }
 }
 
-void Block::drop()
-{
+void Block::drop() {}
+
+
+int Block::getLevel() {
+    return level;
 }
 
 int Block::getAlive()

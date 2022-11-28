@@ -13,6 +13,7 @@ class Board
     int level;
     int score;
     int blockCount;
+    bool trigger;
     bool isBlind;
     bool isHeavy;
     bool isForce;
@@ -27,7 +28,7 @@ class Board
     bool seedBool;
     unsigned int seed;
     void update();
-    int checkClear();
+    std::vector<int> checkClear();
     void addstar();
 
 public:
