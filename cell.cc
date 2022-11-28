@@ -4,21 +4,15 @@
 // get the neighbour cell of current cell based on direction
 Cell *Cell::getCell(char dir)
 {
-    if (dir == 't')
-    {
-        return top;
-    }
-    else if (dir == 'b')
-    {
-        return bottom;
-    }
-    else if (dir == 'l')
-    {
-        return left;
-    }
-    else if (dir == 'r')
-    {
-        return right;
+    switch (dir) {
+        case 't':
+            return top;
+        case 'b':
+            return bottom;
+        case 'l':
+            return left;
+        case 'r':
+            return right;
     }
 }
 
@@ -64,101 +58,93 @@ void Cell::setChar(char c)
 
 void Cell::setCharNeighbour(char dir, char c)
 {
-    if (dir == 't')
-    {
-        top->setChar(c);
-    }
-    else if (dir == 'b')
-    {
-        bottom->setChar(c);
-    }
-    else if (dir == 'l')
-    {
-        left->setChar(c);
-    }
-    else
-    {
-        right->setChar(c);
-    }
+    switch ( dir ) {
+        case 't':
+            top->setChar(c);
+            break;
+        case 'b':
+            bottom->setChar(c);
+            break;
+        case 'l':
+            left->setChar(c);
+            break;
+        case 'r':
+            right->setChar(c);
+            break;
+    } // switch
 }
 
 void Cell::setNeighbour(char dir, Cell *cellPtr)
 {
-    if (dir == 't')
-    {
-        top = cellPtr;
-    }
-    else if (dir == 'b')
-    {
-        bottom = cellPtr;
-    }
-    else if (dir == 'l')
-    {
-        left = cellPtr;
-    }
-    else if (dir == 'r')
-    {
-        right = cellPtr;
-    }
+    switch ( dir ) {
+        case 't':
+            top = cellPtr;
+            break;
+        case 'b':
+            bottom = cellPtr;
+            break;
+        case 'l':
+            left = cellPtr;
+            break;
+        case 'r':
+            right = cellPtr;
+            break;
+    } // switch
 }
 
 bool Cell::check(char dir)
 {
-    if (dir == 'l')
-    {
-        // check if it's the first in a row
-        if (x == 0)
-        {
-            return false;
-        }
-        else if (left->getBlock() != myBlock && left->getBlock() != nullptr)
-        {
-            return false;
-        }
-    }
-    else if (dir == 'r')
-    {
-        if (x == 10)
-        {
-            return false;
-        }
-        else if (right->getBlock() != myBlock && left->getBlock() != nullptr)
-        {
-            return false;
-        }
-    }
-    else if (dir == 't')
-    {
-        if (y == 0)
-        {
-            return false;
-        }
-        else if (top->getBlock() != myBlock && left->getBlock() != nullptr)
-        {
-            return false;
-        }
-    }
-    else if (dir == 'b')
-    {
-        if (y == 17)
-        {
-            return false;
-        }
-        else if (bottom->getBlock() != myBlock && left->getBlock() != nullptr)
-        {
-            return false;
-        }
-    }
-    else if (dir == 's') // s stands for self
-    {
-        if (c == ' ')
-        {
+    switch ( dir ) {
+        case 'l':
+            // check if it's the first in a row
+            if (x == 0)
+            {
+                return false;
+            }
+            else if (left->getBlock() != myBlock && left->getBlock() != nullptr)
+            {
+                return false;
+            }
             return true;
-        }
-        else
-        {
+        case 'r':
+            // check if it's the last in a row
+            if (x == 10)
+            {
+                return false;
+            }
+            else if (right->getBlock() != myBlock && right->getBlock() != nullptr)
+            {
+                return false;
+            }
+            return true;
+        case 't':
+            // check if it's the first row
+            if (y == 0)
+            {
+                return false;
+            }
+            else if (top->getBlock() != myBlock && top->getBlock() != nullptr)
+            {
+                return false;
+            }
+            return true;
+        case 'b':
+            // check if it's the last row
+            if (y == 17)
+            {
+                return false;
+            }
+            else if (bottom->getBlock() != myBlock && bottom->getBlock() != nullptr)
+            {
+                return false;
+            }
+            return true;
+        case 's': // s stands for self
+            if (c == ' ')
+            {
+                return true;
+            }
             return false;
-        }
     }
 }
 
