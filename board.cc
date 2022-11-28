@@ -7,6 +7,7 @@
 #include "level2.h"
 #include "level3.h"
 #include "level4.h"
+#include "starBlock.h"
 #include <vector>
 
 const int rows = 20;
@@ -67,6 +68,34 @@ bool Board::down()
 {
     currBlock->down();
 }
+
+void Board::drop() {
+    isForce = false;
+    isBlind = false;
+    while(down()){}
+    std::vector<int> clearResult = checkClear();
+    int addScore = (level + clearResult[0]) * (level + clearResult[0]);
+    for (int i = 3; i < clearResult.size(); i++) {
+        addScore += (i + 1) * (i + 1);
+    }
+    setScore(getScore() + addScore);
+    if (addScore >= 2) {
+        setTrigger(true);
+    }
+    if (addScore == 0) {
+        blockCount += 1;
+    } else {
+        blockCount = 0;
+    }
+    if (blockCount == 5) {
+        addstar();
+        blockCount = 0;
+    }
+    setCurrBlock(nextBlock->getBlockType());
+    delete(nextBlock);
+    nextBlock = currLevel->CreateNextBlock();
+}
+
 
 void Board::rotate(bool clockwise)
 {
@@ -136,6 +165,12 @@ int Board::getScore() {
     return score;
 }
 
+
+int Board::setScore(int score) {
+    this->score = score;
+}
+
+
 int Board::getLevel() {
     return level;
 }
@@ -146,9 +181,14 @@ char Board::charAt(int row, int col) {
 }
 
 
-int Board::checkClear() {
+std::vector<int> Board::checkClear() {
     int clear = 0;
+    int deleteBlock = 0;
     bool rowClear;
+    std::vector<int> returnValue;
+    returnValue.emplace_back(clear);
+    returnValue.emplace_back(deleteBlock);
+
     for (int i = 0; i < rows - 2; i++) {
         rowClear = true;
         for (int j = 0; j < cols; j++) {
@@ -164,6 +204,8 @@ int Board::checkClear() {
                     if (i2 == i) {
                         Block *currBlock = cells[i2][j2]->getBlock();
                         if (currBlock->getAlive() == 1) {
+                            deleteBlock++;
+                            returnValue.emplace_back(currBlock->getLevel());
                             delete currBlock;
                             cells[i2][j2]->setBlock(nullptr);
                         } else {
@@ -179,7 +221,9 @@ int Board::checkClear() {
             }
         }
     }
-    return clear;
+    returnValue[0] = clear;
+    returnValue[1] = deleteBlock;
+    return returnValue;
 }
 
 
