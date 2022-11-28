@@ -39,8 +39,8 @@ void Cell::setBlock(Block *block) {
 }
 
 char Cell::getChar(bool isDisplay) {
-    if (isDisplay) {
-        return ' ';
+    if (isDisplay && isBlind) {
+        return '?';
     } else {
         return c;
     }
@@ -71,7 +71,7 @@ void Cell::setNeighbour(char dir, Cell *cellPtr) {
         bottom = cellPtr;
     } else if (dir == 'l') {
         left = cellPtr;
-    } else {
+    } else if(dir == 'r') {
         right = cellPtr;
     }
 }
