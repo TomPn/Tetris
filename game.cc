@@ -1,19 +1,42 @@
 #include "game.h"
 #include "board.h"
 #include "commandInterpreter.h"
+#include <sstream>
 using std::cin;
 
-Game::Game(int startLevel, bool textMode, unsigned int seed, bool haveSeed, bool haveScript1, bool haveScript2, std::string scriptfile1, std::string scriptfile2) : playerRound{0},
-                                                                                                                                                                    startLevel{startLevel}, textMode{textMode}, seed{seed}, haveSeed{haveSeed}, haveScript1{haveScript1}, haveScript2{haveScript2}, scriptfile1{scriptfile1}, scriptfile2{scriptfile2}
-{
-    if (haveSeed)
-    {
-        if (haveScript1)
-        {
-            if (haveScript2)
-            {
-                this->curPlayer = new Board{startLevel, scriptfile1, 1, seed};
-                this->opponent = new Board{startLevel, scriptfile2, 1, seed};
+
+bool Game::isDigit(char c) {
+    if (c >= '0' && c <= '9') return true;
+    return false;
+}
+
+int toInt(std::string s) {
+    std::stringstream os;
+    os << s;
+    int i;
+    os >> i;
+    return i;
+}
+
+Game::Game(int startLevel, bool textMode, unsigned int seed, bool haveSeed, bool haveScript1, bool haveScript2, std::string scriptfile1, std::string scriptfile2): playerRound{0}, 
+    startLevel{startLevel}, textMode{textMode}, seed{seed}, haveSeed{haveSeed}, haveScript1{haveScript1}, haveScript2{haveScript2},  scriptfile1{scriptfile1}, scriptfile2{scriptfile2} {
+        if (haveSeed) {
+            if (haveScript1) {
+                if (haveScript2) {
+                    this->curPlayer = new Board{startLevel, scriptfile1, 1, seed};
+                    this->opponent = new Board{startLevel, scriptfile2, 1, seed};
+                } else {
+                    this->curPlayer = new Board{startLevel, scriptfile1, 1, seed};
+                    this->opponent = new Board{startLevel, "sequence2.txt", 1, seed};
+                }
+            } else {
+                if (haveScript2) {
+                    this->curPlayer = new Board{startLevel, "sequence1.txt", 1, seed};
+                    this->opponent = new Board{startLevel, scriptfile2, 1, seed};
+                } else {
+                    this->curPlayer = new Board{startLevel, "sequence1.txt", 1, seed};
+                    this->opponent = new Board{startLevel, "sequence2.txt", 1, seed};
+                }
             }
             else
             {
@@ -74,22 +97,16 @@ int Game::start()
         int multiplier = 0;
         int commandIndex = 0;
         command = cmdInter->getCommand();
-        if (command == "ENDGAME")
-        {
-            break;
-        }
-        if (isdigit(command[0]))
-        {
-            for (int i = 0; i < command.length(); ++i)
-            {
-                if (!isdigit(command[i]))
-                {
+        if (command == "ENDGAME") break;
+        if (isDigit(command[0])) {
+            for (int i = 0; i < command.length(); ++i) {
+                if (!isDigit(command[i])) {
                     break;
                 }
                 ++commandIndex;
             }
-            multiplier = std::stoi(command.substr(0, commandIndex));
-            command = command.substr(commandIndex, command.length() - commandIndex);
+            multiplier = toInt(command.substr(0,commandIndex));
+            command = command.substr(commandIndex,command.length()-commandIndex);
         }
         if (command == "left")
         {
@@ -294,10 +311,8 @@ void Game::IJL(char blockType, int multiplier)
     }
 }
 
-char Game::getState(int row, int col) const
-{
-    if (!playerRound)
-    {
+char Game::getState(int player, int row, int col) const {
+    if (!player) {
         curPlayer->getState(row, col);
     }
     else
@@ -306,10 +321,8 @@ char Game::getState(int row, int col) const
     }
 }
 
-char Game::getLevel(int player) const
-{
-    if (!player)
-    {
+int Game::getLevel(int player) const {
+    if (!player) {
         curPlayer->getLevel();
     }
     else
@@ -318,10 +331,8 @@ char Game::getLevel(int player) const
     }
 }
 
-char Game::getScore(int player) const
-{
-    if (!player)
-    {
+int Game::getScore(int player) const {
+    if (!player) {
         curPlayer->getScore();
     }
     else
@@ -330,28 +341,22 @@ char Game::getScore(int player) const
     }
 }
 
-char Game::getChange(int row, int col) const
-{
-    if (!playerRound)
-    {
-        curPlayer->getChange(row, col);
+void Game::noRandom(std::string file) {
+    if (curPlayer->getLevel() >= 3) {
+        curPlayer->getLevelObject()->setScriptfile(1, file);
     }
-    else
-    {
-        opponent->getChange(row, col);
+    if (opponent->getLevel() >= 3) {
+        opponent->getLevelObject()->setScriptfile(1, file);
     }
 }
 
-void Game::noRandom(std::string file)
-{
-    curPlayer->getLevel()->setScriptfile(1, file);
-    opponent->getLevel()->setScriptfile(1, file);
-}
-
-void Game::random()
-{
-    curPlayer->getLevel()->setScriptfile(0);
-    opponent->getLevel()->setScriptfile(0);
+void Game::random() {
+    if (curPlayer->getLevel() >= 3) {
+        curPlayer->getLevelObject()->setScriptfile(0);
+    }
+    if (opponent->getLevel() >= 3) {
+        opponent->getLevelObject()->setScriptfile(0);
+    }
 }
 
 void Game::levelUp(int multiplier)

@@ -11,23 +11,24 @@ int main(int argc, char **argv) {
     std::string scriptfile1;
     std::string scriptfile2;
     for (int argi = 0; argi < argc; ++argi) {
-        if (argv[argi] == "-text") {
+        std::string flag = argv[argi];
+        if (flag == "-text") {
             textMode = 1;
-        } else if (argv[argi] == "-seed") {
+        } else if (flag == "-seed") {
             haveSeed = 1;
             std::stringstream os;
             os << argv[argi+1];
             os >> seed;
             ++argi;
-        } else if (argv[argi] == "-scriptfile1") {
+        } else if (flag == "-scriptfile1") {
             haveScript1 = 1;
             scriptfile1 = argv[argi+1];
             ++argi;
-        } else if (argv[argi] == "-scriptfile2") {
+        } else if (flag == "-scriptfile2") {
             haveScript2 = 1;
             scriptfile2 = argv[argi+1];
             ++argi;
-        } else if (argv[argi] == "-startlevel") {
+        } else if (flag == "-startlevel") {
             std::stringstream os;
             os << argv[argi+1];
             os >> startLevel;
