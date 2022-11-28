@@ -72,10 +72,8 @@ bool Block::down() {
 
 
 void Block::drop() {
-    
 
 
-    
 }
 
 
