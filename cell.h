@@ -14,11 +14,13 @@ class Cell{
     ~Cell();
     Cell * getCell(char dir);
     Block * getBlock();
+    void getX();
+    void getY();
     void setBlock(Block * block);
     char getChar(bool isDisplay);
     void setChar(char c);
-    Bool check(char dir);
-    Bool setCharNeighbour(char dir);
+    bool check(char dir);
+    bool setCharNeighbour(char dir, char c);
     void setNeighbour(char dir, Cell * cellPtr);
 };
 
