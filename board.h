@@ -1,5 +1,5 @@
 #ifndef BOARD_H
-#define BOARD_H 
+#define BOARD_H
 
 #include <vector>
 
@@ -8,7 +8,8 @@ class Block;
 class Level;
 class Cell;
 
-class Board {
+class Board
+{
     int level;
     int score;
     int blockCount;
@@ -16,10 +17,11 @@ class Board {
     bool isBlind;
     bool isHeavy;
     bool isForce;
-    Board* opponentBoard;
-    Block* currBlock;
-    Block* nextBlock;
-    Level* currLevel;
+    bool over;
+    Board *opponentBoard;
+    Block *currBlock;
+    Block *nextBlock;
+    Level *currLevel;
     std::vector<std::vector<Cell *>> cells;
     void update();
     int checkClear();
@@ -48,9 +50,4 @@ class Board {
 
 };
 
-
 #endif
-
-
-
-
