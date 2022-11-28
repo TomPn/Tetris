@@ -3,34 +3,87 @@
 #include "commandInterpreter.h"
 using std::cin;
 
-int Game::executeCommand() {
+Game::Game(int startLevel, bool textMode, unsigned int seed, bool haveSeed, bool haveScript1, bool haveScript2, std::string scriptfile1, std::string scriptfile2): playerRound{0}, 
+    startLevel{startLevel}, textMode{textMode}, seed{seed}, haveSeed{haveSeed}, haveScript1{haveScript1}, haveScript2{haveScript2},  scriptfile1{scriptfile1}, scriptfile2{scriptfile2} {
+        if (haveSeed) {
+            if (haveScript1) {
+                if (haveScript2) {
+                    this->curPlayer = new Board{startLevel, scriptfile1, 1, seed};
+                    this->opponent = new Board{startLevel, scriptfile2, 1, seed};
+                } else {
+                    this->curPlayer = new Board{startLevel, scriptfile1, 1, seed};
+                    this->opponent = new Board{startLevel, "sequence2.txt", 1, seed};
+                }
+            } else {
+                if (haveScript2) {
+                    this->curPlayer = new Board{startLevel, "sequence1.txt", 1, seed};
+                    this->opponent = new Board{startLevel, scriptfile2, 1, seed};
+                } else {
+                    this->curPlayer = new Board{startLevel, "sequence1.txt", 1, seed};
+                    this->opponent = new Board{startLevel, "sequence2.txt", 1, seed};
+                }
+            }
+        } else {
+            if (haveScript1) {
+                if (haveScript2) {
+                    this->curPlayer = new Board{startLevel, scriptfile1, 0, seed};
+                    this->opponent = new Board{startLevel, scriptfile2, 0, seed};
+                } else {
+                    this->curPlayer = new Board{startLevel, scriptfile1, 0, seed};
+                    this->opponent = new Board{startLevel, "sequence2.txt", 0, seed};
+                }
+            } else {
+                if (haveScript2) {
+                    this->curPlayer = new Board{startLevel, "sequence1.txt", 0, seed};
+                    this->opponent = new Board{startLevel, scriptfile2, 0, seed};
+                } else {
+                    this->curPlayer = new Board{startLevel, "sequence1.txt", 0, seed};
+                    this->opponent = new Board{startLevel, "sequence2.txt", 0, seed};
+                }
+            }
+        }
+}
+
+int Game::start() {
     std::string command;
     while (true) {
+        int multiplier = 0;
+        int commandIndex = 0;
         command = cmdInter->getCommand();
         if (command == "ENDGAME") {break;}
-        else if (command == "left") {
-            left();
+        if (isdigit(command[0])) {
+            for (int i = 0; i < command.length(); ++i) {
+            if (!isdigit(command[i])) {
+                break;
+            }
+            ++commandIndex;
+            }
+            multiplier = std::stoi(command.substr(0,commandIndex));
+            command = command.substr(commandIndex,command.length()-commandIndex);
+        }
+        if (command == "left") {
+            left(multiplier);
         } else if (command == "right") {
-            right();
+            right(multiplier);
         } else if (command == "down") {
-            down();
+            down(multiplier);
         } else if (command == "clockwise") {
-            rotate(1);
+            rotate(1, multiplier);
         } else if (command == "counterclockwise") {
-            rotate(0);
+            rotate(0, multiplier);
         } else if (command == "drop") {
-            drop();
+            drop(multiplier);
         } else if (command == "levelup") {
-            levelUp();
+            levelUp(multiplier);
         } else if (command == "leveldown") {
-            levelDown();
+            levelDown(multiplier);
         } else if (command == "norandom") {
             cin >> command;
             noRandom(command);
         } else if (command == "random") {
             random();
         } else if (command == "I" || command == "J" || command == "L"  || command == "O"  || command == "S"  || command == "Z" || command == "T") {
-            IJL(command[0]);
+            IJL(command[0], multiplier);
         } else if (command == "restart") {
             restart();
         } else if (command == "heavy") {
@@ -89,53 +142,53 @@ int Game::executeCommand() {
     }
 }
 
-void Game::left() {
+void Game::left(int multiplier) {
     if (!playerRound) {
-        curPlayer->left();
+        curPlayer->left(multiplier);
     } else {
-        opponent->left();
+        opponent->left(multiplier);
     }
 }
 
-void Game::right() {
+void Game::right(int multiplier) {
     if (!playerRound) {
-        curPlayer->right();
+        curPlayer->right(multiplier);
     } else {
-        opponent->right();
+        opponent->right(multiplier);
     }
 }
 
-bool Game::down() {
+bool Game::down(int multiplier) {
     if (!playerRound) {
-        curPlayer->down();
+        curPlayer->down(multiplier);
     } else {
-        opponent->down();
+        opponent->down(multiplier);
     }
 }
 
-void Game::rotate(bool clockwise) {
+void Game::rotate(bool clockwise, int multiplier) {
     if (!playerRound) {
-        curPlayer->rotate(clockwise);
+        curPlayer->rotate(clockwise, multiplier);
     } else {
-        opponent->rotate(clockwise);
+        opponent->rotate(clockwise, multiplier);
     }
 }
 
-void Game::drop() {
+void Game::drop(int multiplier) {
     if (!playerRound) {
-        curPlayer->drop();
+        curPlayer->drop(multiplier);
         playerRound = 1;
     } else {
-        opponent->drop();
+        opponent->drop(multiplier);
         playerRound = 0;
     }
 }
 
-void Game::IJL(char blockType) {
+void Game::IJL(char blockType, int multiplier) {
     if (!playerRound) {
-        curPlayer->IJL(blockType);
+        curPlayer->IJL(blockType, multiplier);
     } else {
-        opponent->IJL(blockType);
+        opponent->IJL(blockType, multiplier);
     }
 }
 
@@ -173,27 +226,27 @@ void Game::random() {
     opponent->getLevel()->setScriptfile(0);
 }
 
-void Game::levelUp() {
+void Game::levelUp(int multiplier) {
     if (!playerRound) {
-        curPlayer->levelUp();
+        curPlayer->levelUp(multiplier);
     } else {
-        opponent->levelUp();
+        opponent->levelUp(multiplier);
     }
 }
 
-void Game::levelDown() {
+void Game::levelDown(int multiplier) {
     if (!playerRound) {
-        curPlayer->levelDown();
+        curPlayer->levelDown(multiplier);
     } else {
-        opponent->levelDown();
+        opponent->levelDown(multiplier);
     }
 }
 
 void Game::restart() {
     delete curPlayer;
     delete opponent;
-    curPlayer = new Board();
-    opponent = new Board();
+    curPlayer = new Board{startLevel};
+    opponent = new Board{startLevel};
 }
 
 void Game::blind() {

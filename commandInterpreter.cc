@@ -22,12 +22,17 @@ CommandInterpreter::CommandInterpreter(std::vector<std::string> commands): pImpl
     pImpl->commands = commands;
 }
 
-std::string CommandInterpreter::isValid(std::string name) {
+std::string CommandInterpreter::isValid(std::string name, int multiplier) {
     int duplicate = 0;
     int nameLen = name.length();
     std::string extCommand;
     for (auto it: pImpl->commands) {
-        if (name == it) return name;
+        if (name == it) {
+            if (name == "restart" || name == "norandom" || name == "random") {
+                return name;
+            }
+            return tostring(multiplier) + name;
+        }
     }
     for (auto it: pImpl->commands) {
         if (name == it.substr(0, nameLen)){
@@ -36,7 +41,7 @@ std::string CommandInterpreter::isValid(std::string name) {
         }
     }
     if (duplicate == 1) {
-        return extCommand;
+        return tostring(multiplier) + extCommand;
     }
     return "";
 }
@@ -86,7 +91,7 @@ void CommandInterpreter::addMacro() {
 
 std::string CommandInterpreter::getCommand() {
     std::string command;
-    int multiplier = 0;
+    int multiplier = 1;
     int commandIndex = 0;
     cin >> command;
     if (cin.eof()) return "ENDGAME";
@@ -125,13 +130,12 @@ std::string CommandInterpreter::getCommand() {
             }
             pImpl->remainCommands.emplace_back(command);
         }
-        return isValid(command1);
-    }
-    else {
+        return isValid(command1, multiplier);
+    } else {
         // check if command is a rename of command
         for (auto &p: pImpl->renameMap) {
             if (command == p.first) {
-                return isValid(pImpl->renameMap[command]);
+                return isValid(pImpl->renameMap[command], multiplier);
             }
         }
         // check if command is the name of a macro
@@ -139,14 +143,14 @@ std::string CommandInterpreter::getCommand() {
         for (auto &p: pImpl->macros) {
             if (command == p) {
                 if (pImpl->macros[command].size() == 1) {
-                    return isValid(pImpl->macros[command][0]);
+                    return isValid(pImpl->macros[command][0], multiplier);
                 }
                 newCommand = pImpl->macros[command][0];
                 pImpl->macros[command].erase(pImpl->macros[command].begin());
                 pImpl->remainCommands = pImpl->macros[command];
-                return isValid(pImpl->macros[command][0]);
+                return isValid(pImpl->macros[command][0], multiplier);
             }
         }
     }
-    return isValid(command);
+    return isValid(command, multiplier);
 }
