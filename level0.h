@@ -7,7 +7,8 @@ class Block;
 class Level0 : public Level
 {
 public:
-    Level0() : Level{file, sequence, scriptfile, randomBool, scriptfileBool, seedBool, seed, cells, sequenceIndex, scriptfileIndex, fileIndex, sequenceContent, scriptfileContent, fileContent} {};
+    Level0(std::string L0File, bool noRandomBool, std::string noRandomFile,
+           bool seedBool, unsigned int seed, std::vector<std::vector<Cell *>> cells);
     Block *CreateNextBlock() override;
     ~Level0() override;
 };

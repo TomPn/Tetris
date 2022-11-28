@@ -17,18 +17,21 @@ class Board
     bool isHeavy;
     bool isForce;
     bool over;
-    Board *opponentBoard;
     Block *currBlock;
     Block *nextBlock;
     Level *currLevel;
     std::vector<std::vector<Cell *>> cells;
+    std::string L0File;
+    bool noRandomBool;
+    std::string noRandomFile;
+    bool seedBool;
+    unsigned int seed;
     void update();
     int checkClear();
     void addstar();
 
 public:
-    Board(int level, int score, int blockCount, bool isBlind, bool isHeavy, bool isForce,
-          Board *opponentBoard, Block *currBlock, Block *nextBlock, Level *currLevel);
+    Board(int level, std::string L0File, bool noRandomBool, std::string noRandomFile, bool seedBool, unsigned int seed);
     void right(bool isHeavy);
     void left(bool isHeavy);
     bool down();

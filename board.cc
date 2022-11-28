@@ -2,14 +2,19 @@
 #include "block.h"
 #include "cell.h"
 #include "level.h"
+#include "level0.h"
+#include "level1.h"
+#include "level2.h"
+#include "level3.h"
+#include "level4.h"
 #include <vector>
 
 const int rows = 20;
 const int cols = 11;
 
-Board::Board(int level, int score, int blockCount, bool isBlind, bool isHeavy, bool isForce,
-             Board *opponentBoard, Block *currBlock, Block *nextBlock, Level *currLevel) : level{level}, score{score}, blockCount{blockCount}, isBlind{isBlind}, isHeavy{isHeavy}, isForce{isForce},
-                                                                                           opponentBoard{opponentBoard}, currBlock{currBlock}, nextBlock{nextBlock}, currLevel{currLevel}
+Board::Board(int level, std::string L0File, bool noRandomBool, std::string noRandomFile, bool seedBool, unsigned int seed)
+    : level{level}, score{0}, blockCount{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false}, L0File{L0File}, noRandomBool{noRandomBool}, noRandomFile{noRandomFile},
+      seedBool{seedBool}, seed{seed}
 {
     std::vector<std::vector<Cell *>> cells;
     for (int i = 0; i < rows; i++)
@@ -42,6 +47,36 @@ Board::Board(int level, int score, int blockCount, bool isBlind, bool isHeavy, b
         }
     }
     this->cells = cells;
+
+    Level *tempLevel;
+    if (level == 0)
+    {
+        tempLevel = new Level0{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+    }
+    else if (level == 1)
+    {
+        tempLevel = new Level1{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+    }
+    else if (level == 2)
+    {
+        tempLevel = new Level2{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+    }
+    else if (level == 3)
+    {
+        tempLevel = new Level3{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+    }
+    else if (level == 4)
+    {
+        tempLevel = new Level4{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+    }
+    currLevel = tempLevel;
+
+    Block *nextBlock = currLevel->CreateNextBlock();
+    char blockType = nextBlock->getBlockType();
+    setCurrBlock(blockType);
+    delete nextBlock;
+    Block *nextBlock = currLevel->CreateNextBlock();
+    this->nextBlock = nextBlock;
 }
 
 void Board::right(bool isHeavy)

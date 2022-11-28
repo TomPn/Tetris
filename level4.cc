@@ -4,46 +4,69 @@
 
 class Block;
 
+Level4::Level4(std::string L0File, bool noRandomBool, std::string noRandomFile, bool seedBool, unsigned int seed, std::vector<std::vector<Cell *>> cells)
+    : Level{L0File, noRandomFile, noRandomBool, seedBool, seed, cells}
+{
+    std::vector<char> placeholder{' '};
+    // if fileName isn't empty, call readFile to read the strings in the file and store them in a vector of string
+    if (noRandomFile != "")
+    {
+        noRandomFileContent = Level::readFile(noRandomFile);
+    }
+    else
+    {
+        noRandomFileContent = placeholder;
+    }
+}
+
 Block *Level4::CreateNextBlock()
 {
     Block *nextBlock;
-    // set up the seed
-    if (seedBool == true)
+    if (noRandomBool)
     {
-        std::srand(seed);
+        nextBlock = Level::CreateNextFromFile(noRandomFileContent, noRandomFileIndex);
     }
-    // random is a random int from 1 to 18
-    int random = 1 + std::rand() / ((RAND_MAX + 1u) / 18);
-    // SBlock and ZBlock has probability of 2/9 = 4/18
-    if (random >= 1 && random <= 4)
+    else
     {
-        nextBlock = Level::CreateBlock(3, 'S');
+        // set up the seed
+        if (seedBool == true)
+        {
+            std::srand(seed);
+        }
+        // random is a random int from 1 to 18
+        int random = 1 + std::rand() / ((RAND_MAX + 1u) / 18);
+        // SBlock and ZBlock has probability of 2/9 = 4/18
+        if (random >= 1 && random <= 4)
+        {
+            nextBlock = Level::CreateBlock(3, 'S');
+        }
+        else if (random >= 5 && random <= 8)
+        {
+            nextBlock = Level::CreateBlock(3, 'Z');
+        }
+        // other blocks has probability of 1/6
+        else if (random == 9 || random == 10)
+        {
+            nextBlock = Level::CreateBlock(3, 'I');
+        }
+        else if (random == 11 || random == 12)
+        {
+            nextBlock = Level::CreateBlock(3, 'J');
+        }
+        else if (random == 13 || random == 14)
+        {
+            nextBlock = Level::CreateBlock(3, 'T');
+        }
+        else if (random == 15 || random == 16)
+        {
+            nextBlock = Level::CreateBlock(3, 'O');
+        }
+        else if (random == 17 || random == 18)
+        {
+            nextBlock = Level::CreateBlock(3, 'L');
+        }
     }
-    else if (random >= 5 && random <= 8)
-    {
-        nextBlock = Level::CreateBlock(3, 'Z');
-    }
-    // other blocks has probability of 1/6
-    else if (random == 9 || random == 10)
-    {
-        nextBlock = Level::CreateBlock(3, 'I');
-    }
-    else if (random == 11 || random == 12)
-    {
-        nextBlock = Level::CreateBlock(3, 'J');
-    }
-    else if (random == 13 || random == 14)
-    {
-        nextBlock = Level::CreateBlock(3, 'T');
-    }
-    else if (random == 15 || random == 16)
-    {
-        nextBlock = Level::CreateBlock(3, 'O');
-    }
-    else if (random == 17 || random == 18)
-    {
-        nextBlock = Level::CreateBlock(3, 'L');
-    }
+
     return nextBlock;
 }
 

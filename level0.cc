@@ -4,63 +4,23 @@
 
 class Block;
 
+Level0::Level0(std::string L0File, bool noRandomBool, std::string noRandomFile, bool seedBool, unsigned int seed, std::vector<std::vector<Cell *>> cells)
+    : Level{L0File, noRandomFile, noRandomBool, seedBool, seed, cells}
+{
+
+    L0FileContent = Level::readFile(L0File);
+}
+
 Block *Level0::CreateNextBlock()
 {
     // if the index exceeds the length of content, set the index to 0 so that the program will read it again from the beginning
-    if (sequenceIndex == sequenceContent.size())
+    if (L0FileIndex == L0FileContent.size())
     {
-        sequenceIndex = 0;
+        L0FileIndex = 0;
     }
-    if (scriptfileIndex == scriptfileContent.size())
-    {
-        scriptfileIndex = 0;
-    }
-    // extract the string that represent the next block
-    std::string s = sequenceContent[sequenceIndex];
-    if (scriptfileBool == true)
-    {
-        s = scriptfileContent[scriptfileIndex];
-    }
-    // create new block according to s;
-    Block *nextBlock;
-    if (s == "I")
-    {
-        nextBlock = Level::CreateBlock(0, 'I');
-    }
-    else if (s == "J")
-    {
-        nextBlock = Level::CreateBlock(0, 'J');
-    }
-    else if (s == "L")
-    {
-        nextBlock = Level::CreateBlock(0, 'L');
-    }
-    else if (s == "O")
-    {
-        nextBlock = Level::CreateBlock(0, 'O');
-    }
-    else if (s == "S")
-    {
-        nextBlock = Level::CreateBlock(0, 'S');
-    }
-    else if (s == "Z")
-    {
-        nextBlock = Level::CreateBlock(0, 'Z');
-    }
-    else if (s == "T")
-    {
-        nextBlock = Level::CreateBlock(0, 'T');
-    }
-
+    Block *nextBlock = Level::CreateNextFromFile(L0FileContent, L0FileIndex);
     // increment index
-    if (scriptfileBool == true)
-    {
-        ++scriptfileIndex;
-    }
-    else
-    {
-        ++sequenceIndex;
-    }
+    ++L0FileIndex;
     return nextBlock;
 }
 
