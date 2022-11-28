@@ -25,31 +25,31 @@ Block *Level0::CreateNextBlock()
     Block *nextBlock;
     if (s == "I")
     {
-        nextBlock = Level::CreateIBlock(0);
+        nextBlock = Level::CreateBlock(0, 'I');
     }
     else if (s == "J")
     {
-        nextBlock = Level::CreateJBlock(0);
+        nextBlock = Level::CreateBlock(0, 'J');
     }
     else if (s == "L")
     {
-        nextBlock = Level::CreateLBlock(0);
+        nextBlock = Level::CreateBlock(0, 'L');
     }
     else if (s == "O")
     {
-        nextBlock = Level::CreateOBlock(0);
+        nextBlock = Level::CreateBlock(0, 'O');
     }
     else if (s == "S")
     {
-        nextBlock = Level::CreateSBlock(0);
+        nextBlock = Level::CreateBlock(0, 'S');
     }
     else if (s == "Z")
     {
-        nextBlock = Level::CreateZBlock(0);
+        nextBlock = Level::CreateBlock(0, 'Z');
     }
     else if (s == "T")
     {
-        nextBlock = Level::CreateTBlock(0);
+        nextBlock = Level::CreateBlock(0, 'T');
     }
 
     // increment index

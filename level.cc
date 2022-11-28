@@ -54,74 +54,65 @@ Level::Level(std::vector<std::vector<Cell *>> cells) : file{""}, sequence{""}, s
     }
 }
 
-Block *Level::CreateIBlock(int level)
+Block *Level::CreateBlock(int level, char blockType)
 {
-    char blockChar = 'I';
-    cells[19][0]->setChar(blockChar);
-    cells[19][1]->setChar(blockChar);
-    cells[19][2]->setChar(blockChar);
-    cells[19][3]->setChar(blockChar);
-    Block *nextBlock = new Block{cells[19][0], cells[19][1], cells[19][2], cells[19][3], 4, level};
-    return nextBlock;
-}
-Block *Level::CreateJBlock(int level)
-{
-    std::string blockStr = "J";
-    cells[18][0].setChar(blockStr);
-    cells[19][0].setChar(blockStr);
-    cells[19][1].setChar(blockStr);
-    cells[19][2].setChar(blockStr);
-    Block *nextBlock = new Block{cells[18][0], cells[19][0], cells[19][1], cells[19][2], 4, level};
-    return nextBlock;
-}
-Block *Level::CreateLBlock(int level)
-{
-    string blockStr = "L";
-    cells[18][2].setChar(blockStr);
-    cells[19][0].setChar(blockStr);
-    cells[19][1].setChar(blockStr);
-    cells[19][2].setChar(blockStr);
-    Block *nextBlock = new Block{cells[18][2], cells[19][0], cells[19][1], cells[19][2], 4, level};
-    return nextBlock;
-}
-Block *Level::CreateOBlock(int level)
-{
-    string blockStr = "O";
-    cells[18][0].setChar(blockStr);
-    cells[18][1].setChar(blockStr);
-    cells[19][0].setChar(blockStr);
-    cells[19][1].setChar(blockStr);
-    Block *nextBlock = new Block{cells[18][0], cells[18][1], cells[19][0], cells[19][1], 4, level};
-    return nextBlock;
-}
-Block *Level::CreateSBlock(int level)
-{
-    string blockStr = "S";
-    cells[18][1].setChar(blockStr);
-    cells[18][2].setChar(blockStr);
-    cells[19][0].setChar(blockStr);
-    cells[19][1].setChar(blockStr);
-    Block *nextBlock = new Block{cells[18][1], cells[18][2], cells[19][0], cells[19][1], 4, level};
-    return nextBlock;
-}
-Block *Level::CreateZBlock(int level)
-{
-    string blockStr = "Z";
-    cells[18][0].setChar(blockStr);
-    cells[18][1].setChar(blockStr);
-    cells[19][1].setChar(blockStr);
-    cells[19][2].setChar(blockStr);
-    Block *nextBlock = new Block{cells[18][0], cells[18][1], cells[19][1], cells[19][2], 4, level};
-    return nextBlock;
-}
-Block *Level::CreateTBlock(int level)
-{
-    string blockStr = "T";
-    cells[18][0].setChar(blockStr);
-    cells[18][1].setChar(blockStr);
-    cells[18][2].setChar(blockStr);
-    cells[19][1].setChar(blockStr);
-    Block *nextBlock = new Block{cells[18][0], cells[18][1], cells[18][2], cells[19][1], 4, level};
+    std::vector<Cell *> currCells;
+    if (blockType == 'I')
+    {
+        currCells.emplace_back(cells[18][0]);
+        currCells.emplace_back(cells[18][1]);
+        currCells.emplace_back(cells[18][2]);
+        currCells.emplace_back(cells[18][3]);
+    }
+    else if (blockType = 'J')
+    {
+        currCells.emplace_back(cells[18][0]);
+        currCells.emplace_back(cells[19][0]);
+        currCells.emplace_back(cells[19][1]);
+        currCells.emplace_back(cells[19][2]);
+    }
+    else if (blockType = 'L')
+    {
+        currCells.emplace_back(cells[18][2]);
+        currCells.emplace_back(cells[19][0]);
+        currCells.emplace_back(cells[19][1]);
+        currCells.emplace_back(cells[19][2]);
+    }
+    else if (blockType = 'O')
+    {
+        currCells.emplace_back(cells[18][0]);
+        currCells.emplace_back(cells[18][1]);
+        currCells.emplace_back(cells[19][0]);
+        currCells.emplace_back(cells[19][1]);
+    }
+    else if (blockType = 'S')
+    {
+        currCells.emplace_back(cells[18][1]);
+        currCells.emplace_back(cells[18][2]);
+        currCells.emplace_back(cells[19][0]);
+        currCells.emplace_back(cells[19][1]);
+    }
+    else if (blockType = 'Z')
+    {
+        currCells.emplace_back(cells[18][0]);
+        currCells.emplace_back(cells[18][1]);
+        currCells.emplace_back(cells[19][1]);
+        currCells.emplace_back(cells[19][2]);
+    }
+    else if (blockType = 'Z')
+    {
+        currCells.emplace_back(cells[18][0]);
+        currCells.emplace_back(cells[18][1]);
+        currCells.emplace_back(cells[18][2]);
+        currCells.emplace_back(cells[19][1]);
+    }
+
+    Block *nextBlock = new Block{currCells[0], currCells[1], currCells[3], currCells[4], 4, level};
+    for (auto cell : currCells)
+    {
+        cell->setChar(blockType);
+        cell->setBlock(nextBlock);
+    }
     return nextBlock;
 }
 

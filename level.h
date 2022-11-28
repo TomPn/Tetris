@@ -29,7 +29,7 @@ public:
     void setSeed(unsigned int seed);
     virtual Block *CreateNextBlock() = 0;
     void setRandom(bool random);
-    Block *CreateIBlock(int level);
+    Block *CreateBlock(int level, char blockType);
     Block *CreateJBlock(int level);
     Block *CreateLBlock(int level);
     Block *CreateOBlock(int level);

@@ -24,6 +24,7 @@ public:
     bool check(char dir);
     void setCharNeighbour(char dir, char c);
     void setNeighbour(char dir, Cell *cellPtr);
+    void setIsBlind(bool isBlind);
 };
 
 #endif
