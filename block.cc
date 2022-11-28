@@ -10,6 +10,23 @@ Block::Block(Cell *cell1, Cell *cell2, Cell *cell3, Cell *cell4, int alive, int 
     components.emplace_back(cell2);
     components.emplace_back(cell3);
     components.emplace_back(cell4);
+
+    int tlRow = 19;
+    int tlCol = 10;
+    for (int i = 0; i < 4; ++i)
+    {
+        if (components[i]->getX() < tlCol)
+        {
+            tlCol = components[i]->getX();
+        }
+        if (components[i]->getY() < tlRow)
+        {
+            tlRow = components[i]->getY();
+        }
+    }
+
+    topLeftCol = tlCol;
+    topLeftRow = tlRow;
 }
 
 // move the block to the desired direction
@@ -32,6 +49,22 @@ bool Block::move(char dir)
         neighbour->setBlock(components[i]->getBlock());
         components[i]->setChar(' ');
         components[i]->setBlock(nullptr);
+    }
+    if (dir == 't')
+    {
+        --topLeftRow;
+    }
+    else if (dir == 'd')
+    {
+        ++topLeftRow;
+    }
+    else if (dir == 'l')
+    {
+        --topLeftCol;
+    }
+    else if (dir == 'r')
+    {
+        ++topLeftCol;
     }
     return true;
 }
@@ -83,8 +116,8 @@ bool Block::down()
 
 void Block::drop() {}
 
-
-int Block::getLevel() {
+int Block::getLevel()
+{
     return level;
 }
 
@@ -101,4 +134,42 @@ int Block::setAlive(int alive)
 char Block::getBlockType()
 {
     return blockType;
+}
+
+bool Block::getHorizontal()
+{
+    return horizontal;
+}
+
+void Block::setHorizontal(bool horizontal)
+{
+    this->horizontal = horizontal;
+}
+
+bool Block::member(Cell *cellPtr)
+{
+    for (int i = 0; i < 4; ++i)
+    {
+        if (components[i] == cellPtr)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+int Block::getTopLeftRow()
+{
+    return topLeftRow;
+}
+int Block::getTopLeftCol()
+{
+    return topLeftCol;
+}
+void Block::setTopLeftRow(int row)
+{
+    topLeftRow = row;
+}
+void Block::setTopLeftCol(int col)
+{
+    topLeftCol = col;
 }

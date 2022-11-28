@@ -62,9 +62,10 @@ void Cell::setChar(char c)
     this->c = c;
 }
 
-
-void Cell::setCharNeighbour(char dir, char c) {
-    if (dir == 't') {
+void Cell::setCharNeighbour(char dir, char c)
+{
+    if (dir == 't')
+    {
         top->setChar(c);
     }
     else if (dir == 'b')
@@ -81,8 +82,10 @@ void Cell::setCharNeighbour(char dir, char c) {
     }
 }
 
-void Cell::setNeighbour(char dir, Cell *cellPtr) {
-    if (dir == 't') {
+void Cell::setNeighbour(char dir, Cell *cellPtr)
+{
+    if (dir == 't')
+    {
         top = cellPtr;
     }
     else if (dir == 'b')
@@ -135,13 +138,24 @@ bool Cell::check(char dir)
             return false;
         }
     }
-    else
+    else if (dir == 'b')
     {
         if (y == 17)
         {
             return false;
         }
         else if (bottom->getBlock() != myBlock && left->getBlock() != nullptr)
+        {
+            return false;
+        }
+    }
+    else if (dir == 's') // s stands for self
+    {
+        if (c == ' ')
+        {
+            return true;
+        }
+        else
         {
             return false;
         }
@@ -153,4 +167,4 @@ void Cell::setIsBlind(bool isBlind)
     this->isBlind = isBlind;
 }
 
-Cell::~Cell(){}
+Cell::~Cell() {}

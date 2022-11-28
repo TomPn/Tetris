@@ -30,11 +30,13 @@ class Board
     void update();
     std::vector<int> checkClear();
     void addstar();
+    bool checkForRotate(Cell *cellPtr, int newRow, int newCol);
+    void moveForRotate(Cell *cellPtr, int newRow, int newCol);
 
 public:
     Board(int level, std::string L0File, bool noRandomBool, std::string noRandomFile, bool seedBool, unsigned int seed);
-    void right(bool isHeavy);
-    void left(bool isHeavy);
+    void right(bool isHeavy, int mult);
+    void left(bool isHeavy, int mult);
     bool down();
     void rotate(bool clockwise);
     void drop();
@@ -46,6 +48,10 @@ public:
     void IJL(char blockType);
     void setCurrBlock(char blockType);
     int getScore();
+    bool getTrigger();
+    int getLevel();
+    void setScore(int score);
+    void setTrigger(bool trigger);
     char charAt(int row, int col);
 };
 
