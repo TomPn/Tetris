@@ -20,7 +20,7 @@ class Cell{
     char getChar(bool isDisplay);
     void setChar(char c);
     bool check(char dir);
-    bool setCharNeighbour(char dir, char c);
+    void setCharNeighbour(char dir, char c);
     void setNeighbour(char dir, Cell * cellPtr);
 };
 

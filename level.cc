@@ -41,7 +41,7 @@ Level::Level(std::vector<std::vector<Cell *>> cells):file{""},sequence{""},scrip
 
 Block * Level::CreateIBlock(int level){
     string blockStr = "I";
-    cells[19][0].setChar(blockStr);
+    cells[19][0]->setChar(blockStr);
     cells[19][1].setChar(blockStr);
     cells[19][2].setChar(blockStr);
     cells[19][3].setChar(blockStr);

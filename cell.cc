@@ -52,7 +52,7 @@ void Cell::setChar(char c) {
 }
 
 
-bool Cell::setCharNeighbour(char dir, char c) {
+void Cell::setCharNeighbour(char dir, char c) {
     if (dir == 't') {
         top->setChar(c);
     } else if (dir == 'b') {
@@ -63,6 +63,7 @@ bool Cell::setCharNeighbour(char dir, char c) {
         right->setChar(c);
     }
 }
+
 
 void Cell::setNeighbour(char dir, Cell *cellPtr) {
     if (dir == 't') {
@@ -105,5 +106,4 @@ bool Cell::check(char dir) {
     }
 }
 
-
-
+Cell::~Cell() {}
