@@ -26,11 +26,8 @@ std::vector<char> Level::readFile(std::string fileName)
     return content;
 }
 
-Level::Level(std::string L0File, std::string noRandomFile, bool noRandomBool,
-             bool seedBool, unsigned int seed, std::vector<std::vector<Cell *>> cells)
-    : L0File{L0File}, noRandomFile{noRandomFile}, noRandomBool{noRandomBool}, seedBool{seedBool},
-      seed{seed}, L0FileIndex{0}, noRandomFileIndex{0}, L0FileContent{std::vector<char>{' '}},
-      noRandomFileContent{std::vector<char>{' '}}, cells{cells} {} // not sure if vector constructor is used correctly here
+Level::Level(bool seedBool, unsigned int seed, std::vector<std::vector<Cell *>> cells)
+    : seedBool{seedBool}, seed{seed}, cells{cells} {} // not sure if vector constructor is used correctly here
 
 Block *Level::CreateBlock(int level, char blockType)
 {
@@ -48,58 +45,58 @@ Block *Level::CreateBlock(int level, char blockType)
     }
 
     // for each blockType, insert the corresponding cells to currCells and create a pointer to a new block of the corresponding blockType
-    switch ( blockType ) {
-        case 'I':
-          currCells.emplace_back(cells[18][0]);
-          currCells.emplace_back(cells[18][1]);
-          currCells.emplace_back(cells[18][2]);
-          currCells.emplace_back(cells[18][3]);
-          nextBlock = new IBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
-          break;
-        case 'J':
-            currCells.emplace_back(cells[18][0]);
-            currCells.emplace_back(cells[19][0]);
-            currCells.emplace_back(cells[19][1]);
-            currCells.emplace_back(cells[19][2]);
-            nextBlock = new JBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
-            break;
-        case 'L':
-            currCells.emplace_back(cells[18][2]);
-            currCells.emplace_back(cells[19][0]);
-            currCells.emplace_back(cells[19][1]);
-            currCells.emplace_back(cells[19][2]);
-            nextBlock = new LBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
-            break;
-        case 'O':
-            currCells.emplace_back(cells[18][0]);
-            currCells.emplace_back(cells[18][1]);
-            currCells.emplace_back(cells[19][0]);
-            currCells.emplace_back(cells[19][1]);
-            nextBlock = new OBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
-            break;
-         case 'S':
-            currCells.emplace_back(cells[18][1]);
-            currCells.emplace_back(cells[18][2]);
-            currCells.emplace_back(cells[19][0]);
-            currCells.emplace_back(cells[19][1]);
-            nextBlock = new SBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
-            break;
-          case 'Z':
-            currCells.emplace_back(cells[18][0]);
-            currCells.emplace_back(cells[18][1]);
-            currCells.emplace_back(cells[19][1]);
-            currCells.emplace_back(cells[19][2]);
-            nextBlock = new ZBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};\
-            break;
-          case 'T':
-            currCells.emplace_back(cells[18][0]);
-            currCells.emplace_back(cells[18][1]);
-            currCells.emplace_back(cells[18][2]);
-            currCells.emplace_back(cells[19][1]);
-            nextBlock = new TBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
-            break;
+    switch (blockType)
+    {
+    case 'I':
+        currCells.emplace_back(cells[18][0]);
+        currCells.emplace_back(cells[18][1]);
+        currCells.emplace_back(cells[18][2]);
+        currCells.emplace_back(cells[18][3]);
+        nextBlock = new IBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        break;
+    case 'J':
+        currCells.emplace_back(cells[18][0]);
+        currCells.emplace_back(cells[19][0]);
+        currCells.emplace_back(cells[19][1]);
+        currCells.emplace_back(cells[19][2]);
+        nextBlock = new JBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        break;
+    case 'L':
+        currCells.emplace_back(cells[18][2]);
+        currCells.emplace_back(cells[19][0]);
+        currCells.emplace_back(cells[19][1]);
+        currCells.emplace_back(cells[19][2]);
+        nextBlock = new LBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        break;
+    case 'O':
+        currCells.emplace_back(cells[18][0]);
+        currCells.emplace_back(cells[18][1]);
+        currCells.emplace_back(cells[19][0]);
+        currCells.emplace_back(cells[19][1]);
+        nextBlock = new OBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        break;
+    case 'S':
+        currCells.emplace_back(cells[18][1]);
+        currCells.emplace_back(cells[18][2]);
+        currCells.emplace_back(cells[19][0]);
+        currCells.emplace_back(cells[19][1]);
+        nextBlock = new SBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        break;
+    case 'Z':
+        currCells.emplace_back(cells[18][0]);
+        currCells.emplace_back(cells[18][1]);
+        currCells.emplace_back(cells[19][1]);
+        currCells.emplace_back(cells[19][2]);
+        nextBlock = new ZBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        break;
+    case 'T':
+        currCells.emplace_back(cells[18][0]);
+        currCells.emplace_back(cells[18][1]);
+        currCells.emplace_back(cells[18][2]);
+        currCells.emplace_back(cells[19][1]);
+        nextBlock = new TBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        break;
     }
-
 
     for (auto cell : currCells)
     {
@@ -114,12 +111,6 @@ void Level::setSeed(bool seedBool, unsigned int seed = 0)
 {
     this->seedBool = seedBool;
     this->seed = seed;
-}
-
-// mutate randomBool
-void Level::setNoRandom(bool random)
-{
-    noRandomBool = random;
 }
 
 // generate a newBlock by taking input from file content
