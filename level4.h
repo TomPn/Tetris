@@ -4,13 +4,11 @@
 
 class Block;
 
-class Level4:public Level{
-    public:
-    Block CreateNextBlock() override;
+class Level4 : public Level
+{
+public:
+    Block *CreateNextBlock() override;
     ~Level4() override;
-
 };
 
 #endif
-
-
