@@ -149,17 +149,6 @@ bool Cell::check(char dir)
             return false;
         }
     }
-    else if (dir == 's') // s stands for self
-    {
-        if (c == ' ')
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
 }
 
 void Cell::setIsBlind(bool isBlind)
