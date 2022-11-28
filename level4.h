@@ -16,7 +16,8 @@ public:
         : Level{seedBool, seed, cells}, noRandomBool{false}, noRandomFile{""}, noRandomFileIndex{0}, noRandomFileContent{std::vector<char>{' '}}
     {
     }
-    void setNoRandom(bool noRandom, std::string noRandomFile = "");
+    void setL0File(std::string L0File = "") override;
+    void setNoRandom(bool noRandom, std::string noRandomFile = "") override;
     Block *CreateNextBlock() override;
     ~Level4() override;
 };
