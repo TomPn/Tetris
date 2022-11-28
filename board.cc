@@ -163,6 +163,8 @@ void Board::moveForRotate(Cell *cellPtr, int newRow, int newCol)
 {
     cells[newRow][newCol]->setChar(cellPtr->getChar(false));
     cells[newRow][newCol]->setBlock(cellPtr->getBlock());
+    cellPtr->setChar(' ');
+    cells[newRow][newCol]->setBlock(nullptr);
 }
 
 void Board::rotate(bool clockwise)
