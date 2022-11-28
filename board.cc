@@ -20,8 +20,8 @@
 const int rows = 20;
 const int cols = 11;
 
-Board::Board(int level, std::string L0File, bool noRandomBool, std::string noRandomFile, bool seedBool, unsigned int seed)
-    : level{level}, score{0}, blockCount{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false}, L0File{L0File}, noRandomBool{noRandomBool}, noRandomFile{noRandomFile},
+Board::Board(int level, bool seedBool, unsigned int seed)
+    : level{level}, score{0}, blockCount{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false},
       seedBool{seedBool}, seed{seed}
 {
     std::vector<std::vector<Cell *>> cells;
@@ -90,7 +90,7 @@ Board::Board(int level, std::string L0File, bool noRandomBool, std::string noRan
     this->nextBlock = nextBlock;
 }
 
-void Board::right(bool isHeavy, int mult)
+void Board::right(int mult)
 {
     for (int i = 0; i < mult; i++)
     {
@@ -98,7 +98,7 @@ void Board::right(bool isHeavy, int mult)
     }
 }
 
-void Board::left(bool isHeavy, int mult)
+void Board::left(int mult)
 {
     for (int i = 0; i < mult; i++)
     {
@@ -629,4 +629,25 @@ void Board::addstar()
     Block *star = new StarBlock{cells[availableRow][centralCol], nullptr, nullptr, nullptr, 1, level, '*'};
     cells[availableRow][centralCol]->setChar('*');
     cells[availableRow][centralCol]->setBlock(star);
+}
+
+void Board::setL0File(std::string L0File = "")
+{
+    if (level == 0)
+    {
+        currLevel->setL0File(L0File);
+    }
+}
+
+void Board::setNoRandom(bool noRandom, std::string noRandomFile = "")
+{
+    if (level == 3 || level == 4)
+    {
+        currLevel->setNoRandom(noRandom, noRandomFile);
+    }
+}
+
+bool Board::getChange(int row, int col)
+{
+    return cells[row][col]->getChange();
 }

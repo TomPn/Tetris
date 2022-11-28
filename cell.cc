@@ -170,4 +170,9 @@ bool Cell::getChange()
     return change;
 }
 
+void Cell::setChange(bool change)
+{
+    this->change = change;
+}
+
 Cell::~Cell() {}
