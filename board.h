@@ -22,6 +22,7 @@ class Board {
     std::vector<std::vector<Cell *>> cells;
     void update();
     int checkClear();
+    void addstar();
 
     public:
         Board(int level, int score, int blockCount, bool isBlind, bool isHeavy, bool isForce,
