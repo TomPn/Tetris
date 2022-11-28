@@ -8,34 +8,26 @@ class Cell;
 
 class Level
 {
-    std::vector<std::string> readFile(std::string fileName);
-
 protected:
-    std::string file, sequence, scriptfile;
-    bool randomBool, scriptfileBool, seedBool;
+    std::string L0File, noRandomFile;
+    bool noRandomBool, seedBool;
     unsigned int seed;
+    int L0FileIndex;
+    int noRandomFileIndex;
+    std::vector<char> L0FileContent;
+    std::vector<char> noRandomFileContent;
     std::vector<std::vector<Cell *>> cells;
-    int sequenceIndex;
-    int scriptfileIndex;
-    int fileIndex;
-    std::vector<std::string> sequenceContent;
-    std::vector<std::string> scriptfileContent;
-    std::vector<std::string> fileContent;
+    std::vector<char> readFile(std::string fileName);
+    Block *CreateNextFromFile(std::vector<char> content, int index);
 
 public:
-    Level(std::vector<std::vector<Cell *>> cells);
+    Level(std::string L0File, std::string noRandomFile, bool noRandomBool,
+          bool seedBool, unsigned int seed, std::vector<std::vector<Cell *>> cells);
     virtual ~Level();
-    void setScriptfile(bool scriptfileBool, std::string scriptfile = "");
-    void setSeed(unsigned int seed);
+    void setSeed(bool seedBool, unsigned int seed = 0);
     virtual Block *CreateNextBlock() = 0;
-    void setRandom(bool random);
+    void setNoRandom(bool noRandom);
     Block *CreateBlock(int level, char blockType);
-    Block *CreateJBlock(int level);
-    Block *CreateLBlock(int level);
-    Block *CreateOBlock(int level);
-    Block *CreateSBlock(int level);
-    Block *CreateZBlock(int level);
-    Block *CreateTBlock(int level);
 };
 
 #endif

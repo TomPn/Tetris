@@ -6,53 +6,25 @@
 #include <vector>
 
 // readFile reads the strings in file/sequence/scriptfile store them in a vector of string
-std::vector<std::string> Level::readFile(std::string fileName)
+std::vector<char> Level::readFile(std::string fileName)
 {
     // initialize the file object, a string, and a vector of string
     std::ifstream f{fileName};
-    std::string s;
-    std::vector<std::string> content;
+    char c;
+    std::vector<char> content;
     // read each string in file and insert them into the vecter of string
-    while (f >> s)
+    while (f >> c)
     {
-        content.emplace_back(s);
+        content.emplace_back(c);
     }
     return content;
 }
 
-Level::Level(std::vector<std::vector<Cell *>> cells) : file{""}, sequence{""}, scriptfile{""}, randomBool{false},
-                                                       scriptfileBool{false}, seedBool{false}, seed{0}, cells{cells}, sequenceIndex{0}, scriptfileIndex{0}, fileIndex{0}
-{
-    // initialize a placeholder for the vector of string
-    std::vector<std::string> placeholder{""};
-    // if fileName isn't empty, call readFile to read the strings in the file and store them in a vector of string
-    if (file != "")
-    {
-        fileContent = Level::readFile(file);
-    }
-    else
-    {
-        fileContent = placeholder;
-    }
-
-    if (sequence != "")
-    {
-        sequenceContent = Level::readFile(sequence);
-    }
-    else
-    {
-        sequenceContent = placeholder;
-    }
-
-    if (scriptfile != "")
-    {
-        scriptfileContent = Level::readFile(scriptfile);
-    }
-    else
-    {
-        scriptfileContent = placeholder;
-    }
-}
+Level::Level(std::string L0File, std::string noRandomFile, bool noRandomBool,
+             bool seedBool, unsigned int seed, std::vector<std::vector<Cell *>> cells)
+    : L0File{L0File}, noRandomFile{noRandomFile}, noRandomBool{noRandomBool}, seedBool{seedBool},
+      seed{seed}, L0FileIndex{0}, noRandomFileIndex{0}, L0FileContent{std::vector<char>{' '}},
+      noRandomFileContent{std::vector<char>{' '}}, cells{cells} {}
 
 Block *Level::CreateBlock(int level, char blockType)
 {
@@ -99,7 +71,7 @@ Block *Level::CreateBlock(int level, char blockType)
         currCells.emplace_back(cells[19][1]);
         currCells.emplace_back(cells[19][2]);
     }
-    else if (blockType = 'Z')
+    else if (blockType = 'T')
     {
         currCells.emplace_back(cells[18][0]);
         currCells.emplace_back(cells[18][1]);
@@ -107,7 +79,7 @@ Block *Level::CreateBlock(int level, char blockType)
         currCells.emplace_back(cells[19][1]);
     }
 
-    Block *nextBlock = new Block{currCells[0], currCells[1], currCells[3], currCells[4], 4, level};
+    Block *nextBlock = new Block{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
     for (auto cell : currCells)
     {
         cell->setChar(blockType);
@@ -116,22 +88,23 @@ Block *Level::CreateBlock(int level, char blockType)
     return nextBlock;
 }
 
-// mutate scriptfileBool and scriptfile
-void Level::setScriptfile(bool scriptfileBool, std::string scriptfile = "")
-{
-    this->scriptfileBool = scriptfileBool;
-    this->scriptfile = scriptfile;
-}
-
 // mutate seedBool and seed
-void Level::setSeed(bool seedBool, unsigned int seed)
+void Level::setSeed(bool seedBool, unsigned int seed = 0)
 {
     this->seedBool = seedBool;
     this->seed = seed;
 }
 
 // mutate randomBool
-void Level::setRandom(bool random)
+void Level::setNoRandom(bool random)
 {
-    randomBool = random;
+    noRandomBool = random;
+}
+
+Block *Level::CreateNextFromFile(std::vector<char> content, int index)
+{
+    char c = content[index];
+    // create new block according to s;
+    Block *nextBlock = Level::CreateBlock(0, c);
+    return nextBlock;
 }
