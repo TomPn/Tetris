@@ -32,6 +32,7 @@ class Board
     void addstar();
     bool checkForRotate(Cell *cellPtr, int newRow, int newCol);
     void moveForRotate(Cell *cellPtr, int newRow, int newCol);
+    bool checkForCurrBlock(std::vector<Cell *> currCells);
 
 public:
     Board(int level, std::string L0File, bool noRandomBool, std::string noRandomFile, bool seedBool, unsigned int seed);

@@ -1,5 +1,12 @@
 #include "level.h"
 #include "block.h"
+#include "iBlock.h"
+#include "jBlock.h"
+#include "lBlock.h"
+#include "oBlock.h"
+#include "sBlock.h"
+#include "zBlock.h"
+#include "tBlock.h"
 #include "cell.h"
 #include <string>
 #include <fstream>
@@ -28,52 +35,72 @@ Level::Level(std::string L0File, std::string noRandomFile, bool noRandomBool,
 Block *Level::CreateBlock(int level, char blockType)
 {
     std::vector<Cell *> currCells;
+    Block *nextBlock;
+
+    // reset the last two rows
+    for (int row = 18; row < 20; ++row)
+    {
+        for (int col = 0; col < 11; ++col)
+        {
+            cells[row][col]->setChar(' ');
+            cells[row][col]->setBlock(nullptr);
+        }
+    }
+
+    // for each blockType, insert the corresponding cells to currCells and create a pointer to a new block of the corresponding blockType
     switch ( blockType ) {
         case 'I':
-            currCells.emplace_back(cells[18][0]);
-            currCells.emplace_back(cells[18][1]);
-            currCells.emplace_back(cells[18][2]);
-            currCells.emplace_back(cells[18][3]);
-            break;
+          currCells.emplace_back(cells[18][0]);
+          currCells.emplace_back(cells[18][1]);
+          currCells.emplace_back(cells[18][2]);
+          currCells.emplace_back(cells[18][3]);
+          nextBlock = new IBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+          break;
         case 'J':
             currCells.emplace_back(cells[18][0]);
             currCells.emplace_back(cells[19][0]);
             currCells.emplace_back(cells[19][1]);
             currCells.emplace_back(cells[19][2]);
+            nextBlock = new JBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
             break;
         case 'L':
             currCells.emplace_back(cells[18][2]);
             currCells.emplace_back(cells[19][0]);
             currCells.emplace_back(cells[19][1]);
             currCells.emplace_back(cells[19][2]);
+            nextBlock = new LBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
             break;
         case 'O':
             currCells.emplace_back(cells[18][0]);
             currCells.emplace_back(cells[18][1]);
             currCells.emplace_back(cells[19][0]);
             currCells.emplace_back(cells[19][1]);
+            nextBlock = new OBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
             break;
-        case 'S':
+         case 'S':
             currCells.emplace_back(cells[18][1]);
             currCells.emplace_back(cells[18][2]);
             currCells.emplace_back(cells[19][0]);
             currCells.emplace_back(cells[19][1]);
+            nextBlock = new SBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
             break;
-        case 'Z':
+          case 'Z':
             currCells.emplace_back(cells[18][0]);
             currCells.emplace_back(cells[18][1]);
             currCells.emplace_back(cells[19][1]);
             currCells.emplace_back(cells[19][2]);
+            nextBlock = new ZBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};\
             break;
-        case 'T':
+          case 'T':
             currCells.emplace_back(cells[18][0]);
             currCells.emplace_back(cells[18][1]);
             currCells.emplace_back(cells[18][2]);
             currCells.emplace_back(cells[19][1]);
+            nextBlock = new TBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
             break;
-    } // switch 
+    }
 
-    Block *nextBlock = new Block{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+
     for (auto cell : currCells)
     {
         cell->setChar(blockType);
@@ -95,6 +122,7 @@ void Level::setNoRandom(bool random)
     noRandomBool = random;
 }
 
+// generate a newBlock by taking input from file content
 Block *Level::CreateNextFromFile(std::vector<char> content, int index)
 {
     char c = content[index];
