@@ -20,6 +20,8 @@ class Game: public Subject{
     Board *curPlayer;
     Board *opponent;
     CommandInterpreter *cmdInter;
+    bool isDigit(char c);
+    int toInt(std::string s);
 
     public:
         explicit Game(int startLevel, bool textMode, unsigned int seed, bool haveSeed, bool haveScript1, bool haveScript2, std::string scriptfile1, std::string scriptfile2);
@@ -30,7 +32,7 @@ class Game: public Subject{
         void rotate(bool clockwise, int multiplier);
         void drop(int multiplier);
         void IJL(char blockType, int multiplier);
-        char getState(int row, int col) const override;
+        char getState(int player, int row, int col) const override;
         int getLevel (int player) const override;
         int getScore (int player) const override;
         void noRandom(std::string file);
