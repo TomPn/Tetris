@@ -3,28 +3,29 @@
 
 class Block;
 
-class Cell{
+class Cell
+{
     char c;
-    int x,y;
-    Cell * top, * bottom, * left, * right;
+    int x, y;
+    Cell *top, *bottom, *left, *right;
     bool isBlind;
-    Block * myBlock;
-    public:
-    Cell(char c,int x, int y): c{c},x{x},y{y},top{nullptr},bottom{nullptr},left{nullptr},right{nullptr},myBlock{nullptr},isBlind{false} {}
+    Block *myBlock;
+
+public:
+    Cell(char c, int x, int y) : c{c}, x{x}, y{y}, top{nullptr}, bottom{nullptr}, left{nullptr}, right{nullptr}, myBlock{nullptr}, isBlind{false} {}
     ~Cell();
-    Cell * getCell(char dir);
-    Block * getBlock();
+    Cell *getCell(char dir);
+    Block *getBlock();
     int getX();
     int getY();
-    void setBlock(Block * block);
+    void setBlock(Block *block);
     char getChar(bool isDisplay);
     void setChar(char c);
     bool check(char dir);
     void setCharNeighbour(char dir, char c);
-    void setNeighbour(char dir, Cell * cellPtr);
+    void setNeighbour(char dir, Cell *cellPtr);
+    void setIsBlind(bool isBlind);
+
 };
 
 #endif
-
-
-
