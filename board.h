@@ -6,6 +6,7 @@
 class Board;
 class Block;
 class Level;
+class Cell;
 
 class Board {
     int level;
@@ -22,7 +23,8 @@ class Board {
     int checkClear();
 
     public:
-        Board();
+        Board(int level, int score, bool isBlind, bool isHeavy, bool isForce,
+             Board* opponentBoard, Block* currBlock, Block* nextBlock, Level* currLevel);
         void right();
         void left();
         bool down();
