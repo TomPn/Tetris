@@ -14,34 +14,31 @@ Block *Level2::CreateNextBlock()
     }
     // random is a random int from 1 to 7
     int random = 1 + std::rand() / ((RAND_MAX + 1u) / 7);
-    if (random == 1)
-    {
-        nextBlock = Level::CreateBlock(2, 'S');
-    }
-    else if (random == 2)
-    {
-        nextBlock = Level::CreateBlock(2, 'Z');
-    }
-    else if (random == 3)
-    {
-        nextBlock = Level::CreateBlock(2, 'I');
-    }
-    else if (random == 4)
-    {
-        nextBlock = Level::CreateBlock(2, 'J');
-    }
-    else if (random == 5)
-    {
-        nextBlock = Level::CreateBlock(2, 'T');
-    }
-    else if (random == 6)
-    {
-        nextBlock = Level::CreateBlock(2, 'O');
-    }
-    else if (random == 7)
-    {
-        nextBlock = Level::CreateBlock(2, 'L');
-    }
+    
+    switch ( random ) {
+        case 1:
+            nextBlock = Level::CreateBlock(2, 'S');
+            break;
+        case 2:
+            nextBlock = Level::CreateBlock(2, 'Z');
+            break;
+        case 3:
+            nextBlock = Level::CreateBlock(2, 'I');
+            break;
+        case 4:
+            nextBlock = Level::CreateBlock(2, 'J');
+            break;
+        case 5:
+            nextBlock = Level::CreateBlock(2, 'T');
+            break;
+        case 6:
+            nextBlock = Level::CreateBlock(2, 'O');
+            break;
+        case 7:
+            nextBlock = Level::CreateBlock(2, 'L');
+            break;
+    } // switch
+    
     return nextBlock;
 }
 
