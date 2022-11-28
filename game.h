@@ -6,9 +6,10 @@
 class CommandInterpreter;
 class Board;
 
-class Game: public Subject{
+class Game : public Subject
+{
     int playerRound; // 0: curPlayer's round, 1: opponent's round
-    int startLevel; // default level 0
+    int startLevel;  // default level 0
     bool textMode;
     unsigned int seed;
     bool haveSeed;
@@ -22,6 +23,7 @@ class Game: public Subject{
     CommandInterpreter *cmdInter;
     bool isDigit(char c);
     int toInt(std::string s);
+
 
     public:
         explicit Game(int startLevel, bool textMode, unsigned int seed, bool haveSeed, bool haveScript1, bool haveScript2, std::string scriptfile1, std::string scriptfile2);

@@ -4,6 +4,7 @@
 #include <sstream>
 using std::cin;
 
+
 bool Game::isDigit(char c) {
     if (c >= '0' && c <= '9') return true;
     return false;
@@ -37,30 +38,62 @@ Game::Game(int startLevel, bool textMode, unsigned int seed, bool haveSeed, bool
                     this->opponent = new Board{startLevel, "sequence2.txt", 1, seed};
                 }
             }
-        } else {
-            if (haveScript1) {
-                if (haveScript2) {
-                    this->curPlayer = new Board{startLevel, scriptfile1, 0, seed};
-                    this->opponent = new Board{startLevel, scriptfile2, 0, seed};
-                } else {
-                    this->curPlayer = new Board{startLevel, scriptfile1, 0, seed};
-                    this->opponent = new Board{startLevel, "sequence2.txt", 0, seed};
-                }
-            } else {
-                if (haveScript2) {
-                    this->curPlayer = new Board{startLevel, "sequence1.txt", 0, seed};
-                    this->opponent = new Board{startLevel, scriptfile2, 0, seed};
-                } else {
-                    this->curPlayer = new Board{startLevel, "sequence1.txt", 0, seed};
-                    this->opponent = new Board{startLevel, "sequence2.txt", 0, seed};
-                }
+            else
+            {
+                this->curPlayer = new Board{startLevel, scriptfile1, 1, seed};
+                this->opponent = new Board{startLevel, "sequence2.txt", 1, seed};
             }
         }
+        else
+        {
+            if (haveScript2)
+            {
+                this->curPlayer = new Board{startLevel, "sequence1.txt", 1, seed};
+                this->opponent = new Board{startLevel, scriptfile2, 1, seed};
+            }
+            else
+            {
+                this->curPlayer = new Board{startLevel, "sequence1.txt", 1, seed};
+                this->opponent = new Board{startLevel, "sequence2.txt", 1, seed};
+            }
+        }
+    }
+    else
+    {
+        if (haveScript1)
+        {
+            if (haveScript2)
+            {
+                this->curPlayer = new Board{startLevel, scriptfile1, 0, seed};
+                this->opponent = new Board{startLevel, scriptfile2, 0, seed};
+            }
+            else
+            {
+                this->curPlayer = new Board{startLevel, scriptfile1, 0, seed};
+                this->opponent = new Board{startLevel, "sequence2.txt", 0, seed};
+            }
+        }
+        else
+        {
+            if (haveScript2)
+            {
+                this->curPlayer = new Board{startLevel, "sequence1.txt", 0, seed};
+                this->opponent = new Board{startLevel, scriptfile2, 0, seed};
+            }
+            else
+            {
+                this->curPlayer = new Board{startLevel, "sequence1.txt", 0, seed};
+                this->opponent = new Board{startLevel, "sequence2.txt", 0, seed};
+            }
+        }
+    }
 }
 
-int Game::start() {
+int Game::start()
+{
     std::string command;
-    while (true) {
+    while (true)
+    {
         int multiplier = 0;
         int commandIndex = 0;
         command = cmdInter->getCommand();
@@ -75,51 +108,87 @@ int Game::start() {
             multiplier = toInt(command.substr(0,commandIndex));
             command = command.substr(commandIndex,command.length()-commandIndex);
         }
-        if (command == "left") {
+        if (command == "left")
+        {
             left(multiplier);
-        } else if (command == "right") {
+        }
+        else if (command == "right")
+        {
             right(multiplier);
-        } else if (command == "down") {
+        }
+        else if (command == "down")
+        {
             down(multiplier);
-        } else if (command == "clockwise") {
+        }
+        else if (command == "clockwise")
+        {
             rotate(1, multiplier);
-        } else if (command == "counterclockwise") {
+        }
+        else if (command == "counterclockwise")
+        {
             rotate(0, multiplier);
-        } else if (command == "drop") {
+        }
+        else if (command == "drop")
+        {
             drop(multiplier);
-        } else if (command == "levelup") {
+        }
+        else if (command == "levelup")
+        {
             levelUp(multiplier);
-        } else if (command == "leveldown") {
+        }
+        else if (command == "leveldown")
+        {
             levelDown(multiplier);
-        } else if (command == "norandom") {
+        }
+        else if (command == "norandom")
+        {
             cin >> command;
             noRandom(command);
-        } else if (command == "random") {
+        }
+        else if (command == "random")
+        {
             random();
-        } else if (command == "I" || command == "J" || command == "L"  || command == "O"  || command == "S"  || command == "Z" || command == "T") {
+        }
+        else if (command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T")
+        {
             IJL(command[0], multiplier);
-        } else if (command == "restart") {
+        }
+        else if (command == "restart")
+        {
             restart();
-        } else if (command == "heavy") {
+        }
+        else if (command == "heavy")
+        {
             // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
-            if (playerRound) {
-                if (curPlayer->getTrigger()) {
+            if (playerRound)
+            {
+                if (curPlayer->getTrigger())
+                {
                     heavy();
                     curPlayer->setTrigger(0);
                 }
                 // could give a note of invalid command here
-            } else {
-                if (opponent->getTrigger()) {
+            }
+            else
+            {
+                if (opponent->getTrigger())
+                {
                     heavy();
                     opponent->setTrigger(0);
                 }
             }
-        } else if (command == "force") {
+        }
+        else if (command == "force")
+        {
             // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
-            if (playerRound) {
-                if (curPlayer->getTrigger()) {
-                    while (cin >> command) {
-                        if (command == "I" || command == "J" || command == "L"  || command == "O"  || command == "S"  || command == "Z" || command == "T") {
+            if (playerRound)
+            {
+                if (curPlayer->getTrigger())
+                {
+                    while (cin >> command)
+                    {
+                        if (command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T")
+                        {
                             force(command[0]);
                             curPlayer->setTrigger(0);
                             break;
@@ -127,10 +196,15 @@ int Game::start() {
                     }
                 }
                 // could give a note of invalid command here
-            } else {
-                if (opponent->getTrigger()) {
-                    while (cin >> command) {
-                        if (command == "I" || command == "J" || command == "L"  || command == "O"  || command == "S"  || command == "Z" || command == "T") {
+            }
+            else
+            {
+                if (opponent->getTrigger())
+                {
+                    while (cin >> command)
+                    {
+                        if (command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T")
+                        {
                             force(command[0]);
                             opponent->setTrigger(0);
                             break;
@@ -138,16 +212,23 @@ int Game::start() {
                     }
                 }
             }
-        } else if (command == "blind") {
+        }
+        else if (command == "blind")
+        {
             // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
-            if (playerRound) {
-                if (curPlayer->getTrigger()) {
+            if (playerRound)
+            {
+                if (curPlayer->getTrigger())
+                {
                     blind();
                     curPlayer->setTrigger(0);
                 }
                 // could give a note of invalid command here
-            } else {
-                if (opponent->getTrigger()) {
+            }
+            else
+            {
+                if (opponent->getTrigger())
+                {
                     blind();
                     opponent->setTrigger(0);
                 }
@@ -156,52 +237,76 @@ int Game::start() {
     }
 }
 
-void Game::left(int multiplier) {
-    if (!playerRound) {
+void Game::left(int multiplier)
+{
+    if (!playerRound)
+    {
         curPlayer->left(multiplier);
-    } else {
+    }
+    else
+    {
         opponent->left(multiplier);
     }
 }
 
-void Game::right(int multiplier) {
-    if (!playerRound) {
+void Game::right(int multiplier)
+{
+    if (!playerRound)
+    {
         curPlayer->right(multiplier);
-    } else {
+    }
+    else
+    {
         opponent->right(multiplier);
     }
 }
 
-bool Game::down(int multiplier) {
-    if (!playerRound) {
+bool Game::down(int multiplier)
+{
+    if (!playerRound)
+    {
         curPlayer->down(multiplier);
-    } else {
+    }
+    else
+    {
         opponent->down(multiplier);
     }
 }
 
-void Game::rotate(bool clockwise, int multiplier) {
-    if (!playerRound) {
+void Game::rotate(bool clockwise, int multiplier)
+{
+    if (!playerRound)
+    {
         curPlayer->rotate(clockwise, multiplier);
-    } else {
+    }
+    else
+    {
         opponent->rotate(clockwise, multiplier);
     }
 }
 
-void Game::drop(int multiplier) {
-    if (!playerRound) {
+void Game::drop(int multiplier)
+{
+    if (!playerRound)
+    {
         curPlayer->drop(multiplier);
         playerRound = 1;
-    } else {
+    }
+    else
+    {
         opponent->drop(multiplier);
         playerRound = 0;
     }
 }
 
-void Game::IJL(char blockType, int multiplier) {
-    if (!playerRound) {
+void Game::IJL(char blockType, int multiplier)
+{
+    if (!playerRound)
+    {
         curPlayer->IJL(blockType, multiplier);
-    } else {
+    }
+    else
+    {
         opponent->IJL(blockType, multiplier);
     }
 }
@@ -209,7 +314,9 @@ void Game::IJL(char blockType, int multiplier) {
 char Game::getState(int player, int row, int col) const {
     if (!player) {
         curPlayer->getState(row, col);
-    } else {
+    }
+    else
+    {
         opponent->getState(row, col);
     }
 }
@@ -217,7 +324,9 @@ char Game::getState(int player, int row, int col) const {
 int Game::getLevel(int player) const {
     if (!player) {
         curPlayer->getLevel();
-    } else {
+    }
+    else
+    {
         opponent->getLevel();
     }
 }
@@ -225,7 +334,9 @@ int Game::getLevel(int player) const {
 int Game::getScore(int player) const {
     if (!player) {
         curPlayer->getScore();
-    } else {
+    }
+    else
+    {
         opponent->getScore();
     }
 }
@@ -248,53 +359,73 @@ void Game::random() {
     }
 }
 
-void Game::levelUp(int multiplier) {
-    if (!playerRound) {
+void Game::levelUp(int multiplier)
+{
+    if (!playerRound)
+    {
         curPlayer->levelUp(multiplier);
-    } else {
+    }
+    else
+    {
         opponent->levelUp(multiplier);
     }
 }
 
-void Game::levelDown(int multiplier) {
-    if (!playerRound) {
+void Game::levelDown(int multiplier)
+{
+    if (!playerRound)
+    {
         curPlayer->levelDown(multiplier);
-    } else {
+    }
+    else
+    {
         opponent->levelDown(multiplier);
     }
 }
 
-void Game::restart() {
+void Game::restart()
+{
     delete curPlayer;
     delete opponent;
     curPlayer = new Board{startLevel};
     opponent = new Board{startLevel};
 }
 
-void Game::blind() {
+void Game::blind()
+{
     // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
-    if (playerRound) {
+    if (playerRound)
+    {
         curPlayer->setBlind();
-    } else {
+    }
+    else
+    {
         opponent->setBlind();
     }
 }
 
-void Game::heavy() {
+void Game::heavy()
+{
     // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
-    if (playerRound) {
+    if (playerRound)
+    {
         curPlayer->setHeavy();
-    } else {
+    }
+    else
+    {
         opponent->setHeavy();
     }
 }
 
-void Game::force(char blockType) {
+void Game::force(char blockType)
+{
     // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
-    if (playerRound) {
+    if (playerRound)
+    {
         opponent->setForce(blockType);
-    } else {
+    }
+    else
+    {
         curPlayer->setForce(blockType);
     }
 }
-

@@ -60,23 +60,23 @@ Board::Board(int level, std::string L0File, bool noRandomBool, std::string noRan
     Level *tempLevel;
     if (level == 0)
     {
-        tempLevel = new Level0{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+        tempLevel = new Level0{seedBool, seed, cells};
     }
     else if (level == 1)
     {
-        tempLevel = new Level1{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+        tempLevel = new Level1{seedBool, seed, cells};
     }
     else if (level == 2)
     {
-        tempLevel = new Level2{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+        tempLevel = new Level2{seedBool, seed, cells};
     }
     else if (level == 3)
     {
-        tempLevel = new Level3{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+        tempLevel = new Level3{seedBool, seed, cells};
     }
     else if (level == 4)
     {
-        tempLevel = new Level4{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+        tempLevel = new Level4{seedBool, seed, cells};
     }
 
     currLevel = tempLevel;
@@ -345,19 +345,19 @@ void Board::levelDown()
         Level *tmp = currLevel;
         if (level == 1)
         {
-            currLevel = new Level1{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+            currLevel = new Level1{seedBool, seed, cells};
         }
         else if (level == 2)
         {
-            currLevel = new Level2{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+            currLevel = new Level2{seedBool, seed, cells};
         }
         else if (level == 3)
         {
-            currLevel = new Level3{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+            currLevel = new Level3{seedBool, seed, cells};
         }
         else if (level == 4)
         {
-            currLevel = new Level4{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+            currLevel = new Level4{seedBool, seed, cells};
         }
         delete tmp;
     }
@@ -371,19 +371,19 @@ void Board::levelUp()
         Level *tmp = currLevel;
         if (level == 0)
         {
-            currLevel = new Level1{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+            currLevel = new Level1{seedBool, seed, cells};
         }
         else if (level == 1)
         {
-            currLevel = new Level2{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+            currLevel = new Level2{seedBool, seed, cells};
         }
         else if (level == 2)
         {
-            currLevel = new Level3{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+            currLevel = new Level3{seedBool, seed, cells};
         }
         else if (level == 3)
         {
-            currLevel = new Level4{L0File, noRandomBool, noRandomFile, seedBool, seed, cells};
+            currLevel = new Level4{seedBool, seed, cells};
         }
         delete tmp;
     }
