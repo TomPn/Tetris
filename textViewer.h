@@ -15,3 +15,4 @@ class TextViewer: public Observer {
 }; 
 
 #endif
+

@@ -4,29 +4,29 @@
 #include "level.h"
 #include <vector>
 
-const int rows = 18;
-const int cols = 10;
+const int rows = 20;
+const int cols = 11;
 
-Board::Board(int level, int score, bool isBlind, bool isHeavy, bool isForce,
+Board::Board(int level, int score, int blockCount, bool isBlind, bool isHeavy, bool isForce,
              Board* opponentBoard, Block* currBlock, Block* nextBlock, Level* currLevel) :
-             level{level}, score{score}, isBlind{isBlind}, isHeavy{isHeavy}, isForce{isForce},
-             opponentBoard{opponentBoard}, currBlock{currBlock}, nectBlock{nextBlock}, currLevel{currLevel} {
-    std::vector<vector<Cell*>> cells; 
-    for (int i = 0; i < rows, i++) {
-        for (int j = 0; j < cols, j++) {
+             level{level}, score{score}, blockCount{blockCount}, isBlind{isBlind}, isHeavy{isHeavy}, isForce{isForce},
+             opponentBoard{opponentBoard}, currBlock{currBlock}, nextBlock{nextBlock}, currLevel{currLevel} {
+    std::vector<std::vector<Cell*>> cells; 
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
             cells[i][j] = new Cell{' ', i, j};
         }
     }
-    for (int i = 0; i < rows, i++) {
-        for (int j = 0; j < cols, j++) {
-            if (cells[i][j]->x != 0) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (cells[i][j]->getX() != 0) {
                 cells[i][j]->setNeighbour('t', cells[i - 1][j]);
-            } else if (cells[i][j]->x != rows - 1) {
+            } else if (cells[i][j]->getX() != rows - 1) {
                 cells[i][j]->setNeighbour('b', cells[i + 1][j]);
-            } else if (cells[i][j]->y != 0) {
+            } else if (cells[i][j]->getY() != 0) {
                 cells[i][j]->setNeighbour('l', cells [i][j - 1]);
-            } else if (cells[i][j]->y != cols - 1) {
-                cells[i][j]->setNeightbour('r', cells[i][j + 1]);
+            } else if (cells[i][j]->getY() != cols - 1) {
+                cells[i][j]->setNeighbour('r', cells[i][j + 1]);
             }
         }
     }
