@@ -1,5 +1,5 @@
 #include "cell.h"
-#include "Block"
+#include "block.h"
 
 
 // get the neighbour cell of current cell based on direction
@@ -81,25 +81,25 @@ bool Cell::check(char dir) {
         // check if it's the first in a row
         if (x == 0) {
             return false;
-        } else if (left->getBlock != myBlock) {
+        } else if (left->getBlock() != myBlock) {
             return false;
         }
     } else if (dir == 'r') {
         if (x == 10) {
             return false;
-        } else if (right->getBlock != myBlock) {
+        } else if (right->getBlock() != myBlock) {
             return false;
         }
     } else if (dir == 't') {
         if (y == 0) {
             return false;
-        } else if (top->getBlock != myBlock) {
+        } else if (top->getBlock() != myBlock) {
             return false;
         }
     } else {
         if (y == 17) {
             return false;
-        } else if (bottom->getBlock != myBlock) {
+        } else if (bottom->getBlock() != myBlock) {
             return false;
         }
     }

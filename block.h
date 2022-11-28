@@ -8,7 +8,7 @@ class Cell;
 class Block {
     protected:
         std::vector<Cell*> components;
-        int level
+        int level;
         int alive;
         bool checkCell(char dir, Cell* cell);
         bool move(char dir);
