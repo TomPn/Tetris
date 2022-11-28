@@ -22,7 +22,7 @@ Xwindow::Xwindow(int width, int height): pImpl{new XWindowImpl} {
     cerr << "Cannot open display" << endl;
     exit(1);
   }
-  pImpl->s = DefaultScreen(d);
+  pImpl->s = DefaultScreen(pImpl->d);
   pImpl->w = XCreateSimpleWindow(pImpl->d, RootWindow(pImpl->d, pImpl->s), 10, 10, width, height, 1,
                           BlackPixel(pImpl->d, pImpl->s), WhitePixel(pImpl->d, pImpl->s));
   XSelectInput(pImpl->d, pImpl->w, ExposureMask | KeyPressMask);
@@ -40,7 +40,7 @@ Xwindow::Xwindow(int width, int height): pImpl{new XWindowImpl} {
   Colormap cmap;
   char color_vals[10][10]={"white", "black", "red", "green", "blue", "cyan", "yellow", "magenta", "orange", "brown"};
 
-  cmap=DefaultColormap(d,DefaultScreen(d));
+  cmap=DefaultColormap(pImpl->d,DefaultScreen(pImpl->d));
   for(int i=0; i < 5; ++i) {
       XParseColor(pImpl->d,cmap,color_vals[i],&xcolour);
       XAllocColor(pImpl->d,cmap,&xcolour);

@@ -6,7 +6,7 @@ class Block;
 class Cell{
     char c;
     int x,y;
-    Cell * top, bottom, left, right;
+    Cell * top, * bottom, * left, * right;
     bool isBlind;
     Block * myBlock;
     public:
@@ -14,11 +14,13 @@ class Cell{
     ~Cell();
     Cell * getCell(char dir);
     Block * getBlock();
+    int getX();
+    int getY();
     void setBlock(Block * block);
     char getChar(bool isDisplay);
     void setChar(char c);
-    Bool check(char dir);
-    Bool setCharNeighbour(char dir);
+    bool check(char dir);
+    bool setCharNeighbour(char dir, char c);
     void setNeighbour(char dir, Cell * cellPtr);
 };
 
