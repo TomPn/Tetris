@@ -62,10 +62,9 @@ void Cell::setChar(char c)
     this->c = c;
 }
 
-void Cell::setCharNeighbour(char dir, char c)
-{
-    if (dir == 't')
-    {
+
+void Cell::setCharNeighbour(char dir, char c) {
+    if (dir == 't') {
         top->setChar(c);
     }
     else if (dir == 'b')
@@ -82,10 +81,8 @@ void Cell::setCharNeighbour(char dir, char c)
     }
 }
 
-void Cell::setNeighbour(char dir, Cell *cellPtr)
-{
-    if (dir == 't')
-    {
+void Cell::setNeighbour(char dir, Cell *cellPtr) {
+    if (dir == 't') {
         top = cellPtr;
     }
     else if (dir == 'b')
@@ -156,6 +153,4 @@ void Cell::setIsBlind(bool isBlind)
     this->isBlind = isBlind;
 }
 
-Cell::~Cell()
-{
-}
+Cell::~Cell(){}

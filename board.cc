@@ -2,6 +2,11 @@
 #include "block.h"
 #include "cell.h"
 #include "level.h"
+#include "level0.h"
+#include "level1.h"
+#include "level2.h"
+#include "level3.h"
+#include "level4.h"
 #include <vector>
 
 const int rows = 20;
@@ -68,14 +73,100 @@ void Board::drop()
 {
 }
 
-void Board::levelDown()
-{
-    if (level >= 1)
-    {
+void Board::levelDown() {
+    if(level > 0) {
         level--;
-        currLevel
+        Level *tmp = currLevel;
+        if (level == 1) {
+            currLevel = new Level1{cells};
+        } else if (level == 2) {
+            currLevel = new Level2{cells};
+        } else if (level == 3) {
+            currLevel = new Level3{cells};
+        } else if (level == 4) {
+            currLevel = new Level4{cells};
+        }
+        delete tmp;
     }
 }
+
+void Board::levelUp() {
+    if(level < 4) {
+        level++;
+        Level *tmp = currLevel;
+        if (level == 0) {
+            currLevel = new Level1{cells};
+        } else if (level == 1) {
+            currLevel = new Level2{cells};
+        } else if (level == 2) {
+            currLevel = new Level3{cells};
+        } else if (level == 3) {
+            currLevel = new Level4{cells};
+        }
+        delete tmp;
+    }
+}
+
+void Board::setBlind() {
+    isBlind = true;
+}
+
+void Board::setHeavy() {
+    isHeavy = true;
+}
+
+
+void Board::setForce(char blockType) {
+    setCurrBlock(blockType);
+    isForce = true;
+}
+
+
+int Board::getScore() {
+    return score;
+}
+
+
+char Board::charAt(int row, int col) {
+    return cells[row][col]->getChar(isBlind);
+}
+
+
+int Board::checkClear() {
+    int clear = 0;
+    bool rowClear;
+    for (int i = 0; i < rows - 2; i++) {
+        rowClear = true;
+        for (int j = 0; j < cols; j++) {
+            if (cells[i][j]->getBlock() == nullptr) {
+                rowClear = false;
+                break;
+            }
+        }
+        if (rowClear) {
+            clear += 1;
+            for (int i2 = i; i2 > 0; i2--) {
+                for (int j2 = 0; j2 < cols; j2++) {
+                    if (i2 == i) {
+                        Block *currBlock = cells[i2][j2]->getBlock();
+                        if (currBlock->getAlive() == 1) {
+                            delete currBlock;
+                            cells[i2][j2]->setBlock(nullptr);
+                        } else {
+                            currBlock->setAlive(currBlock->getAlive() - 1);
+                        }
+                        cells[i2][j2]->setChar(' ');
+                    }
+                    if (i2 != 0) {
+                        cells[i2][j2]->setBlock(cells[i2 - 1][j2]->getBlock());
+                        cells[i2][j2]->setChar(cells[i2 - 1][j2]->getChar(false));
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 void Board::setCurrBlock(char blockType)
 {
