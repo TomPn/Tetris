@@ -34,6 +34,34 @@ Board::Board(int level, int score, int blockCount, bool isBlind, bool isHeavy, b
 }
 
 
+void Board::right(bool isHeavy) {
+    currBlock->right(isHeavy);
+}
 
- 
 
+void Board::left(bool isHeavy) {
+    currBlock->left(isHeavy);
+}
+
+
+bool Board::down() {
+    currBlock->down();
+}
+
+
+void Board::rotate(bool clockwise) {
+    currBlock->rotate(clockwise);
+}
+
+
+void Board::drop() {
+    
+}
+
+
+void Board::levelDown() {
+    if(level >= 1) {
+        level--;
+        currLevel
+    }
+}

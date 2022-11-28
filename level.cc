@@ -5,7 +5,7 @@
 // readFile reads the strings in file/sequence/scriptfile store them in a vector of string
 std::vector<std::string> Level::readFile(std::string fileName){
     // initialize the file object, a string, and a vector of string
-    ifstream f{sequence1};
+    std::ifstream f{fileName};
     std::string s;
     std::vector<std::string> content;
     // read each string in file and insert them into the vecter of string
@@ -15,7 +15,7 @@ std::vector<std::string> Level::readFile(std::string fileName){
     return content;
 }
 
-Level(std::vector<std::vector<Cell *>> cells):file{""},sequence{""},scriptfile{""},randomBool{false},scriptfileBool{false},seedBool{false},seed{0}, cells{cells}, sequenceIndex{0},scriptfileIndex{0},fileIndex{0} {
+Level::Level(std::vector<std::vector<Cell *>> cells):file{""},sequence{""},scriptfile{""},randomBool{false},scriptfileBool{false},seedBool{false},seed{0}, cells{cells}, sequenceIndex{0},scriptfileIndex{0},fileIndex{0} {
     // initialize a placeholder for the vector of string
     std::vector<std::string> placeholder{""};
     // if fileName isn't empty, call readFile to read the strings in the file and store them in a vector of string
