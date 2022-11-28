@@ -20,6 +20,7 @@ class Block {
         bool down();
         virtual void rotate(bool clockwise) = 0;
         void drop();
+        int getLevel();
         int getAlive();
         int setAlive(int alive);
 };

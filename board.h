@@ -24,7 +24,7 @@ class Board
     Level *currLevel;
     std::vector<std::vector<Cell *>> cells;
     void update();
-    int checkClear();
+    std::vector<int> checkClear();
     void addstar();
 
     public:
@@ -45,6 +45,7 @@ class Board
         void IJL(char blockType);
         void setCurrBlock(char blockType);
         int getScore();
+        int setScore(int score);
         int getLevel();
         char charAt(int row, int col);
 
