@@ -110,7 +110,9 @@ bool Cell::check(char dir)
         if (x == 0)
         {
             return false;
-        } else if (left->getBlock() != myBlock && left->getBlock() != nullptr) {
+        }
+        else if (left->getBlock() != myBlock && left->getBlock() != nullptr)
+        {
             return false;
         }
     }
@@ -119,7 +121,9 @@ bool Cell::check(char dir)
         if (x == 10)
         {
             return false;
-        } else if (right->getBlock() != myBlock && left->getBlock() != nullptr) {
+        }
+        else if (right->getBlock() != myBlock && left->getBlock() != nullptr)
+        {
             return false;
         }
     }
@@ -128,7 +132,9 @@ bool Cell::check(char dir)
         if (y == 0)
         {
             return false;
-        } else if (top->getBlock() != myBlock && left->getBlock() != nullptr) {
+        }
+        else if (top->getBlock() != myBlock && left->getBlock() != nullptr)
+        {
             return false;
         }
     }
@@ -137,10 +143,19 @@ bool Cell::check(char dir)
         if (y == 17)
         {
             return false;
-        } else if (bottom->getBlock() != myBlock && left->getBlock() != nullptr) {
+        }
+        else if (bottom->getBlock() != myBlock && left->getBlock() != nullptr)
+        {
             return false;
         }
     }
 }
 
-Cell::~Cell() {}
+void Cell::setIsBlind(bool isBlind)
+{
+    this->isBlind = isBlind;
+}
+
+Cell::~Cell()
+{
+}
