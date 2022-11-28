@@ -28,7 +28,7 @@ class Board
     bool seedBool;
     unsigned int seed;
     void update();
-    std::vector<int> checkClear();
+    int checkClear();
     void addstar();
     bool checkForRotate(Cell *cellPtr, int newRow, int newCol);
     void moveForRotate(Cell *cellPtr, int newRow, int newCol);

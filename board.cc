@@ -116,18 +116,13 @@ void Board::drop()
     while (down())
     {
     }
-    std::vector<int> clearResult = checkClear();
-    int addScore = (level + clearResult[0]) * (level + clearResult[0]);
-    for (int i = 3; i < clearResult.size(); i++)
-    {
-        addScore += (i + 1) * (i + 1);
-    }
-    setScore(getScore() + addScore);
-    if (addScore >= 2)
+    int clearResult = checkClear();
+
+    if (clearResult >= 2)
     {
         setTrigger(true);
     }
-    if (addScore == 0)
+    if (clearResult == 0)
     {
         blockCount += 1;
     }
@@ -406,14 +401,10 @@ char Board::charAt(int row, int col)
     return cells[row][col]->getChar(isBlind);
 }
 
-std::vector<int> Board::checkClear()
+int Board::checkClear()
 {
     int clear = 0;
-    int deleteBlock = 0;
     bool rowClear;
-    std::vector<int> returnValue;
-    returnValue.emplace_back(clear);
-    returnValue.emplace_back(deleteBlock);
 
     for (int i = 0; i < rows - 2; i++)
     {
@@ -438,8 +429,7 @@ std::vector<int> Board::checkClear()
                         Block *currBlock = cells[i2][j2]->getBlock();
                         if (currBlock->getAlive() == 1)
                         {
-                            deleteBlock++;
-                            returnValue.emplace_back(currBlock->getLevel());
+                            score += (currBlock->getLevel() + 1) * (currBlock->getLevel() + 1); 
                             delete currBlock;
                             cells[i2][j2]->setBlock(nullptr);
                         }
@@ -458,10 +448,10 @@ std::vector<int> Board::checkClear()
             }
         }
     }
-    returnValue[0] = clear;
-    returnValue[1] = deleteBlock;
-    return returnValue;
+    score += (level + clear) * (level + clear); 
+    return clear;
 }
+
 
 void Board::setCurrBlock(char blockType)
 {
