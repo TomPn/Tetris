@@ -13,7 +13,7 @@ class Cell
     bool change;
 
 public:
-    Cell(char c, int x, int y) : c{c}, x{x}, y{y}, top{nullptr}, bottom{nullptr}, left{nullptr}, right{nullptr}, myBlock{nullptr}, isBlind{false} {}
+    Cell(char c, int x, int y) : c{c}, x{x}, y{y}, top{nullptr}, bottom{nullptr}, left{nullptr}, right{nullptr}, myBlock{nullptr}, isBlind{false}, change{true} {}
     ~Cell();
     Cell *getCell(char dir);
     Block *getBlock();

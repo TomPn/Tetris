@@ -10,6 +10,8 @@ void Level0::setL0File(std::string L0File = "")
     L0FileContent = Level::readFile(L0File);
 }
 
+void Level0::setNoRandom(bool noRandom, std::string noRandomFile = "") {}
+
 Block *Level0::CreateNextBlock()
 {
     // if the index exceeds the length of content, set the index to 0 so that the program will read it again from the beginning

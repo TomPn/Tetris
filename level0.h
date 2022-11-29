@@ -16,7 +16,8 @@ public:
     {
     }
     Block *CreateNextBlock() override;
-    void setL0File(std::string L0File = "");
+    void setL0File(std::string L0File = "") override;
+    void setNoRandom(bool noRandom, std::string noRandomFile = "") override;
     ~Level0() override;
 };
 

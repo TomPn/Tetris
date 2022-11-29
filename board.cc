@@ -20,8 +20,9 @@
 const int rows = 20;
 const int cols = 11;
 
-Board::Board(int level, std::string L0File, bool seedBool, unsigned int seed)
-    : level{level}, score{0}, blockCount{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false}, L0File{L0File}, seedBool{seedBool}, seed{seed}, noRandomFile{""} 
+Board::Board(int level, bool seedBool, unsigned int seed)
+    : level{level}, score{0}, blockCount{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false},
+      seedBool{seedBool}, seed{seed}
 {
     std::vector<std::vector<Cell *>> cells(rows, std::vector<Cell *> (cols, nullptr));
     for (int i = 0; i < rows; i++)
@@ -160,8 +161,10 @@ void Board::drop()
     }
 
     // set current block to next block, delete the old next block, and generate a new next block
-    setCurrBlock(nextBlock->getBlockType());
+    bool over = setCurrBlock(nextBlock->getBlockType());
     delete (nextBlock);
+    over = over || checkRowClear(3);
+
     nextBlock = currLevel->CreateNextBlock();
 }
 
@@ -439,6 +442,19 @@ char Board::charAt(int row, int col)
     return cells[row][col]->getChar(isBlind);
 }
 
+bool Board::checkRowClear(int row)
+{
+    for (int col = 0; col < cols; col++)
+    {
+        // if we reach a cell that is not occupied, that means the row should not be cleared
+        if (cells[row][col]->getBlock() == nullptr && cells[row][col]->getChar(false) == ' ')
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 int Board::checkClear()
 {
     // clear records the number of rows that is cleared
@@ -449,16 +465,7 @@ int Board::checkClear()
     // for each row(except for the "Next"), check if the row should be clear
     for (int i = 3; i < rows - 2; i++) // HERE
     {
-        rowClear = true;
-        for (int j = 0; j < cols; j++)
-        {
-            // if we reach a cell that is not occupied, that means the row should not be cleared
-            if (cells[i][j]->getBlock() == nullptr && cells[i][j]->getChar(false) == ' ')
-            {
-                rowClear = false;
-                break;
-            }
-        }
+        rowClear = checkRowClear(i);
         // if the row should be cleared
         if (rowClear)
         {
@@ -514,7 +521,7 @@ bool Board::checkForCurrBlock(std::vector<Cell *> currCells)
     return true;
 }
 
-void Board::setCurrBlock(char blockType)
+bool Board::setCurrBlock(char blockType)
 {
     std::vector<Cell *> currCells;
     Block *curr;
@@ -526,7 +533,7 @@ void Board::setCurrBlock(char blockType)
         currCells.emplace_back(cells[3][3]);
         if (!checkForCurrBlock(currCells))
         {
-            return;
+            return false;
         }
         curr = new IBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
     }
@@ -538,7 +545,7 @@ void Board::setCurrBlock(char blockType)
         currCells.emplace_back(cells[3][2]);
         if (!checkForCurrBlock(currCells))
         {
-            return;
+            return false;
         }
         curr = new JBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
     }
@@ -550,7 +557,7 @@ void Board::setCurrBlock(char blockType)
         currCells.emplace_back(cells[3][2]);
         if (!checkForCurrBlock(currCells))
         {
-            return;
+            return false;
         }
         curr = new LBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
     }
@@ -562,7 +569,7 @@ void Board::setCurrBlock(char blockType)
         currCells.emplace_back(cells[3][1]);
         if (!checkForCurrBlock(currCells))
         {
-            return;
+            return false;
         }
         curr = new OBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
     }
@@ -574,7 +581,7 @@ void Board::setCurrBlock(char blockType)
         currCells.emplace_back(cells[3][1]);
         if (!checkForCurrBlock(currCells))
         {
-            return;
+            return false;
         }
         curr = new SBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
     }
@@ -586,7 +593,7 @@ void Board::setCurrBlock(char blockType)
         currCells.emplace_back(cells[3][2]);
         if (!checkForCurrBlock(currCells))
         {
-            return;
+            return false;
         }
         curr = new ZBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
     }
@@ -598,7 +605,7 @@ void Board::setCurrBlock(char blockType)
         currCells.emplace_back(cells[3][1]);
         if (!checkForCurrBlock(currCells))
         {
-            return;
+            return false;
         }
         curr = new TBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
     }
@@ -609,6 +616,7 @@ void Board::setCurrBlock(char blockType)
         cell->setBlock(curr);
     }
     currBlock = curr;
+    return true;
 }
 
 void Board::IJL(char blockType)
@@ -645,3 +653,28 @@ void Board::addstar()
     cells[availableRow][centralCol]->setBlock(star);
 }
 
+void Board::setL0File(std::string L0File = "")
+{
+    if (level == 0)
+    {
+        currLevel->setL0File(L0File);
+    }
+}
+
+void Board::setNoRandom(bool noRandom, std::string noRandomFile = "")
+{
+    if (level == 3 || level == 4)
+    {
+        currLevel->setNoRandom(noRandom, noRandomFile);
+    }
+}
+
+bool Board::getChange(int row, int col)
+{
+    return cells[row][col]->getChange();
+}
+
+bool Board::getOver()
+{
+    return over;
+}
