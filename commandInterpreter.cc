@@ -4,25 +4,18 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <iostream>
 #include "commandInterpreter.h"
+#include "commandInterpreterImpl.h"
 
 using std::cin;
-
-struct CommandInterpreterImpl {
-    std::string curCommand;
-    int multiplier;
-    std::vector<std::string> remainCommands;
-    std::vector<std::string> commands;
-    std::map<std::string, std::string> renameMap;
-    std::map<std::string, std::vector<std::string>> macros;
-};
 
 bool CommandInterpreter::isDigit(char c) {
     if (c >= '0' && c <= '9') return true;
     return false;
 }
 
-std::string toString(int i) {
+std::string CommandInterpreter::toString(int i) {
     std::stringstream os;
     os << i;
     std::string s{};
@@ -30,7 +23,7 @@ std::string toString(int i) {
     return s;
 }
 
-int toInt(std::string s) {
+int CommandInterpreter::toInt(std::string s) {
     std::stringstream os;
     os << s;
     int i;
@@ -153,7 +146,8 @@ std::string CommandInterpreter::getCommand() {
         return isValid(command1, multiplier);
     } else {
         // check if command is a rename of command
-        for (auto &p: pImpl->renameMap) {
+        pImpl->multiplier = 0;
+        for (auto const &p: pImpl->renameMap) {
             if (command == p.first) {
                 return isValid(pImpl->renameMap[command], multiplier);
             }

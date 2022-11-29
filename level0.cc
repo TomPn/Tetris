@@ -4,13 +4,13 @@
 
 class Block;
 
-void Level0::setL0File(std::string L0File = "")
+void Level0::setL0File(std::string L0File)
 {
     this->L0File = L0File;
     L0FileContent = Level::readFile(L0File);
 }
 
-void Level0::setNoRandom(bool noRandom, std::string noRandomFile = "") {}
+void Level0::setNoRandom(bool noRandom, std::string noRandomFile) {}
 
 Block *Level0::CreateNextBlock()
 {

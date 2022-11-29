@@ -4,7 +4,7 @@
 const int cellNum = 4;
 
 // Block constructor
-Block::Block(Cell *cell1, Cell *cell2, Cell *cell3, Cell *cell4, int alive, int level, char blockType) : alive{alive}, level{level}, blockType{blockType}
+Block::Block(Cell *cell1, Cell *cell2, Cell *cell3, Cell *cell4, int alive, int level, char blockType) : level{level}, alive{alive}, blockType{blockType}
 {
     components.emplace_back(cell1);
     components.emplace_back(cell2);
@@ -122,7 +122,7 @@ int Block::getAlive()
 
 int Block::setAlive(int alive)
 {
-    this->alive = alive;
+    return this->alive = alive;
 }
 
 char Block::getBlockType()

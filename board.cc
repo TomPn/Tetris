@@ -16,6 +16,7 @@
 #include "level3.h"
 #include "level4.h"
 #include <vector>
+#include <iostream>
 
 const int rows = 20;
 const int cols = 11;
@@ -23,15 +24,16 @@ const int cols = 11;
 Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
     : level{level}, score{0}, blockCount{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false},
       seedBool{seedBool}, seed{seed}, L0File{L0File}
-{
+{   
     std::vector<std::vector<Cell *>> cells(rows, std::vector<Cell *> (cols, nullptr));
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < cols; j++)
         {
-            cells[i][j] = new Cell{' ', i, j};
+            cells[i][j] = new Cell{' ', j, i};
         }
     }
+    
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < cols; j++)
@@ -59,7 +61,6 @@ Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
         }
     }
     this->cells = cells;
-
     // initialize currLevel
     Level *tempLevel;
     if (level == 0)
@@ -86,12 +87,12 @@ Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
 
     currLevel = tempLevel;
     // get a next block and set it as currBlock
-    Block *nextBlock = currLevel->CreateNextBlock();
+    nextBlock = currLevel->CreateNextBlock();
     char blockType = nextBlock->getBlockType();
     setCurrBlock(blockType);
     delete nextBlock;
     // then get another next block as nextBlock
-    Block *nextBlock = currLevel->CreateNextBlock();
+    nextBlock = currLevel->CreateNextBlock();
     this->nextBlock = nextBlock;
 }
 
@@ -123,7 +124,7 @@ void Board::left(int mult)
 
 bool Board::down()
 {
-    currBlock->down();
+    return currBlock->down();
 }
 
 void Board::drop()
@@ -178,7 +179,7 @@ bool Board::checkForRotate(Cell *cellPtr, int newRow, int newCol)
         return false;
     }
     // not valid if the cellPtr is a cell of currBlock and the desination is occupied by a block that is not currBlock
-    if (!(currBlock->member(cellPtr) && (cells[newRow][newCol]->getChar(false) != ' ') || currBlock->member(cells[newRow][newCol])))
+    if (!(currBlock->member(cellPtr) && ((cells[newRow][newCol]->getChar(false) != ' ') || currBlock->member(cells[newRow][newCol]))))
     {
         return false;
     }
@@ -537,7 +538,7 @@ bool Board::setCurrBlock(char blockType)
         }
         curr = new IBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
     }
-    else if (blockType = 'J')
+    else if (blockType == 'J')
     {
         currCells.emplace_back(cells[2][0]);
         currCells.emplace_back(cells[3][0]);
@@ -549,7 +550,7 @@ bool Board::setCurrBlock(char blockType)
         }
         curr = new JBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
     }
-    else if (blockType = 'L')
+    else if (blockType == 'L')
     {
         currCells.emplace_back(cells[2][2]);
         currCells.emplace_back(cells[3][0]);
@@ -561,7 +562,7 @@ bool Board::setCurrBlock(char blockType)
         }
         curr = new LBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
     }
-    else if (blockType = 'O')
+    else if (blockType == 'O')
     {
         currCells.emplace_back(cells[2][0]);
         currCells.emplace_back(cells[2][1]);
@@ -573,7 +574,7 @@ bool Board::setCurrBlock(char blockType)
         }
         curr = new OBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
     }
-    else if (blockType = 'S')
+    else if (blockType == 'S')
     {
         currCells.emplace_back(cells[2][1]);
         currCells.emplace_back(cells[2][2]);
@@ -585,7 +586,7 @@ bool Board::setCurrBlock(char blockType)
         }
         curr = new SBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
     }
-    else if (blockType = 'Z')
+    else if (blockType == 'Z')
     {
         currCells.emplace_back(cells[2][0]);
         currCells.emplace_back(cells[2][1]);
@@ -597,7 +598,7 @@ bool Board::setCurrBlock(char blockType)
         }
         curr = new ZBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
     }
-    else if (blockType = 'T')
+    else if (blockType == 'T')
     {
         currCells.emplace_back(cells[2][0]);
         currCells.emplace_back(cells[2][1]);
@@ -653,7 +654,7 @@ void Board::addstar()
     cells[availableRow][centralCol]->setBlock(star);
 }
 
-void Board::setL0File(std::string L0File = "")
+void Board::setL0File(std::string L0File)
 {
     if (level == 0)
     {
@@ -661,7 +662,7 @@ void Board::setL0File(std::string L0File = "")
     }
 }
 
-void Board::setNoRandom(bool noRandom, std::string noRandomFile = "")
+void Board::setNoRandom(bool noRandom, std::string noRandomFile)
 {
     if (level == 3 || level == 4)
     {

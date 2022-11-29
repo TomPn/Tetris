@@ -2,7 +2,7 @@
 #define BOARD_H
 
 #include <vector>
-
+#include <string>
 class Board;
 class Block;
 class Level;
@@ -31,7 +31,7 @@ class Board
     bool checkForRotate(Cell *cellPtr, int newRow, int newCol);
     void moveForRotate(Cell *cellPtr, int newRow, int newCol);
     bool checkForCurrBlock(std::vector<Cell *> currCells);
-    bool Board::checkRowClear(int row);
+    bool checkRowClear(int row);
 
 public:
     Board(int level, bool seedBool, unsigned int seed, std::string L0File);
