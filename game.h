@@ -10,7 +10,6 @@ class Game : public Subject
 {
     int playerRound; // 0: curPlayer's round, 1: opponent's round
     int startLevel;  // default level 0
-    bool textMode;
     unsigned int seed;
     bool haveSeed;
     bool haveScript1;
@@ -26,7 +25,7 @@ class Game : public Subject
     int toInt(std::string s);
 
 public:
-    explicit Game(int startLevel, bool textMode, unsigned int seed, bool haveSeed, bool haveScript1, bool haveScript2, std::string scriptfile1, std::string scriptfile2);
+    explicit Game(int startLevel, unsigned int seed, bool haveSeed, bool haveScript1, bool haveScript2, std::string scriptfile1, std::string scriptfile2);
     void start();
     void left(int multiplier);
     void right(int multiplier);

@@ -39,9 +39,9 @@ int main(int argc, char **argv) {
         }
     }
     std::vector<Observer*> observers;
-    Game * game = new Game{startLevel, textMode, seed, haveSeed, haveScript1, haveScript2, scriptfile1, scriptfile2};
+    Game * game = new Game{startLevel, seed, haveSeed, haveScript1, haveScript2, scriptfile1, scriptfile2};
     observers.emplace_back(new TextViewer{game});
-    observers.emplace_back(new GraphicsViewer{game});
+    if (!textMode)  {observers.emplace_back(new GraphicsViewer{game});}
     game->start();
     delete game;
 }
