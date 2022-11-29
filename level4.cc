@@ -4,10 +4,10 @@
 
 class Block;
 
-void Level4::setL0File(std::string L0File = "") {}
+void Level4::setL0File(std::string L0File) {}
 
 // mutate randomBool
-void Level4::setNoRandom(bool noRandom, std::string noRandomFile = "")
+void Level4::setNoRandom(bool noRandom, std::string noRandomFile)
 {
     noRandomBool = noRandom;
     if (noRandom == true)

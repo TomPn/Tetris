@@ -19,7 +19,7 @@ protected:
     int topLeftCol;
 
 public:
-    Block(Cell *cell1, Cell *cell2, Cell *cell3, Cell *cell4, int alive, int level, char blockType);
+    Block(Cell *cell1, Cell *cell2, Cell *cell3, Cell *cell4, int level, int alive, char blockType);
     bool left();
     bool right();
     bool down();

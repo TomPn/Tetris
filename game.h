@@ -27,7 +27,7 @@ class Game : public Subject
 
 public:
     explicit Game(int startLevel, bool textMode, unsigned int seed, bool haveSeed, bool haveScript1, bool haveScript2, std::string scriptfile1, std::string scriptfile2);
-    int start();
+    void start();
     void left(int multiplier);
     void right(int multiplier);
     bool down(int multiplier);

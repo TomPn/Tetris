@@ -14,6 +14,8 @@ Cell *Cell::getCell(char dir)
         return left;
     case 'r':
         return right;
+    default:
+        return nullptr;
     }
 }
 
@@ -151,11 +153,7 @@ bool Cell::check(char dir)
             return false;
         }
         return true;
-    case 's': // s stands for self
-        if (c == ' ')
-        {
-            return true;
-        }
+    default:
         return false;
     }
 }

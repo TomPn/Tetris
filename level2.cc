@@ -4,8 +4,8 @@
 
 class Block;
 
-void Level2::setL0File(std::string L0File = "") {}
-void Level2::setNoRandom(bool noRandom, std::string noRandomFile = "") {}
+void Level2::setL0File(std::string L0File) {}
+void Level2::setNoRandom(bool noRandom, std::string noRandomFile) {}
 
 Block *Level2::CreateNextBlock()
 {

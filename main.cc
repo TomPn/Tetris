@@ -1,6 +1,6 @@
 #include "game.h"
 #include <sstream>
-
+#include <iostream>
 int main(int argc, char **argv) {
     bool textMode = 0;
     bool haveSeed = 0;

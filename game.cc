@@ -3,6 +3,8 @@
 #include "commandInterpreter.h"
 #include <sstream>
 using std::cin;
+using std::cout;
+using std::endl;
 
 bool Game::isDigit(char c)
 {
@@ -11,7 +13,7 @@ bool Game::isDigit(char c)
     return false;
 }
 
-int toInt(std::string s)
+int Game::toInt(std::string s)
 {
     std::stringstream os;
     os << s;
@@ -32,11 +34,16 @@ Game::Game(int startLevel, bool textMode, unsigned int seed, bool haveSeed, bool
     {
         scriptfile2 = "sequence2.txt";
     }
+    
     curPlayer = new Board{startLevel, haveSeed, seed, scriptfile1};
     opponent = new Board{startLevel, haveSeed, seed, scriptfile2};
+    std::vector<std::string> commands;
+    commands.emplace_back("left");
+    commands.emplace_back("right");
+    cmdInter = new CommandInterpreter{commands};
 }
 
-int Game::start()
+void Game::start()
 {
     std::string command;
     while (true)
@@ -218,13 +225,14 @@ bool Game::down(int multiplier)
     {
         if (!playerRound)
         {
-            curPlayer->down();
+            return curPlayer->down();
         }
         else
         {
-            opponent->down();
+            return  opponent->down();
         }
     }
+    return false;
 }
 
 void Game::rotate(bool clockwise, int multiplier)
@@ -314,11 +322,11 @@ int Game::getLevel(int player) const
 {
     if (!player)
     {
-        curPlayer->getLevel();
+        return curPlayer->getLevel();
     }
     else
     {
-        opponent->getLevel();
+        return  opponent->getLevel();
     }
 }
 
@@ -326,11 +334,11 @@ int Game::getScore(int player) const
 {
     if (!player)
     {
-        curPlayer->getScore();
+        return curPlayer->getScore();
     }
     else
     {
-        opponent->getScore();
+        return opponent->getScore();
     }
 }
 
@@ -451,3 +459,5 @@ int Game::getHiScore()
 {
     return hiScore;
 }
+
+Game::~Game() {}

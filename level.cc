@@ -107,7 +107,7 @@ Block *Level::CreateBlock(int level, char blockType)
 }
 
 // mutate seedBool and seed
-void Level::setSeed(bool seedBool, unsigned int seed = 0)
+void Level::setSeed(bool seedBool, unsigned int seed)
 {
     this->seedBool = seedBool;
     this->seed = seed;
@@ -121,3 +121,5 @@ Block *Level::CreateNextFromFile(std::vector<char> content, int index)
     Block *nextBlock = CreateBlock(0, c);
     return nextBlock;
 }
+
+Level::~Level() {}
