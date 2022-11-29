@@ -41,7 +41,7 @@ Xwindow::Xwindow(int width, int height): pImpl{new XWindowImpl} {
   char color_vals[10][10]={"white", "black", "red", "green", "blue", "cyan", "yellow", "magenta", "orange", "brown"};
 
   cmap=DefaultColormap(pImpl->d,DefaultScreen(pImpl->d));
-  for(int i=0; i < 5; ++i) {
+  for(int i=0; i < 10; ++i) {
       XParseColor(pImpl->d,cmap,color_vals[i],&xcolour);
       XAllocColor(pImpl->d,cmap,&xcolour);
       pImpl->colours[i]=xcolour.pixel;
