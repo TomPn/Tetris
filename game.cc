@@ -258,11 +258,21 @@ void Game::drop(int multiplier)
         if (!playerRound)
         {
             curPlayer->drop();
+            isOver = curPlayer->getOver();
+            if (isOver)
+            {
+                // over()
+            }
             playerRound = 1;
         }
         else
         {
             opponent->drop();
+            isOver = curPlayer->getOver();
+            if (isOver)
+            {
+                // over()
+            }
             playerRound = 0;
         }
     }
@@ -429,5 +439,17 @@ void Game::force(char blockType)
     else
     {
         curPlayer->setForce(blockType);
+    }
+}
+
+void Game::setHiScore()
+{
+    if (curPlayer->getScore() > hiScore)
+    {
+        hiScore = curPlayer->getScore();
+    }
+    if (opponent->getScore() > hiScore)
+    {
+        hiScore = opponent->getScore();
     }
 }

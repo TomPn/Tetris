@@ -15,6 +15,7 @@ class Game : public Subject
     bool haveSeed;
     bool haveScript1;
     bool haveScript2;
+    bool isOver;
     int hiScore;
     std::string scriptfile1;
     std::string scriptfile2;
@@ -36,6 +37,7 @@ public:
     char getState(int player, int row, int col) const override;
     int getLevel(int player) const override;
     int getScore(int player) const override;
+    void setHiScore();
     bool getChange(int player, int row, int col) const;
     void noRandom(std::string file);
     void random();
@@ -45,6 +47,8 @@ public:
     void blind();
     void heavy();
     void force(char blockType);
+    void checkOver();
+    void over();
     ~Game();
 };
 
