@@ -24,6 +24,7 @@ class Board
     std::vector<std::vector<Cell *>> cells;
     bool seedBool;
     unsigned int seed;
+    std::string L0File;
     void update();
     int checkClear();
     void addstar();
@@ -33,7 +34,7 @@ class Board
     bool Board::checkRowClear(int row);
 
 public:
-    Board(int level, bool seedBool, unsigned int seed);
+    Board(int level, bool seedBool, unsigned int seed, std::string L0File);
     void right(int mult);
     void left(int mult);
     bool down();
