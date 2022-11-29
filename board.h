@@ -30,6 +30,7 @@ class Board
     bool checkForRotate(Cell *cellPtr, int newRow, int newCol);
     void moveForRotate(Cell *cellPtr, int newRow, int newCol);
     bool checkForCurrBlock(std::vector<Cell *> currCells);
+    bool Board::checkRowClear(int row);
 
 public:
     Board(int level, bool seedBool, unsigned int seed);
@@ -44,7 +45,7 @@ public:
     void setHeavy();
     void setForce(char blockType);
     void IJL(char blockType);
-    void setCurrBlock(char blockType);
+    bool setCurrBlock(char blockType);
     int getScore();
     bool getTrigger();
     int getLevel();
@@ -54,6 +55,7 @@ public:
     char charAt(int row, int col);
     void setL0File(std::string L0File = "");
     void setNoRandom(bool noRandom, std::string noRandomFile = "");
+    bool getOver();
 };
 
 #endif
