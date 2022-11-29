@@ -392,8 +392,8 @@ void Game::restart()
 {
     delete curPlayer;
     delete opponent;
-    curPlayer = new Board{startLevel, haveSeed, seed};
-    opponent = new Board{startLevel, haveSeed, seed};
+    curPlayer = new Board{startLevel, haveSeed, seed, scriptfile1};
+    opponent = new Board{startLevel, haveSeed, seed, scriptfile2};
 }
 
 void Game::blind()
