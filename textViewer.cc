@@ -3,7 +3,11 @@
 using std::cout;
 using std::endl;
 
-TextViewer::TextViewer(Game *subject): subject{subject}, top{0}, bot{25}, left{0}, right{28} {
+
+const int rows = 20;
+const int cols = 11;
+
+TextViewer::TextViewer(Game *subject): subject{subject} {
     subject->attach(this);
 }
 
@@ -11,48 +15,69 @@ TextViewer::~TextViewer() {
     subject->detach(this);
 }
 
-void TextViewer::notify() {
-    for (int row = top; row < bot; ++row) {
-        // print the first line of the game
-        if (row == 0) {
-            for (int i = 0; i < 2; ++i) {
-                // each player's level
-                out << "Level:";
-                for (int j = 0; j < 4; ++j) out << ' ';
-                out << subject->getLevel(i);
-                // print the space between the first player and the second player
-                if (i == 0) {
-                    for (int j = 0; j < 6; ++j) out << ' ';
-                }
-            }
-            out << endl;
-        } else if (row == 1) {
-            for (int i = 0; i < 2; ++i) {
-                // each player's level
-                out << "Score:";
-                for (int j = 0; j < 4; ++j) out << ' ';
-                out << subject->getScore(i);
-                // print the space between the first player and the second player
-                if (i == 0) {
-                    for (int j = 0; j < 6; ++j) out << ' ';
-                }
-            }
-            out << endl;
-        } else if (row == 2 || row == 21) {
-            // print the breakline between the statistics and the actual game
-            for (int col = left; col < right; ++col) out << '-';
-            out << endl;
-        } else if (row == 22) {
-            // print the Next section for both players
-            out << "Next:";
-            for (int j = 0; j < 10; ++j) out << ' ';
-            out << "Next:" << endl;
-        } else {
-            // print the actual games
-            for (int col = left; col < right; ++col) {
-                out << subject->getState(row, col);
-            }
-            out << endl;
-        }
+
+void TextViewer::printLine() {
+    for (int j = 0; j < cols; j++) {
+        out << "-";
+    }
+    out << "          ";
+    for (int j = 0; j < cols; j++) {
+        out << "-";
+    }
+    out << endl;
+
+}
+void TextViewer::printData(std::string dataType) {
+    std::string output;
+    if (dataType == "Score") {
+        output = dataType + " " + std::to_string(subject->getScore(0)); 
+    } else if (dataType == "Level"){
+        output = dataType + " " + std::to_string(subject->getLevel(0));
+    }
+    int wsLength = cols - output.length();
+    for (int i = 0; i < wsLength; i++) {
+        output += " ";
+    }
+    out << output << "          ";
+    if (dataType == "Score") {
+        out << "Score: " << subject->getScore(1) << endl; 
+    } else if (dataType == "Level"){
+        out << "Level: " << subject->getLevel(1) << endl;
     }
 }
+
+
+
+void TextViewer::notify() {
+    out << "      Highest Score:" << subject->getHi() << endl;
+    for(int j = 0; j < cols * 2 + 10; j++) {
+        out << "-";
+    }
+    out << endl << endl;
+    printData("Score");
+    printData("Level");
+    printLine();
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            out << subject->getState(0, i, j);
+        }
+        out << "          ";
+        for (int j = 0; j < cols; j++) {
+            out << subject->getState(1, i, j);
+        }
+        out << endl;
+        if (i == 17) {
+            printLine();
+            out << "Next:                Next: " << endl;
+        }
+    }
+    for (int j = 0; j < cols; j++) {
+        out << "-";
+    }
+    out << "          ";
+    for (int j = 0; j < cols; j++) {
+        out << "-";
+    }
+    out << endl;
+}
+
