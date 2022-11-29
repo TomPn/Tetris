@@ -20,8 +20,8 @@ protected:
 
 public:
     Block(Cell *cell1, Cell *cell2, Cell *cell3, Cell *cell4, int alive, int level, char blockType);
-    void left(bool isHeavy);
-    void right(bool isHeavy);
+    bool left();
+    bool right();
     bool down();
     bool getHorizontal();
     void setHorizontal(bool horizontal);

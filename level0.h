@@ -6,10 +6,18 @@ class Block;
 
 class Level0 : public Level
 {
+    std::string L0File;
+    int L0FileIndex;
+    std::vector<char> L0FileContent;
+
 public:
-    Level0(std::string L0File, bool noRandomBool, std::string noRandomFile,
-           bool seedBool, unsigned int seed, std::vector<std::vector<Cell *>> cells);
+    Level0(bool seedBool, unsigned int seed, std::vector<std::vector<Cell *>> cells)
+        : Level{seedBool, seed, cells}, L0File{""}, L0FileIndex{0}, L0FileContent{std::vector<char>{' '}}
+    {
+    }
     Block *CreateNextBlock() override;
+    void setL0File(std::string L0File = "") override;
+    void setNoRandom(bool noRandom, std::string noRandomFile = "") override;
     ~Level0() override;
 };
 
