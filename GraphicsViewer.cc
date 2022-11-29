@@ -7,14 +7,14 @@ const int rows = 20;
 const int cols = 11;
 const int dim = 20;
 
-
-GraphicsViewer::GraphicsViewer(Game *subject): subject{subject}, top{0}, bot{60}, left{0}, right{60} {
-    window = new Xwindow {(this->right-this->left+1) * 10, (this->bot-this->top+1) * 10};
+GraphicsViewer::GraphicsViewer(Game *subject) : Observer{false}, subject{subject}, top{0}, bot{65}, left{0}, right{60}
+{
+    window = new Xwindow{(this->right - this->left + 1) * 10, (this->bot - this->top + 1) * 10};
     subject->attach(this);
 }
 
-
-GraphicsViewer::~GraphicsViewer() {
+GraphicsViewer::~GraphicsViewer()
+{
     subject->detach(this);
     delete window;
     window = nullptr;
@@ -22,39 +22,62 @@ GraphicsViewer::~GraphicsViewer() {
 
 
 void GraphicsViewer::printTitle() {
-    window->drawString(200, 10, "Highest Score: " + std::to_string(subject->getHi()));
+    window->drawString(200, 10, "Highest Score: " + std::to_string(subject->getHiScore()));
     window->drawString(20, 40, "Score: " + std::to_string(subject->getScore(0)));
     window->drawString(300, 40, "Score: " + std::to_string(subject->getScore(1)));
     window->drawString(20, 70, "Level: " + std::to_string(subject->getLevel(0)));
     window->drawString(300, 70, "Level: " + std::to_string(subject->getLevel(1)));
 }
 
-void GraphicsViewer::printPlayer(int row_start, int row_end,int x, int y, int player) {
+void GraphicsViewer::printPlayer(int row_start, int row_end, int x, int y, int player)
+{
     int color;
-    for (int i = row_start; i <= row_end; ++i) {
-        for (int j = 0; j < cols; ++j) {
+    for (int i = row_start; i <= row_end; ++i)
+    {
+        for (int j = 0; j < cols; ++j)
+        {
             bool change = subject->getChange(player, i, j);
             char output = subject->getState(player, i, j);
-            if (change) {
-                if (output == '*') {
+            if (change)
+            {
+                if (output == '*')
+                {
                     color = window->Brown;
-                } else if (output == 'S') {
+                }
+                else if (output == 'S')
+                {
                     color = window->Blue;
-                } else if (output == 'J') {
+                }
+                else if (output == 'J')
+                {
                     color = window->Cyan;
-                } else if (output == 'Z') {
+                }
+                else if (output == 'Z')
+                {
                     color = window->Magenta;
-                } else if (output == 'O') {
+                }
+                else if (output == 'O')
+                {
                     color = window->Red;
-                } else if (output == 'T') {
+                }
+                else if (output == 'T')
+                {
                     color = window->Orange;
-                } else if (output == 'I') {
-                    color = window->Green; 
-                } else if (output == 'L') {
+                }
+                else if (output == 'I')
+                {
+                    color = window->Green;
+                }
+                else if (output == 'L')
+                {
                     color = window->Yellow;
-                } else if (output == '?') {
+                }
+                else if (output == '?')
+                {
                     color = window->White;
-                } else if (output == ' ') {
+                }
+                else if (output == ' ')
+                {
                     color = window->Black;
                 }
             }
@@ -63,8 +86,8 @@ void GraphicsViewer::printPlayer(int row_start, int row_end,int x, int y, int pl
     }
 }
 
-
-void GraphicsViewer::notify() {
+void GraphicsViewer::notify()
+{
     printTitle();
     printPlayer(0, 17, 20, 100, 0);
     printPlayer(0, 17, 300, 100, 0);
@@ -73,6 +96,3 @@ void GraphicsViewer::notify() {
     printPlayer(18, 19, 20, 510, 0);
     printPlayer(18, 19, 300, 510, 0);
 }
-
-
-
