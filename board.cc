@@ -20,11 +20,10 @@
 const int rows = 20;
 const int cols = 11;
 
-Board::Board(int level, std::string L0File, bool noRandomBool, std::string noRandomFile, bool seedBool, unsigned int seed)
-    : level{level}, score{0}, blockCount{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false}, L0File{L0File}, noRandomBool{noRandomBool}, noRandomFile{noRandomFile},
-      seedBool{seedBool}, seed{seed}
+Board::Board(int level, std::string L0File, bool seedBool, unsigned int seed)
+    : level{level}, score{0}, blockCount{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false}, L0File{L0File}, seedBool{seedBool}, seed{seed}, noRandomFile{""} 
 {
-    std::vector<std::vector<Cell *>> cells;
+    std::vector<std::vector<Cell *>> cells(rows, std::vector<Cell *> (cols, nullptr));
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < cols; j++)
@@ -36,19 +35,23 @@ Board::Board(int level, std::string L0File, bool noRandomBool, std::string noRan
     {
         for (int j = 0; j < cols; j++)
         {
-            if (cells[i][j]->getX() != 0)
+            // check if the cell is at the first row
+            if (cells[i][j]->getY() != 0)
             {
                 cells[i][j]->setNeighbour('t', cells[i - 1][j]);
             }
-            else if (cells[i][j]->getX() != rows - 1)
+            // check if the cell is at the last row
+            if (cells[i][j]->getY() != rows - 1)
             {
                 cells[i][j]->setNeighbour('b', cells[i + 1][j]);
             }
-            else if (cells[i][j]->getY() != 0)
+            // check if the cell is at the leftmost col
+            if (cells[i][j]->getX() != 0)
             {
                 cells[i][j]->setNeighbour('l', cells[i][j - 1]);
             }
-            else if (cells[i][j]->getY() != cols - 1)
+            // check if the cell is at the rightmost col
+            if (cells[i][j]->getX() != cols - 1)
             {
                 cells[i][j]->setNeighbour('r', cells[i][j + 1]);
             }
@@ -61,6 +64,7 @@ Board::Board(int level, std::string L0File, bool noRandomBool, std::string noRan
     if (level == 0)
     {
         tempLevel = new Level0{seedBool, seed, cells};
+        tempLevel->setL0File(L0File);
     }
     else if (level == 1)
     {
@@ -90,19 +94,29 @@ Board::Board(int level, std::string L0File, bool noRandomBool, std::string noRan
     this->nextBlock = nextBlock;
 }
 
-void Board::right(bool isHeavy, int mult)
+void Board::right(int mult)
 {
-    for (int i = 0; i < mult; i++)
-    {
-        currBlock->right(isHeavy);
+    if (mult > 1) {
+        for (int i = 0; i < mult; i++)
+        {
+            currBlock->right();
+        }
+        for (int i = 0; i < 2; i++) currBlock->down();
+    } else {
+        currBlock->right();
     }
 }
 
-void Board::left(bool isHeavy, int mult)
+void Board::left(int mult)
 {
-    for (int i = 0; i < mult; i++)
-    {
-        currBlock->left(isHeavy);
+    if (mult > 1) {
+        for (int i = 0; i < mult; i++)
+        {
+            currBlock->left();
+        }
+        for (int i = 0; i < 2; i++) currBlock->down();
+    } else {
+        currBlock->left();
     }
 }
 
@@ -630,3 +644,4 @@ void Board::addstar()
     cells[availableRow][centralCol]->setChar('*');
     cells[availableRow][centralCol]->setBlock(star);
 }
+

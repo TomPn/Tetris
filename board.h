@@ -35,9 +35,9 @@ class Board
     bool checkForCurrBlock(std::vector<Cell *> currCells);
 
 public:
-    Board(int level, std::string L0File, bool noRandomBool, std::string noRandomFile, bool seedBool, unsigned int seed);
-    void right(bool isHeavy, int mult);
-    void left(bool isHeavy, int mult);
+    Board(int level, std::string L0File, bool seedBool, unsigned int seed);
+    void right(int mult);
+    void left(int mult);
     bool down();
     void rotate(bool clockwise);
     void drop();
