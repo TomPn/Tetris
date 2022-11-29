@@ -70,28 +70,34 @@ bool Block::move(char dir)
 }
 
 // move the block to the left
-bool Block::left()
+void Block::left(bool isHeavy)
 {
     if (move('l'))
     {
-        return true;
-    }
-    else
-    {
-        return false;
+        // if it's heavy, then go down twice
+        if (isHeavy)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                down();
+            }
+        }
     }
 }
 
 // move the block to the right
-bool Block::right()
+void Block::right(bool isHeavy)
 {
     if (move('r'))
     {
-        return true;
-    }
-    else
-    {
-        return false;
+        // if it's heavy, then go down twice
+        if (isHeavy)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                down();
+            }
+        }
     }
 }
 

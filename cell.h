@@ -10,10 +10,9 @@ class Cell
     Cell *top, *bottom, *left, *right;
     bool isBlind;
     Block *myBlock;
-    bool change;
 
 public:
-    Cell(char c, int x, int y) : c{c}, x{x}, y{y}, top{nullptr}, bottom{nullptr}, left{nullptr}, right{nullptr}, myBlock{nullptr}, isBlind{false}, change{true} {}
+    Cell(char c, int x, int y) : c{c}, x{x}, y{y}, top{nullptr}, bottom{nullptr}, left{nullptr}, right{nullptr}, myBlock{nullptr}, isBlind{false} {}
     ~Cell();
     Cell *getCell(char dir);
     Block *getBlock();
@@ -26,8 +25,6 @@ public:
     void setCharNeighbour(char dir, char c);
     void setNeighbour(char dir, Cell *cellPtr);
     void setIsBlind(bool isBlind);
-    bool getChange();
-    void setChange(bool change);
 };
 
 #endif

@@ -3,15 +3,10 @@
 
 class Subject;
 
-class Observer
-{
-    bool text;
-
-public:
-    Observer(bool text) : text{text} {}
-    virtual void notify() = 0;
-    bool getText();
-    virtual ~Observer() = default;
+class Observer {
+    public:
+        virtual void notify() = 0;
+        virtual ~Observer() = default;
 };
 
 #endif

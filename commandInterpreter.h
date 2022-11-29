@@ -15,10 +15,7 @@ class CommandInterpreter {
         int getMultiplier();
         void rename();
         void addMacro();
-        bool isDigit(char c);
-        std::string toString(int i);
-        int toInt(std::string s);
-        std::string isValid(std::string name, int multiplier);
+        std::string isValid(std::string name);
 };
 
 #endif

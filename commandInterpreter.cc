@@ -2,8 +2,9 @@
 #include <vector>
 #include <map>
 #include <fstream>
+#include <stdio.h>
 #include <string>
-#include <sstream>
+#include <ctype.h>
 #include "commandInterpreter.h"
 
 using std::cin;
@@ -16,27 +17,6 @@ struct CommandInterpreterImpl {
     std::map<std::string, std::string> renameMap;
     std::map<std::string, std::vector<std::string>> macros;
 };
-
-bool CommandInterpreter::isDigit(char c) {
-    if (c >= '0' && c <= '9') return true;
-    return false;
-}
-
-std::string toString(int i) {
-    std::stringstream os;
-    os << i;
-    std::string s{};
-    os >> s;
-    return s;
-}
-
-int toInt(std::string s) {
-    std::stringstream os;
-    os << s;
-    int i;
-    os >> i;
-    return i;
-}
 
 CommandInterpreter::CommandInterpreter(std::vector<std::string> commands): pImpl{new CommandInterpreterImpl} {
     pImpl->commands = commands;
@@ -51,18 +31,18 @@ std::string CommandInterpreter::isValid(std::string name, int multiplier) {
             if (name == "restart" || name == "norandom" || name == "random") {
                 return name;
             }
-            return toString(multiplier) + name;
+            return tostring(multiplier) + name;
         }
     }
-    // check if any head of the command equals to the current command
     for (auto it: pImpl->commands) {
         if (name == it.substr(0, nameLen)){
             ++duplicate;
             extCommand = it;
         }
     }
-    // if no ambiguious meaning of the current command, return the command
-    if (duplicate == 1) return toString(multiplier) + extCommand;
+    if (duplicate == 1) {
+        return tostring(multiplier) + extCommand;
+    }
     return "";
 }
 
@@ -115,10 +95,10 @@ std::string CommandInterpreter::getCommand() {
     int commandIndex = 0;
     cin >> command;
     if (cin.eof()) return "ENDGAME";
-    // check if a multiplier exists
-    if (isDigit(command[0])) {
+    // check if a multiplier exits
+    if (isdigit(command[0])) {
         for (int i = 0; i < command.length(); ++i) {
-            if (!isDigit(command[i])) {
+            if (!isdigit(command[i])) {
                 break;
             }
             ++commandIndex;
@@ -126,7 +106,7 @@ std::string CommandInterpreter::getCommand() {
         if (commandIndex >= command.length()) {
             return "";
         }
-        multiplier = toInt(command.substr(0,commandIndex));
+        multiplier = std::stoi(command.substr(0,commandIndex));
         command = command.substr(commandIndex,command.length()-commandIndex);
     }
     // rename command
@@ -161,7 +141,7 @@ std::string CommandInterpreter::getCommand() {
         // check if command is the name of a macro
         std::string newCommand;
         for (auto &p: pImpl->macros) {
-            if (command == p.first) {
+            if (command == p) {
                 if (pImpl->macros[command].size() == 1) {
                     return isValid(pImpl->macros[command][0], multiplier);
                 }

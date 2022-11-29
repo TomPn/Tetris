@@ -17,4 +17,3 @@ class GraphicsViewer: public Observer {
 };
 
 #endif
-
