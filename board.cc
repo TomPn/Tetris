@@ -20,9 +20,9 @@
 const int rows = 20;
 const int cols = 11;
 
-Board::Board(int level, bool seedBool, unsigned int seed)
+Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
     : level{level}, score{0}, blockCount{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false},
-      seedBool{seedBool}, seed{seed}
+      seedBool{seedBool}, seed{seed}, L0File{L0File}
 {
     std::vector<std::vector<Cell *>> cells(rows, std::vector<Cell *> (cols, nullptr));
     for (int i = 0; i < rows; i++)

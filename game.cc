@@ -23,9 +23,6 @@ int toInt(std::string s)
 Game::Game(int startLevel, bool textMode, unsigned int seed, bool haveSeed, bool haveScript1, bool haveScript2, std::string scriptfile1, std::string scriptfile2) : playerRound{0},
                                                                                                                                                                     startLevel{startLevel}, textMode{textMode}, seed{seed}, haveSeed{haveSeed}, haveScript1{haveScript1}, haveScript2{haveScript2}, scriptfile1{scriptfile1}, scriptfile2{scriptfile2}
 {
-    curPlayer = new Board{startLevel, haveSeed, seed};
-    opponent = new Board{startLevel, haveSeed, seed};
-
     if (!haveScript1)
     {
         scriptfile1 = "sequence1.txt";
@@ -35,12 +32,8 @@ Game::Game(int startLevel, bool textMode, unsigned int seed, bool haveSeed, bool
     {
         scriptfile2 = "sequence2.txt";
     }
-
-    if (startLevel == 0)
-    {
-        curPlayer->setL0File(scriptfile1);
-        opponent->setL0File(scriptfile2);
-    }
+    curPlayer = new Board{startLevel, haveSeed, seed, scriptfile1};
+    opponent = new Board{startLevel, haveSeed, seed, scriptfile2};
 }
 
 int Game::start()
