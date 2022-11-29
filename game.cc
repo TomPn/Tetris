@@ -37,9 +37,8 @@ Game::Game(int startLevel, bool textMode, unsigned int seed, bool haveSeed, bool
     
     curPlayer = new Board{startLevel, haveSeed, seed, scriptfile1};
     opponent = new Board{startLevel, haveSeed, seed, scriptfile2};
-    std::vector<std::string> commands;
-    commands.emplace_back("left");
-    commands.emplace_back("right");
+    std::vector<std::string> commands { "left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "I", "J", "L", "O", "S", "Z", "T", "restart", "printtext", "printgraphics"};
+    
     cmdInter = new CommandInterpreter{commands};
 }
 
@@ -66,7 +65,15 @@ void Game::start()
             multiplier = toInt(command.substr(0, commandIndex));
             command = command.substr(commandIndex, command.length() - commandIndex);
         }
-        if (command == "left")
+        if (command == "printtext")
+        {
+            Subject::notifyObservers(1);
+        } 
+        else if (command == "printgraphics")
+        {
+            Subject::notifyObservers(0);
+        }
+        else if (command == "left")
         {
             left(multiplier);
         }
