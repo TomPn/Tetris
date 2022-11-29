@@ -7,8 +7,10 @@ class Block;
 class Level2 : public Level
 {
 public:
-    Level2(std::string L0File, bool noRandomBool, std::string noRandomFile, bool seedBool, unsigned int seed, std::vector<std::vector<Cell *>> cells)
-        : Level{L0File, noRandomFile, noRandomBool, seedBool, seed, cells} {}
+    Level2(bool seedBool, unsigned int seed, std::vector<std::vector<Cell *>> cells)
+        : Level{seedBool, seed, cells} {}
+    void setL0File(std::string L0File = "") override;
+    void setNoRandom(bool noRandom, std::string noRandomFile = "") override;
     Block *CreateNextBlock() override;
     ~Level2() override;
 };

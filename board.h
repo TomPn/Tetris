@@ -22,21 +22,21 @@ class Board
     Block *nextBlock;
     Level *currLevel;
     std::vector<std::vector<Cell *>> cells;
-    std::string L0File;
-    bool noRandomBool;
-    std::string noRandomFile;
     bool seedBool;
     unsigned int seed;
+    std::string L0File;
     void update();
     int checkClear();
     void addstar();
     bool checkForRotate(Cell *cellPtr, int newRow, int newCol);
     void moveForRotate(Cell *cellPtr, int newRow, int newCol);
+    bool checkForCurrBlock(std::vector<Cell *> currCells);
+    bool Board::checkRowClear(int row);
 
 public:
-    Board(int level, std::string L0File, bool noRandomBool, std::string noRandomFile, bool seedBool, unsigned int seed);
-    void right(bool isHeavy, int mult);
-    void left(bool isHeavy, int mult);
+    Board(int level, bool seedBool, unsigned int seed, std::string L0File);
+    void right(int mult);
+    void left(int mult);
     bool down();
     void rotate(bool clockwise);
     void drop();
@@ -46,13 +46,17 @@ public:
     void setHeavy();
     void setForce(char blockType);
     void IJL(char blockType);
-    void setCurrBlock(char blockType);
+    bool setCurrBlock(char blockType);
     int getScore();
     bool getTrigger();
     int getLevel();
+    bool getChange(int row, int col);
     void setScore(int score);
     void setTrigger(bool trigger);
     char charAt(int row, int col);
+    void setL0File(std::string L0File = "");
+    void setNoRandom(bool noRandom, std::string noRandomFile = "");
+    bool getOver();
 };
 
 #endif

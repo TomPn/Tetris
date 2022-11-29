@@ -4,20 +4,15 @@
 // get the neighbour cell of current cell based on direction
 Cell *Cell::getCell(char dir)
 {
-    if (dir == 't')
+    switch (dir)
     {
+    case 't':
         return top;
-    }
-    else if (dir == 'b')
-    {
+    case 'b':
         return bottom;
-    }
-    else if (dir == 'l')
-    {
+    case 'l':
         return left;
-    }
-    else if (dir == 'r')
-    {
+    case 'r':
         return right;
     }
 }
@@ -59,53 +54,60 @@ char Cell::getChar(bool isDisplay)
 
 void Cell::setChar(char c)
 {
-    this->c = c;
+    if (this->c == c)
+    {
+        change = false;
+    }
+    else
+    {
+        change = true;
+        this->c = c;
+    }
 }
 
 void Cell::setCharNeighbour(char dir, char c)
 {
-    if (dir == 't')
+    switch (dir)
     {
+    case 't':
         top->setChar(c);
-    }
-    else if (dir == 'b')
-    {
+        break;
+    case 'b':
         bottom->setChar(c);
-    }
-    else if (dir == 'l')
-    {
+        break;
+    case 'l':
         left->setChar(c);
-    }
-    else
-    {
+        break;
+    case 'r':
         right->setChar(c);
-    }
+        break;
+    } // switch
 }
 
 void Cell::setNeighbour(char dir, Cell *cellPtr)
 {
-    if (dir == 't')
+    switch (dir)
     {
+    case 't':
         top = cellPtr;
-    }
-    else if (dir == 'b')
-    {
+        break;
+    case 'b':
         bottom = cellPtr;
-    }
-    else if (dir == 'l')
-    {
+        break;
+    case 'l':
         left = cellPtr;
-    }
-    else if (dir == 'r')
-    {
+        break;
+    case 'r':
         right = cellPtr;
-    }
+        break;
+    } // switch
 }
 
 bool Cell::check(char dir)
 {
-    if (dir == 'l')
+    switch (dir)
     {
+    case 'l':
         // check if it's the first in a row
         if (x == 0)
         {
@@ -115,56 +117,62 @@ bool Cell::check(char dir)
         {
             return false;
         }
-    }
-    else if (dir == 'r')
-    {
+        return true;
+    case 'r':
+        // check if it's the last in a row
         if (x == 10)
         {
             return false;
         }
-        else if (right->getBlock() != myBlock && left->getBlock() != nullptr)
+        else if (right->getBlock() != myBlock && right->getBlock() != nullptr)
         {
             return false;
         }
-    }
-    else if (dir == 't')
-    {
+        return true;
+    case 't':
+        // check if it's the first row
         if (y == 0)
         {
             return false;
         }
-        else if (top->getBlock() != myBlock && left->getBlock() != nullptr)
+        else if (top->getBlock() != myBlock && top->getBlock() != nullptr)
         {
             return false;
         }
-    }
-    else if (dir == 'b')
-    {
+        return true;
+    case 'b':
+        // check if it's the last row
         if (y == 17)
         {
             return false;
         }
-        else if (bottom->getBlock() != myBlock && left->getBlock() != nullptr)
+        else if (bottom->getBlock() != myBlock && bottom->getBlock() != nullptr)
         {
             return false;
         }
-    }
-    else if (dir == 's') // s stands for self
-    {
+        return true;
+    case 's': // s stands for self
         if (c == ' ')
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 }
 
 void Cell::setIsBlind(bool isBlind)
 {
     this->isBlind = isBlind;
+}
+
+bool Cell::getChange()
+{
+    return change;
+}
+
+void Cell::setChange(bool change)
+{
+    this->change = change;
 }
 
 Cell::~Cell() {}
