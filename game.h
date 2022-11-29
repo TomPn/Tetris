@@ -38,6 +38,7 @@ public:
     int getLevel(int player) const override;
     int getScore(int player) const override;
     void setHiScore();
+    int getHiScore();
     bool getChange(int player, int row, int col) const;
     void noRandom(std::string file);
     void random();

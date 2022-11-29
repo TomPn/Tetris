@@ -453,3 +453,8 @@ void Game::setHiScore()
         hiScore = opponent->getScore();
     }
 }
+
+int Game::getHiScore()
+{
+    return hiScore;
+}

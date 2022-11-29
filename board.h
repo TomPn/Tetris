@@ -24,6 +24,7 @@ class Board
     std::vector<std::vector<Cell *>> cells;
     bool seedBool;
     unsigned int seed;
+    std::string L0File;
     void update();
     int checkClear();
     void addstar();
