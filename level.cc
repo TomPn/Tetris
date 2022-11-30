@@ -52,49 +52,49 @@ Block *Level::CreateBlock(int level, char blockType)
         currCells.emplace_back(cells[18][1]);
         currCells.emplace_back(cells[18][2]);
         currCells.emplace_back(cells[18][3]);
-        nextBlock = new IBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        nextBlock = new IBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
         break;
     case 'J':
         currCells.emplace_back(cells[18][0]);
         currCells.emplace_back(cells[19][0]);
         currCells.emplace_back(cells[19][1]);
         currCells.emplace_back(cells[19][2]);
-        nextBlock = new JBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        nextBlock = new JBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
         break;
     case 'L':
         currCells.emplace_back(cells[18][2]);
         currCells.emplace_back(cells[19][0]);
         currCells.emplace_back(cells[19][1]);
         currCells.emplace_back(cells[19][2]);
-        nextBlock = new LBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        nextBlock = new LBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
         break;
     case 'O':
         currCells.emplace_back(cells[18][0]);
         currCells.emplace_back(cells[18][1]);
         currCells.emplace_back(cells[19][0]);
         currCells.emplace_back(cells[19][1]);
-        nextBlock = new OBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        nextBlock = new OBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
         break;
     case 'S':
         currCells.emplace_back(cells[18][1]);
         currCells.emplace_back(cells[18][2]);
         currCells.emplace_back(cells[19][0]);
         currCells.emplace_back(cells[19][1]);
-        nextBlock = new SBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        nextBlock = new SBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
         break;
     case 'Z':
         currCells.emplace_back(cells[18][0]);
         currCells.emplace_back(cells[18][1]);
         currCells.emplace_back(cells[19][1]);
         currCells.emplace_back(cells[19][2]);
-        nextBlock = new ZBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        nextBlock = new ZBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
         break;
     case 'T':
         currCells.emplace_back(cells[18][0]);
         currCells.emplace_back(cells[18][1]);
         currCells.emplace_back(cells[18][2]);
         currCells.emplace_back(cells[19][1]);
-        nextBlock = new TBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        nextBlock = new TBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
         break;
     }
 

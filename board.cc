@@ -17,7 +17,8 @@
 #include "level4.h"
 #include <vector>
 #include <iostream>
-
+using std::cout;
+using std::endl;
 const int rows = 20;
 const int cols = 11;
 
@@ -103,7 +104,9 @@ void Board::right(int mult)
         {
             currBlock->right();
         }
-        for (int i = 0; i < 2; i++) currBlock->down();
+        if (isHeavy) {
+            for (int i = 0; i < 2; i++) currBlock->down();
+        }
     } else {
         currBlock->right();
     }
@@ -116,7 +119,9 @@ void Board::left(int mult)
         {
             currBlock->left();
         }
-        for (int i = 0; i < 2; i++) currBlock->down();
+        if (isHeavy) {
+            for (int i = 0; i < 2; i++) currBlock->down();
+        }
     } else {
         currBlock->left();
     }
@@ -179,8 +184,9 @@ bool Board::checkForRotate(Cell *cellPtr, int newRow, int newCol)
         return false;
     }
     // not valid if the cellPtr is a cell of currBlock and the desination is occupied by a block that is not currBlock
-    if (!(currBlock->member(cellPtr) && ((cells[newRow][newCol]->getChar(false) != ' ') || currBlock->member(cells[newRow][newCol]))))
+    if ((cells[newRow][newCol]->getChar(false) != ' ') && (!currBlock->member(cells[newRow][newCol])))
     {
+        cout << "hello" << endl;
         return false;
     }
     // else return true
@@ -536,7 +542,7 @@ bool Board::setCurrBlock(char blockType)
         {
             return false;
         }
-        curr = new IBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        curr = new IBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
     }
     else if (blockType == 'J')
     {
@@ -548,7 +554,7 @@ bool Board::setCurrBlock(char blockType)
         {
             return false;
         }
-        curr = new JBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        curr = new JBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
     }
     else if (blockType == 'L')
     {
@@ -560,7 +566,7 @@ bool Board::setCurrBlock(char blockType)
         {
             return false;
         }
-        curr = new LBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        curr = new LBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
     }
     else if (blockType == 'O')
     {
@@ -572,7 +578,7 @@ bool Board::setCurrBlock(char blockType)
         {
             return false;
         }
-        curr = new OBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        curr = new OBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
     }
     else if (blockType == 'S')
     {
@@ -584,7 +590,7 @@ bool Board::setCurrBlock(char blockType)
         {
             return false;
         }
-        curr = new SBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        curr = new SBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
     }
     else if (blockType == 'Z')
     {
@@ -596,7 +602,7 @@ bool Board::setCurrBlock(char blockType)
         {
             return false;
         }
-        curr = new ZBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        curr = new ZBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
     }
     else if (blockType == 'T')
     {
@@ -608,7 +614,7 @@ bool Board::setCurrBlock(char blockType)
         {
             return false;
         }
-        curr = new TBlock{currCells[0], currCells[1], currCells[3], currCells[4], 4, level, blockType};
+        curr = new TBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
     }
 
     for (auto cell : currCells)
