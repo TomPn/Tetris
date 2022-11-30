@@ -44,9 +44,10 @@ Game::Game(int startLevel, unsigned int seed, bool haveSeed, bool haveScript1, b
 void Game::start()
 {
     std::string command;
+    Subject::notifyObservers();
     while (true)
     {
-        int multiplier = 0;
+        int multiplier = 1;
         int commandIndex = 0;
         command = cmdInter->getCommand();
         if (command == "ENDGAME")
@@ -64,37 +65,35 @@ void Game::start()
             multiplier = toInt(command.substr(0, commandIndex));
             command = command.substr(commandIndex, command.length() - commandIndex);
         }
-        if (command == "printtext")
-        {
-            Subject::notifyObservers(1);
-        } 
-        else if (command == "printgraphics")
-        {
-            Subject::notifyObservers(0);
-        }
-        else if (command == "left")
+        if (command == "left")
         {
             left(multiplier);
+            Subject::notifyObservers();
         }
         else if (command == "right")
         {
             right(multiplier);
+            Subject::notifyObservers();
         }
         else if (command == "down")
         {
             down(multiplier);
+            Subject::notifyObservers();
         }
         else if (command == "clockwise")
         {
             rotate(1, multiplier);
+            Subject::notifyObservers();
         }
         else if (command == "counterclockwise")
         {
             rotate(0, multiplier);
+            Subject::notifyObservers();
         }
         else if (command == "drop")
         {
             drop(multiplier);
+            Subject::notifyObservers();
         }
         else if (command == "levelup")
         {
@@ -227,15 +226,18 @@ void Game::right(int multiplier)
 
 bool Game::down(int multiplier)
 {
+    bool ifBot = 0;
     for (int i = 0; i < multiplier; ++i)
     {
         if (!playerRound)
         {
-            return curPlayer->down();
+            ifBot = curPlayer->down();
+            if (!ifBot) {break;}
         }
         else
         {
-            return  opponent->down();
+            ifBot = opponent->down();
+            if (!ifBot) {break;}
         }
     }
     return false;

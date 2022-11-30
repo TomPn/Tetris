@@ -1,5 +1,6 @@
 #include "block.h"
 #include "cell.h"
+#include <iostream>
 
 const int cellNum = 4;
 
@@ -33,38 +34,54 @@ Block::Block(Cell *cell1, Cell *cell2, Cell *cell3, Cell *cell4, int alive, int 
 bool Block::move(char dir)
 {
     // check if it can move to the required direction
-    for (int i = 0; i < cellNum; i++)
+    for (int i = 3; i >= 0; i--)
     {
         if (!components[i]->check(dir))
         {
             return false;
         }
     }
-
     // move the block to the desired direction
-    for (int i = 0; i < cellNum; i++)
-    {
-        Cell *neighbour = components[i]->getCell(dir);
-        neighbour->setChar(components[i]->getChar(false));
-        neighbour->setBlock(components[i]->getBlock());
-        components[i]->setChar(' ');
-        components[i]->setBlock(nullptr);
-    }
-    if (dir == 't')
-    {
-        --topLeftRow;
-    }
-    else if (dir == 'd')
-    {
-        ++topLeftRow;
-    }
-    else if (dir == 'l')
-    {
-        --topLeftCol;
-    }
-    else if (dir == 'r')
-    {
-        ++topLeftCol;
+    switch ( dir ) {
+        case('t'):
+            --topLeftRow;
+            break;
+        case('d'):
+            for (int i = 3; i >= 0; i--)
+            {
+                Cell *neighbour = components[i]->getCell(dir);
+                neighbour->setChar(components[i]->getChar(false));
+                neighbour->setBlock(components[i]->getBlock());
+                components[i]->setChar(' ');
+                components[i]->setBlock(nullptr);
+                components[i] = neighbour;
+            }
+            ++topLeftRow;;
+            break;
+        case('l'):
+            for (int i = 0; i < cellNum; i++)
+            {
+                Cell *neighbour = components[i]->getCell(dir);
+                neighbour->setChar(components[i]->getChar(false));
+                neighbour->setBlock(components[i]->getBlock());
+                components[i]->setChar(' ');
+                components[i]->setBlock(nullptr);
+                components[i] = neighbour;
+            }
+            --topLeftCol;
+            break;
+        case('r'):
+            for (int i = 3; i >= 0; i--)
+            {
+                Cell *neighbour = components[i]->getCell(dir);
+                neighbour->setChar(components[i]->getChar(false));
+                neighbour->setBlock(components[i]->getBlock());
+                components[i]->setChar(' ');
+                components[i]->setBlock(nullptr);
+                components[i] = neighbour;
+            }
+            ++topLeftCol;;
+            break;
     }
     return true;
 }

@@ -18,13 +18,10 @@ void Subject::detach(Observer *o)
   }
 }
 
-void Subject::notifyObservers(bool textMode)
+void Subject::notifyObservers()
 {
   for (auto ob : observers)
   {
-    if (ob->getText() || !textMode)
-    {
       ob->notify();
-    }
   }
 }

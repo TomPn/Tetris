@@ -8,7 +8,7 @@ Cell *Cell::getCell(char dir)
     {
     case 't':
         return top;
-    case 'b':
+    case 'd':
         return bottom;
     case 'l':
         return left;
@@ -142,7 +142,7 @@ bool Cell::check(char dir)
             return false;
         }
         return true;
-    case 'b':
+    case 'd':
         // check if it's the last row
         if (y == 17)
         {
