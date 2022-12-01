@@ -29,7 +29,7 @@ class Board
     int checkClear();
     void addstar();
     bool checkForRotate(Cell *cellPtr, int newRow, int newCol, std::vector<int> &rowsOfBlockDesination, std::vector<int> &colsOfBlockDesination);
-    void moveForRotate(Cell *cellPtr, int newRow, int newCol, std::vector<int> &rowsOfBlockDesination, std::vector<int> &colsOfBlockDesination);
+    void moveForRotate(Cell *cellPtr, int newRow, int newCol, std::vector<int> &rowsOfBlockDesination, std::vector<int> &colsOfBlockDesination, char originalChar, Block *originalBlock);
     bool checkForCurrBlock(std::vector<Cell *> currCells);
     bool checkRowClear(int row);
     void rotateHelper(bool twoThree, bool horizontal, std::vector<std::pair<int, int>> Original, std::vector<std::pair<int, int>> Desination);
