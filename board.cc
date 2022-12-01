@@ -207,8 +207,17 @@ bool Board::checkForRotate(Cell *cellPtr, int newRow, int newCol, std::vector<in
     return true;
 }
 
-void Board::moveForRotate(Cell *cellPtr, int newRow, int newCol, std::vector<int> &rowsOfBlockDesination, std::vector<int> &colsOfBlockDesination)
+void Board::moveForRotate(Cell *cellPtr, int newRow, int newCol, std::vector<int> &rowsOfBlockDesination, std::vector<int> &colsOfBlockDesination, char originalChar, Block *originalBlock)
 {
+    std::cerr << "before:" << endl;
+    if (cells[newRow][newCol]->getBlock() == currBlock)
+    {
+        std::cerr << newRow << "   " << newCol << std::endl;
+    }
+    if (cells[newRow][newCol]->getBlock() == nullptr)
+    {
+        std::cerr << newRow << "              " << newCol << std::endl;
+    }
 
     // std::cerr << "new row: " << newRow << "new col: " << newCol << std::endl;
     //   cellPtr is the original cell, newRow and newCol locates the desination
@@ -245,46 +254,55 @@ void Board::moveForRotate(Cell *cellPtr, int newRow, int newCol, std::vector<int
                 cellPtr->setChar(' ');
                 cellPtr->setBlock(nullptr);
             }
-            std::cerr << "rol now: " << cellPtr->getY() << "  col now: " << cellPtr->getX() << std::endl;
-            for (int i = 0; i < 4; ++i)
-            {
+            // std::cerr << "rol now: " << cellPtr->getY() << "  col now: " << cellPtr->getX() << std::endl;
+            // for (int i = 0; i < 4; ++i)
+            // {
 
-                if (components[i] == cellPtr)
-                {
+            //     if (components[i] == cellPtr)
+            //     {
 
-                    // std::cerr << "rol before: " << cellPtr->getY() << "  col before: " << cellPtr->getX() << std::endl;
-                    std::cerr << "rol after: " << cells[newRow][newCol]->getY() << "  col after: " << cells[newRow][newCol]->getX() << std::endl;
-                    components[i] = cells[newRow][newCol];
-                    break;
-                }
-            }
-            currBlock->setComponents(components);
+            //         // std::cerr << "rol before: " << cellPtr->getY() << "  col before: " << cellPtr->getX() << std::endl;
+            //         std::cerr << "rol after: " << cells[newRow][newCol]->getY() << "  col after: " << cells[newRow][newCol]->getX() << std::endl;
+            //         components[i] = cells[newRow][newCol];
+            //         break;
+            //     }
+            // }
+            // currBlock->setComponents(components);
         }
         // the original cell is a pair of the current block and the desination is blank
         else if (cells[newRow][newCol]->getBlock() == nullptr)
         {
-            cells[newRow][newCol]->setChar(cellPtr->getChar(false));
-            cells[newRow][newCol]->setBlock(cellPtr->getBlock());
+            cells[newRow][newCol]->setChar(originalChar);
+            cells[newRow][newCol]->setBlock(originalBlock);
             if (!protect)
             {
                 // std::cerr << "protected rol: " << cellPtr->getY() << "  protected col: " << cellPtr->getX() << std::endl;
                 cellPtr->setChar(' ');
                 cellPtr->setBlock(nullptr);
             }
-            std::cerr << "rol now: " << cellPtr->getY() << "  col now: " << cellPtr->getX() << std::endl;
-            for (int i = 0; i < 4; ++i)
-            {
-                if (components[i] == cellPtr)
-                {
-                    std::cerr << "rol after: " << newRow << "  col after: " << newCol << std::endl;
-                    // std::cerr << "rol before: " << cellPtr->getY() << "  col before: " << cellPtr->getX() << std::endl;
-                    // std::cerr << "rol after: " << cells[newRow][newCol]->getY() << "  col after: " << cells[newRow][newCol]->getX() << std::endl;
-                    components[i] = cells[newRow][newCol];
-                    break;
-                }
-            }
-            currBlock->setComponents(components);
+            // std::cerr << "rol now: " << cellPtr->getY() << "  col now: " << cellPtr->getX() << std::endl;
+            // for (int i = 0; i < 4; ++i)
+            // {
+            //     if (components[i] == cellPtr)
+            //     {
+            //         std::cerr << "rol after: " << newRow << "  col after: " << newCol << std::endl;
+            //         // std::cerr << "rol before: " << cellPtr->getY() << "  col before: " << cellPtr->getX() << std::endl;
+            //         // std::cerr << "rol after: " << cells[newRow][newCol]->getY() << "  col after: " << cells[newRow][newCol]->getX() << std::endl;
+            //         components[i] = cells[newRow][newCol];
+            //         break;
+            //     }
+            // }
+            // currBlock->setComponents(components);
         }
+    }
+    std::cerr << "after:" << endl;
+    if (cells[newRow][newCol]->getBlock() == currBlock)
+    {
+        std::cerr << newRow << "   " << newCol << std::endl;
+    }
+    if (cells[newRow][newCol]->getBlock() == nullptr)
+    {
+        std::cerr << newRow << "              " << newCol << std::endl;
     }
 }
 
@@ -295,11 +313,28 @@ void Board::rotateHelper(bool twoThree, bool horizontal, std::vector<std::pair<i
     int minCol = 100;
     std::vector<int> rowsOfComponentsDesination;
     std::vector<int> colsOfComponentsDesination;
-
+    std::vector<char> originalChar;
+    std::vector<Block *> originalBlock;
     int range = 4;
     if (twoThree)
     {
         range = 6;
+    }
+    for (int i = 0; i < range; ++i)
+    {
+        if (cells[Desination[i].first][Desination[i].second]->getBlock() == currBlock)
+        {
+            // std::cerr << Desination[i].first << "   " << Desination[i].second << std::endl;
+        }
+    }
+    for (int i = 0; i < range; ++i) // for (int i = range - 1; i >= 0; --i)
+    {
+        originalChar.emplace_back(cells[Original[i].first][Original[i].second]->getChar(false));
+        originalBlock.emplace_back(cells[Original[i].first][Original[i].second]->getBlock());
+    }
+    for (int i = 0; i < range; ++i)
+    {
+        std::cerr << originalChar[i] << std::endl;
     }
     for (int i = 0; i < range; ++i)
     {
@@ -309,7 +344,9 @@ void Board::rotateHelper(bool twoThree, bool horizontal, std::vector<std::pair<i
     {
         for (int i = 0; i < range; ++i)
         {
-            moveForRotate(cells[Original[i].first][Original[i].second], Desination[i].first, Desination[i].second, rowsOfComponentsDesination, colsOfComponentsDesination);
+            moveForRotate(cells[Original[i].first][Original[i].second], Desination[i].first, Desination[i].second, rowsOfComponentsDesination, colsOfComponentsDesination, originalChar[i], originalBlock[i]);
+            // std::cerr << "ori row: " << Original[i].first << "  ori col: " << Original[i].second << std::endl;
+            // std::cerr << "des row: " << Desination[i].first << "  des col: " << Desination[i].second << std::endl;
             if (Desination[i].first < minRow)
             {
                 minRow = Desination[i].first;
@@ -323,6 +360,16 @@ void Board::rotateHelper(bool twoThree, bool horizontal, std::vector<std::pair<i
             currBlock->setHorizontal(!horizontal);
         }
     }
+    std::vector<Cell *> components;
+    for (int i = 0; i < range; ++i)
+    {
+        if (cells[Desination[i].first][Desination[i].second]->getBlock() == currBlock)
+        {
+            // std::cerr << "count" << std::endl;
+            components.emplace_back(cells[Desination[i].first][Desination[i].second]);
+        }
+    }
+    currBlock->setComponents(components);
 }
 
 void Board::rotate(bool clockwise)
@@ -419,8 +466,8 @@ void Board::rotate(bool clockwise)
             }
             else
             {
-                rowsOfDesination = std::vector<int>{tlRow + 3, tlRow + 2, tlRow + 1, tlRow};
-                colsOfDesination = std::vector<int>{tlCol - 3, tlCol - 2, tlCol - 1, tlCol};
+                rowsOfDesination = std::vector<int>{tlRow + 3, tlRow + 3, tlRow + 3, tlRow + 3};
+                colsOfDesination = std::vector<int>{tlCol, tlCol + 1, tlCol + 2, tlCol + 3};
             }
         }
         for (int i = 0; i < 4; ++i)
@@ -430,11 +477,13 @@ void Board::rotate(bool clockwise)
         }
         rotateHelper(false, horizontal, Original, Desination);
     }
+
     std::cerr << "after " << std::endl;
     components = currBlock->getComponents();
+    std::cerr << components.size() << std::endl;
     for (int i = 0; i < 4; ++i)
     {
-        std::cerr << "row: " << components[i]->getY() << "  col: " << components[i]->getX() << std::endl;
+        // std::cerr << "row: " << components[i]->getY() << "  col: " << components[i]->getX() << std::endl;
     }
 }
 
