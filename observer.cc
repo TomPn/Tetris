@@ -2,5 +2,5 @@
 
 bool Observer::getText()
 {
-    return text;
+     return text;
 }

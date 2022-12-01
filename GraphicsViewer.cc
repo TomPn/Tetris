@@ -13,6 +13,7 @@ GraphicsViewer::GraphicsViewer(Game *subject) : Observer{false}, subject{subject
     subject->attach(this);
 }
 
+
 GraphicsViewer::~GraphicsViewer()
 {
     subject->detach(this);
@@ -22,10 +23,15 @@ GraphicsViewer::~GraphicsViewer()
 
 
 void GraphicsViewer::printTitle() {
+    window->fillRectangle(200, 10, 10, 30, window->White);
     window->drawString(200, 10, "Highest Score: " + std::to_string(subject->getHiScore()));
+    window->fillRectangle(20, 40, 10, 30, window->White);
     window->drawString(20, 40, "Score: " + std::to_string(subject->getScore(0)));
+    window->fillRectangle(300, 40, 10, 30, window->White);
     window->drawString(300, 40, "Score: " + std::to_string(subject->getScore(1)));
+    window->fillRectangle(20, 70, 10, 30, window->White);
     window->drawString(20, 70, "Level: " + std::to_string(subject->getLevel(0)));
+    window->fillRectangle(300, 70, 10, 30, window->White);
     window->drawString(300, 70, "Level: " + std::to_string(subject->getLevel(1)));
 }
 
@@ -39,6 +45,7 @@ void GraphicsViewer::printPlayer(int row_start, int row_end, int x, int y, int p
         {
             bool change = subject->getChange(player, i, j);
             char output = subject->getState(player, i, j);
+
             if (change)
             {
                 if (output == '*')
@@ -79,22 +86,27 @@ void GraphicsViewer::printPlayer(int row_start, int row_end, int x, int y, int p
                 }
                 else if (output == ' ')
                 {
-                    color = window->Black;
+                    if (i >= 18) {
+                        color = window->White;
+                    } else {
+                        color = window->Black;
+                    }
                 }
+                window->fillRectangle(x + (dim * j), y + dim * (i - row_start), dim, dim, color);
             }
-            window->fillRectangle(x + dim * j, y + dim * (i - row_start), dim, dim, color);
         }
     }
 }
+
 
 void GraphicsViewer::notify()
 {
     printTitle();
     printPlayer(0, 17, 20, 100, 0);
-    printPlayer(0, 17, 300, 100, 0);
+    printPlayer(0, 17, 300, 100, 1);
     window->drawString(20, 500, "Next: ");
     window->drawString(300, 500, "Next: ");
     printPlayer(18, 19, 20, 510, 0);
-    printPlayer(18, 19, 300, 510, 0);
+    printPlayer(18, 19, 300, 510, 1);
 }
 
