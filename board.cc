@@ -99,41 +99,35 @@ Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
 
 void Board::right(int mult)
 {
+    bool success = currBlock->right();
     if (mult > 1)
     {
-        for (int i = 0; i < mult; i++)
+        for (int i = 1; i < mult; i++)
         {
             currBlock->right();
         }
-        if (isHeavy)
-        {
-            for (int i = 0; i < 2; i++)
-                currBlock->down();
-        }
     }
-    else
+    if (success && isHeavy)
     {
-        currBlock->right();
+        for (int i = 0; i < 2; i++)
+            currBlock->down();
     }
 }
 
 void Board::left(int mult)
 {
+    bool success = currBlock->left();
     if (mult > 1)
     {
-        for (int i = 0; i < mult; i++)
+        for (int i = 1; i < mult; i++)
         {
             currBlock->left();
         }
-        if (isHeavy)
-        {
-            for (int i = 0; i < 2; i++)
-                currBlock->down();
-        }
     }
-    else
+    if (success && isHeavy)
     {
-        currBlock->left();
+        for (int i = 0; i < 2; i++)
+            currBlock->down();
     }
 }
 
@@ -529,20 +523,22 @@ void Board::levelUp()
     {
         level++;
         Level *tmp = currLevel;
-        if (level == 0)
+        if (level == 1)
         {
             currLevel = new Level1{seedBool, seed, cells};
         }
-        else if (level == 1)
+        else if (level == 2)
         {
             currLevel = new Level2{seedBool, seed, cells};
         }
-        else if (level == 2)
-        {
-            currLevel = new Level3{seedBool, seed, cells};
-        }
         else if (level == 3)
         {
+            isHeavy = true;
+            currLevel = new Level3{seedBool, seed, cells};
+        }
+        else if (level == 4)
+        {
+            isHeavy = true;
             currLevel = new Level4{seedBool, seed, cells};
         }
         delete tmp;
@@ -647,9 +643,13 @@ int Board::checkClear()
             }
         }
     }
+    if (clear > 0) {
+        score += (level + clear) * (level + clear);
+    }
     // return
     return clear;
 }
+
 
 bool Board::checkForCurrBlock(std::vector<Cell *> currCells)
 {
@@ -821,3 +821,6 @@ bool Board::getOver()
 {
     return over;
 }
+
+
+
