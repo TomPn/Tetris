@@ -24,6 +24,8 @@ public:
     bool right();
     bool down();
     bool getHorizontal();
+    void setComponents(std::vector<Cell *> components);
+    std::vector<Cell *> getComponents();
     void setHorizontal(bool horizontal);
     // virtual void rotate(bool clockwise) = 0;
     char getBlockType();

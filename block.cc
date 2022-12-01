@@ -5,7 +5,7 @@
 const int cellNum = 4;
 
 // Block constructor
-Block::Block(Cell *cell1, Cell *cell2, Cell *cell3, Cell *cell4, int alive, int level, char blockType) : level{level}, alive{alive}, blockType{blockType}
+Block::Block(Cell *cell1, Cell *cell2, Cell *cell3, Cell *cell4, int alive, int level, char blockType) : level{level}, alive{alive}, blockType{blockType}, horizontal{true}
 {
     components.emplace_back(cell1);
     components.emplace_back(cell2);
@@ -42,46 +42,49 @@ bool Block::move(char dir)
         }
     }
     // move the block to the desired direction
-    switch ( dir ) {
-        case('t'):
-            --topLeftRow;
-            break;
-        case('d'):
-            for (int i = 3; i >= 0; i--)
-            {
-                Cell *neighbour = components[i]->getCell(dir);
-                neighbour->setChar(components[i]->getChar(false));
-                neighbour->setBlock(components[i]->getBlock());
-                components[i]->setChar(' ');
-                components[i]->setBlock(nullptr);
-                components[i] = neighbour;
-            }
-            ++topLeftRow;;
-            break;
-        case('l'):
-            for (int i = 0; i < cellNum; i++)
-            {
-                Cell *neighbour = components[i]->getCell(dir);
-                neighbour->setChar(components[i]->getChar(false));
-                neighbour->setBlock(components[i]->getBlock());
-                components[i]->setChar(' ');
-                components[i]->setBlock(nullptr);
-                components[i] = neighbour;
-            }
-            --topLeftCol;
-            break;
-        case('r'):
-            for (int i = 3; i >= 0; i--)
-            {
-                Cell *neighbour = components[i]->getCell(dir);
-                neighbour->setChar(components[i]->getChar(false));
-                neighbour->setBlock(components[i]->getBlock());
-                components[i]->setChar(' ');
-                components[i]->setBlock(nullptr);
-                components[i] = neighbour;
-            }
-            ++topLeftCol;;
-            break;
+    switch (dir)
+    {
+    case ('t'):
+        --topLeftRow;
+        break;
+    case ('d'):
+        for (int i = 3; i >= 0; i--)
+        {
+            Cell *neighbour = components[i]->getCell(dir);
+            neighbour->setChar(components[i]->getChar(false));
+            neighbour->setBlock(components[i]->getBlock());
+            components[i]->setChar(' ');
+            components[i]->setBlock(nullptr);
+            components[i] = neighbour;
+        }
+        ++topLeftRow;
+        ;
+        break;
+    case ('l'):
+        for (int i = 0; i < cellNum; i++)
+        {
+            Cell *neighbour = components[i]->getCell(dir);
+            neighbour->setChar(components[i]->getChar(false));
+            neighbour->setBlock(components[i]->getBlock());
+            components[i]->setChar(' ');
+            components[i]->setBlock(nullptr);
+            components[i] = neighbour;
+        }
+        --topLeftCol;
+        break;
+    case ('r'):
+        for (int i = 3; i >= 0; i--)
+        {
+            Cell *neighbour = components[i]->getCell(dir);
+            neighbour->setChar(components[i]->getChar(false));
+            neighbour->setBlock(components[i]->getBlock());
+            components[i]->setChar(' ');
+            components[i]->setBlock(nullptr);
+            components[i] = neighbour;
+        }
+        ++topLeftCol;
+        ;
+        break;
     }
     return true;
 }
@@ -183,4 +186,14 @@ void Block::setTopLeftRow(int row)
 void Block::setTopLeftCol(int col)
 {
     topLeftCol = col;
+}
+
+void Block::setComponents(std::vector<Cell *> components)
+{
+    this->components = components;
+}
+
+std::vector<Cell *> Block::getComponents()
+{
+    return components;
 }
