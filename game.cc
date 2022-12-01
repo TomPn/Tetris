@@ -273,6 +273,9 @@ void Game::drop(int multiplier)
                 // over()
             }
             playerRound = 1;
+            if (curPlayer->getScore() > hiScore) {
+                hiScore = curPlayer->getScore();
+            }
         }
         else
         {
@@ -283,6 +286,9 @@ void Game::drop(int multiplier)
                 // over()
             }
             playerRound = 0;
+            if (opponent->getScore() > hiScore) {
+                hiScore = curPlayer->getScore();
+            }
         }
     }
 }
