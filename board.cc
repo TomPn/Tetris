@@ -25,8 +25,8 @@ const int cols = 11;
 Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
     : level{level}, score{0}, blockCount{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false},
       seedBool{seedBool}, seed{seed}, L0File{L0File}
-{   
-    std::vector<std::vector<Cell *>> cells(rows, std::vector<Cell *> (cols, nullptr));
+{
+    std::vector<std::vector<Cell *>> cells(rows, std::vector<Cell *>(cols, nullptr));
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < cols; j++)
@@ -34,7 +34,7 @@ Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
             cells[i][j] = new Cell{' ', j, i};
         }
     }
-    
+
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < cols; j++)
@@ -99,30 +99,40 @@ Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
 
 void Board::right(int mult)
 {
-    if (mult > 1) {
+    if (mult > 1)
+    {
         for (int i = 0; i < mult; i++)
         {
             currBlock->right();
         }
-        if (isHeavy) {
-            for (int i = 0; i < 2; i++) currBlock->down();
+        if (isHeavy)
+        {
+            for (int i = 0; i < 2; i++)
+                currBlock->down();
         }
-    } else {
+    }
+    else
+    {
         currBlock->right();
     }
 }
 
 void Board::left(int mult)
 {
-    if (mult > 1) {
+    if (mult > 1)
+    {
         for (int i = 0; i < mult; i++)
         {
             currBlock->left();
         }
-        if (isHeavy) {
-            for (int i = 0; i < 2; i++) currBlock->down();
+        if (isHeavy)
+        {
+            for (int i = 0; i < 2; i++)
+                currBlock->down();
         }
-    } else {
+    }
+    else
+    {
         currBlock->left();
     }
 }
@@ -174,34 +184,145 @@ void Board::drop()
     nextBlock = currLevel->CreateNextBlock();
 }
 
-// checks if rotated cell is valid
-bool Board::checkForRotate(Cell *cellPtr, int newRow, int newCol)
+//
+bool Board::checkForRotate(Cell *cellPtr, int newRow, int newCol, std::vector<int> &rowsOfBlockDesination, std::vector<int> &colsOfBlockDesination)
 {
-    // cellPtr is the original cell, newRow and newCol locates the desination
-    // not valid if out of bound
     if (newRow > 17 || newRow < 0 || newCol > 10 || newCol < 0)
     {
-        return false;
+        return false; // can't be rotated
     }
-    // not valid if the cellPtr is a cell of currBlock and the desination is occupied by a block that is not currBlock
-    if ((cells[newRow][newCol]->getChar(false) != ' ') && (!currBlock->member(cells[newRow][newCol])))
+
+    if (currBlock->member(cellPtr) && cells[newRow][newCol]->getBlock() != currBlock && cells[newRow][newCol]->getBlock() != nullptr)
     {
-        cout << "hello" << endl;
         return false;
     }
-    // else return true
+
+    if (currBlock->member(cellPtr))
+    {
+        // std::cerr << "des rol: " << newRow << "  des col: " << newCol << std::endl;
+        rowsOfBlockDesination.emplace_back(newRow);
+        colsOfBlockDesination.emplace_back(newCol);
+    }
+
     return true;
 }
 
-// move the cellPtr to its desination
-void Board::moveForRotate(Cell *cellPtr, int newRow, int newCol)
+void Board::moveForRotate(Cell *cellPtr, int newRow, int newCol, std::vector<int> &rowsOfBlockDesination, std::vector<int> &colsOfBlockDesination)
 {
-    // update the desination's char and myBlock
-    cells[newRow][newCol]->setChar(cellPtr->getChar(false));
-    cells[newRow][newCol]->setBlock(cellPtr->getBlock());
-    // change the original cell to a blank cell
-    cellPtr->setChar(' ');
-    cellPtr->setBlock(nullptr);
+
+    // std::cerr << "new row: " << newRow << "new col: " << newCol << std::endl;
+    //   cellPtr is the original cell, newRow and newCol locates the desination
+    //   not valid if out of bound
+
+    // if the original cell is blank
+    if (!currBlock->member(cellPtr))
+    {
+        return; // do nothing
+    }
+    else
+    {
+        // std::cerr << "N blank" << std::endl;
+        std::vector<Cell *> components = currBlock->getComponents();
+        bool protect = false;
+        for (int i = 0; i < 6; ++i)
+        {
+
+            // std::cerr << "cellPtr rol: " << cellPtr->getY() << "  cellPtr col: " << cellPtr->getX() << std::endl;
+
+            if (rowsOfBlockDesination[i] == cellPtr->getY() && colsOfBlockDesination[i] == cellPtr->getX())
+            {
+                // std::cerr << "des rol: " << rowsOfBlockDesination[i] << "  des col: " << colsOfBlockDesination[i] << std::endl;
+                protect = true;
+                break;
+            }
+        }
+
+        // the original cell and the desination cell are both pairs of the current block
+        if (cells[newRow][newCol]->getBlock() == currBlock)
+        {
+            if (!protect)
+            {
+                cellPtr->setChar(' ');
+                cellPtr->setBlock(nullptr);
+            }
+            std::cerr << "rol now: " << cellPtr->getY() << "  col now: " << cellPtr->getX() << std::endl;
+            for (int i = 0; i < 4; ++i)
+            {
+
+                if (components[i] == cellPtr)
+                {
+
+                    // std::cerr << "rol before: " << cellPtr->getY() << "  col before: " << cellPtr->getX() << std::endl;
+                    std::cerr << "rol after: " << cells[newRow][newCol]->getY() << "  col after: " << cells[newRow][newCol]->getX() << std::endl;
+                    components[i] = cells[newRow][newCol];
+                    break;
+                }
+            }
+            currBlock->setComponents(components);
+        }
+        // the original cell is a pair of the current block and the desination is blank
+        else if (cells[newRow][newCol]->getBlock() == nullptr)
+        {
+            cells[newRow][newCol]->setChar(cellPtr->getChar(false));
+            cells[newRow][newCol]->setBlock(cellPtr->getBlock());
+            if (!protect)
+            {
+                // std::cerr << "protected rol: " << cellPtr->getY() << "  protected col: " << cellPtr->getX() << std::endl;
+                cellPtr->setChar(' ');
+                cellPtr->setBlock(nullptr);
+            }
+            std::cerr << "rol now: " << cellPtr->getY() << "  col now: " << cellPtr->getX() << std::endl;
+            for (int i = 0; i < 4; ++i)
+            {
+                if (components[i] == cellPtr)
+                {
+                    std::cerr << "rol after: " << newRow << "  col after: " << newCol << std::endl;
+                    // std::cerr << "rol before: " << cellPtr->getY() << "  col before: " << cellPtr->getX() << std::endl;
+                    // std::cerr << "rol after: " << cells[newRow][newCol]->getY() << "  col after: " << cells[newRow][newCol]->getX() << std::endl;
+                    components[i] = cells[newRow][newCol];
+                    break;
+                }
+            }
+            currBlock->setComponents(components);
+        }
+    }
+}
+
+void Board::rotateHelper(bool twoThree, bool horizontal, std::vector<std::pair<int, int>> Original, std::vector<std::pair<int, int>> Desination)
+{
+    bool valid = true;
+    int minRow = 100;
+    int minCol = 100;
+    std::vector<int> rowsOfComponentsDesination;
+    std::vector<int> colsOfComponentsDesination;
+
+    int range = 4;
+    if (twoThree)
+    {
+        range = 6;
+    }
+    for (int i = 0; i < range; ++i)
+    {
+        valid = valid && checkForRotate(cells[Original[i].first][Original[i].second], Desination[i].first, Desination[i].second, rowsOfComponentsDesination, colsOfComponentsDesination);
+    }
+    if (valid)
+    {
+        for (int i = 0; i < range; ++i)
+        {
+            moveForRotate(cells[Original[i].first][Original[i].second], Desination[i].first, Desination[i].second, rowsOfComponentsDesination, colsOfComponentsDesination);
+            if (Desination[i].first < minRow)
+            {
+                minRow = Desination[i].first;
+            }
+            if (Desination[i].second < minCol)
+            {
+                minCol = Desination[i].second;
+            }
+            currBlock->setTopLeftRow(minRow);
+            currBlock->setTopLeftCol(minCol);
+            currBlock->setHorizontal(!horizontal);
+        }
+    }
 }
 
 void Board::rotate(bool clockwise)
@@ -213,141 +334,107 @@ void Board::rotate(bool clockwise)
     int tlCol = currBlock->getTopLeftCol();
     // valid checks if the rotated block are valid
     bool valid = true;
+    std::vector<std::pair<int, int>> Original;
+    std::vector<std::pair<int, int>> Desination;
+    std::vector<int> rowsOfOriginal;
+    std::vector<int> colsOfOriginal;
+    std::vector<int> rowsOfDesination;
+    std::vector<int> colsOfDesination;
+    std::vector<Cell *> components = currBlock->getComponents();
+    for (int i = 0; i < 4; ++i)
+    {
+        std::cerr << "row: " << components[i]->getY() << "  col: " << components[i]->getX() << std::endl;
+    }
 
+    std::cerr << "tlrow: " << tlRow << "  tlcol: " << tlCol << std::endl;
+    std::string h = "horizontal";
+    if (!horizontal)
+        h = "v";
+    std::cerr << "horizontal: " << h << std::endl;
     // if the rectangle is 2*3
     if (blockType == 'J' || blockType == 'L' || blockType == 'S' || blockType == 'Z' || blockType == 'T')
     {
-        if (horizontal && clockwise)
+        if (horizontal)
         {
-            // check if each cell is valid for being rotated
-            valid = valid && checkForRotate(cells[tlRow][tlCol], tlRow - 1, tlCol + 1);
-            valid = valid && checkForRotate(cells[tlRow + 1][tlCol], tlRow - 1, tlCol);
-            // if valid, move the cells to their desination and update the coordinate of the top left cell and the horizontal
-            if (valid)
+            rowsOfOriginal = std::vector<int>{tlRow, tlRow, tlRow, tlRow + 1, tlRow + 1, tlRow + 1};
+            colsOfOriginal = std::vector<int>{tlCol, tlCol + 1, tlCol + 2, tlCol, tlCol + 1, tlCol + 2};
+            if (clockwise)
             {
-                moveForRotate(cells[tlRow][tlCol], tlRow - 1, tlCol + 1);
-                moveForRotate(cells[tlRow + 1][tlCol], tlRow - 1, tlCol);
-                currBlock->setTopLeftRow(tlRow - 1);
-                currBlock->setTopLeftCol(tlCol);
-                currBlock->setHorizontal(false);
+                rowsOfDesination = std::vector<int>{tlRow - 1, tlRow, tlRow + 1, tlRow - 1, tlRow, tlRow + 1};
+                colsOfDesination = std::vector<int>{tlCol + 1, tlCol + 1, tlCol + 1, tlCol, tlCol, tlCol};
             }
-            // valid = valid && checkForRotate(cells[tlRow][tlCol + 1], tlRow, tlCol + 1);
-            // valid = valid && checkForRotate(cells[tlRow + 1][tlCol + 1], tlRow, tlCol);
-            // valid = valid && checkForRotate(cells[tlRow][tlCol + 2], tlRow + 1, tlCol + 1);
-            // valid = valid && checkForRotate(cells[tlRow + 1][tlCol + 2], tlRow + 1, tlCol);
-        }
-        else if (horizontal && !clockwise)
-        {
-            valid = valid && checkForRotate(cells[tlRow][tlCol + 2], tlRow - 1, tlCol);
-            valid = valid && checkForRotate(cells[tlRow + 1][tlCol + 2], tlRow - 1, tlCol + 1);
-            if (valid)
+            else
             {
-                moveForRotate(cells[tlRow][tlCol + 2], tlRow - 1, tlCol);
-                moveForRotate(cells[tlRow + 1][tlCol + 2], tlRow - 1, tlCol + 1);
-                currBlock->setTopLeftRow(tlRow - 1);
-                currBlock->setTopLeftCol(tlCol);
-                currBlock->setHorizontal(false);
-            }
-            // valid = valid && checkForRotate(cells[tlRow][tlCol + 2], tlRow, tlCol);
-            // valid = valid && checkForRotate(cells[tlRow + 1][tlCol + 2], tlRow, tlCol + 1);
-            // valid = valid && checkForRotate(cells[tlRow][tlCol + 2], tlRow + 1, tlCol);
-            // valid = valid && checkForRotate(cells[tlRow + 1][tlCol + 2], tlRow + 1, tlCol + 1);
-        }
-        else if (!horizontal && clockwise)
-        {
-            valid = valid && checkForRotate(cells[tlRow][tlCol], tlRow + 1, tlCol + 2);
-            valid = valid && checkForRotate(cells[tlRow][tlCol + 1], tlRow + 2, tlCol + 1);
-            if (valid)
-            {
-                moveForRotate(cells[tlRow][tlCol], tlRow + 1, tlCol + 2);
-                moveForRotate(cells[tlRow][tlCol + 1], tlRow + 2, tlCol + 1);
-                currBlock->setTopLeftRow(tlRow + 1);
-                currBlock->setTopLeftCol(tlCol);
-                currBlock->setHorizontal(true);
+                rowsOfDesination = std::vector<int>{tlRow + 1, tlRow, tlRow - 1, tlRow + 1, tlRow, tlRow - 1};
+                colsOfDesination = std::vector<int>{tlCol, tlCol, tlCol, tlCol + 1, tlCol + 1, tlCol + 1};
             }
         }
-        else if (!horizontal && !clockwise)
+        else
         {
-            valid = valid && checkForRotate(cells[tlRow][tlCol], tlRow + 2, tlCol - 1);
-            valid = valid && checkForRotate(cells[tlRow][tlCol + 1], tlRow + 1, tlCol - 1);
-            if (valid)
+            rowsOfOriginal = std::vector<int>{tlRow, tlRow, tlRow + 1, tlRow + 1, tlRow + 2, tlRow + 2};
+            colsOfOriginal = std::vector<int>{tlCol, tlCol + 1, tlCol, tlCol + 1, tlCol, tlCol + 1};
+            if (clockwise)
             {
-                moveForRotate(cells[tlRow][tlCol], tlRow + 2, tlCol - 1);
-                moveForRotate(cells[tlRow][tlCol + 1], tlRow + 1, tlCol - 1);
-                currBlock->setTopLeftRow(tlRow + 1);
-                currBlock->setTopLeftCol(tlCol - 1);
-                currBlock->setHorizontal(true);
+                rowsOfDesination = std::vector<int>{tlRow + 1, tlRow + 2, tlRow + 1, tlRow + 2, tlRow + 1, tlRow + 2};
+                colsOfDesination = std::vector<int>{tlCol + 2, tlCol + 2, tlCol + 1, tlCol + 1, tlCol, tlCol};
+            }
+            else
+            {
+                rowsOfDesination = std::vector<int>{tlRow + 2, tlRow + 1, tlRow + 2, tlRow + 1, tlRow + 2, tlRow + 1};
+                colsOfDesination = std::vector<int>{tlCol, tlCol, tlCol + 1, tlCol + 1, tlCol + 2, tlCol + 2};
             }
         }
+        for (int i = 0; i < 6; ++i)
+        {
+            Original.emplace_back(std::make_pair(rowsOfOriginal[i], colsOfOriginal[i]));
+            Desination.emplace_back(std::make_pair(rowsOfDesination[i], colsOfDesination[i]));
+        }
+        rotateHelper(true, horizontal, Original, Desination);
     }
     else if (blockType == 'I')
     {
-        if (horizontal && clockwise)
+        if (horizontal)
         {
-            valid = valid && checkForRotate(cells[tlRow][tlCol], tlRow - 3, tlCol);
-            valid = valid && checkForRotate(cells[tlRow][tlCol + 1], tlRow - 2, tlCol);
-            valid = valid && checkForRotate(cells[tlRow][tlCol + 2], tlRow - 1, tlCol);
-            valid = valid && checkForRotate(cells[tlRow][tlCol + 3], tlRow, tlCol);
-            if (valid)
+            rowsOfOriginal = std::vector<int>{tlRow, tlRow, tlRow, tlRow};
+            colsOfOriginal = std::vector<int>{tlCol, tlCol + 1, tlCol + 2, tlCol + 3};
+            if (clockwise)
             {
-                moveForRotate(cells[tlRow][tlCol], tlRow - 3, tlCol);
-                moveForRotate(cells[tlRow][tlCol + 1], tlRow - 2, tlCol);
-                moveForRotate(cells[tlRow][tlCol + 2], tlRow - 1, tlCol);
-                moveForRotate(cells[tlRow][tlCol + 3], tlRow, tlCol);
-                currBlock->setTopLeftRow(tlRow - 3);
-                currBlock->setTopLeftCol(tlCol);
-                currBlock->setHorizontal(false);
+                rowsOfDesination = std::vector<int>{tlRow - 3, tlRow - 2, tlRow - 1, tlRow};
+                colsOfDesination = std::vector<int>{tlCol, tlCol, tlCol, tlCol};
+            }
+            else
+            {
+                rowsOfDesination = std::vector<int>{tlRow, tlRow - 1, tlRow - 2, tlRow - 3};
+                colsOfDesination = std::vector<int>{tlCol, tlCol, tlCol, tlCol};
             }
         }
-        else if (horizontal && !clockwise)
+        else
         {
-            valid = valid && checkForRotate(cells[tlRow][tlCol + 1], tlRow - 1, tlCol);
-            valid = valid && checkForRotate(cells[tlRow][tlCol + 2], tlRow - 2, tlCol);
-            valid = valid && checkForRotate(cells[tlRow][tlCol + 3], tlRow - 3, tlCol);
-            if (valid)
+            rowsOfOriginal = std::vector<int>{tlRow, tlRow + 1, tlRow + 2, tlRow + 3};
+            colsOfOriginal = std::vector<int>{tlCol, tlCol, tlCol, tlCol};
+            if (clockwise)
             {
-                moveForRotate(cells[tlRow][tlCol + 1], tlRow - 1, tlCol);
-                moveForRotate(cells[tlRow][tlCol + 2], tlRow - 2, tlCol);
-                moveForRotate(cells[tlRow][tlCol + 3], tlRow - 3, tlCol);
-                currBlock->setTopLeftRow(tlRow - 3);
-                currBlock->setTopLeftCol(tlCol);
-                currBlock->setHorizontal(false);
+                rowsOfDesination = std::vector<int>{tlRow + 3, tlRow + 3, tlRow + 3, tlRow + 3};
+                colsOfDesination = std::vector<int>{tlCol + 3, tlCol + 2, tlCol + 1, tlCol};
+            }
+            else
+            {
+                rowsOfDesination = std::vector<int>{tlRow + 3, tlRow + 2, tlRow + 1, tlRow};
+                colsOfDesination = std::vector<int>{tlCol - 3, tlCol - 2, tlCol - 1, tlCol};
             }
         }
-        else if (!horizontal && clockwise)
+        for (int i = 0; i < 4; ++i)
         {
-            valid = valid && checkForRotate(cells[tlRow][tlCol], tlRow + 3, tlCol);
-            valid = valid && checkForRotate(cells[tlRow + 1][tlCol], tlRow + 2, tlCol + 1);
-            valid = valid && checkForRotate(cells[tlRow + 2][tlCol], tlRow + 1, tlCol + 2);
-            valid = valid && checkForRotate(cells[tlRow + 3][tlCol], tlRow, tlCol + 3);
-            if (valid)
-            {
-                moveForRotate(cells[tlRow][tlCol], tlRow + 3, tlCol);
-                moveForRotate(cells[tlRow + 1][tlCol], tlRow + 2, tlCol + 1);
-                moveForRotate(cells[tlRow + 2][tlCol], tlRow + 1, tlCol + 2);
-                moveForRotate(cells[tlRow + 3][tlCol], tlRow, tlCol + 3);
-                currBlock->setTopLeftRow(tlRow + 3);
-                currBlock->setTopLeftCol(tlCol);
-                currBlock->setHorizontal(true);
-            }
+            Original.emplace_back(std::make_pair(rowsOfOriginal[i], colsOfOriginal[i]));
+            Desination.emplace_back(std::make_pair(rowsOfDesination[i], colsOfDesination[i]));
         }
-        else if (!horizontal && !clockwise)
-        {
-            valid = valid && checkForRotate(cells[tlRow][tlCol], tlRow + 3, tlCol - 3);
-            valid = valid && checkForRotate(cells[tlRow + 1][tlCol], tlRow + 2, tlCol - 2);
-            valid = valid && checkForRotate(cells[tlRow + 2][tlCol], tlRow + 1, tlCol - 1);
-            valid = valid && checkForRotate(cells[tlRow + 3][tlCol], tlRow, tlCol);
-            if (valid)
-            {
-                moveForRotate(cells[tlRow][tlCol], tlRow + 3, tlCol - 3);
-                moveForRotate(cells[tlRow + 1][tlCol], tlRow + 2, tlCol - 2);
-                moveForRotate(cells[tlRow + 2][tlCol], tlRow + 1, tlCol - 1);
-                moveForRotate(cells[tlRow + 3][tlCol], tlRow, tlCol);
-                currBlock->setTopLeftRow(tlRow + 3);
-                currBlock->setTopLeftCol(tlCol - 3);
-                currBlock->setHorizontal(true);
-            }
-        }
+        rotateHelper(false, horizontal, Original, Desination);
+    }
+    std::cerr << "after " << std::endl;
+    components = currBlock->getComponents();
+    for (int i = 0; i < 4; ++i)
+    {
+        std::cerr << "row: " << components[i]->getY() << "  col: " << components[i]->getX() << std::endl;
     }
 }
 

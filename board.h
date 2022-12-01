@@ -28,10 +28,11 @@ class Board
     void update();
     int checkClear();
     void addstar();
-    bool checkForRotate(Cell *cellPtr, int newRow, int newCol);
-    void moveForRotate(Cell *cellPtr, int newRow, int newCol);
+    bool checkForRotate(Cell *cellPtr, int newRow, int newCol, std::vector<int> &rowsOfBlockDesination, std::vector<int> &colsOfBlockDesination);
+    void moveForRotate(Cell *cellPtr, int newRow, int newCol, std::vector<int> &rowsOfBlockDesination, std::vector<int> &colsOfBlockDesination);
     bool checkForCurrBlock(std::vector<Cell *> currCells);
     bool checkRowClear(int row);
+    void rotateHelper(bool twoThree, bool horizontal, std::vector<std::pair<int, int>> Original, std::vector<std::pair<int, int>> Desination);
 
 public:
     Board(int level, bool seedBool, unsigned int seed, std::string L0File);
