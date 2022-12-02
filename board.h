@@ -20,14 +20,14 @@ class Board
     bool isHeavy;
     bool isForce;
     bool over;
+    bool seedBool;
+    unsigned int seed;
+    std::string L0File;
     std::unique_ptr<Block> currBlock;
     std::unique_ptr<Block> nextBlock;
     std::unique_ptr<Level> currLevel;
     std::vector<std::vector<std::shared_ptr<Cell>>> cells;
     std::vector<std::unique_ptr<Block>> blocksPlaced;
-    bool seedBool;
-    unsigned int seed;
-    std::string L0File;
     void update();
     int checkClear();
     void addstar();

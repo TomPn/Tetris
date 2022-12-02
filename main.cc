@@ -40,10 +40,10 @@ int main(int argc, char **argv) {
             ++argi;
         }
     }
-    std::vector<std::unique_ptr<Observer>> observers;
+    
     auto game = std::make_unique<Game>(startLevel, seed, haveSeed, haveScript1, haveScript2, scriptfile1, scriptfile2);
-    observers.emplace_back(std::make_unique<TextViewer>(game.get()));
-    if (!textMode)  {observers.emplace_back(std::make_unique<GraphicsViewer>(game.get()));}
+    TextViewer observer1{game.get()};
+    if (!textMode)  {GraphicsViewer observer2{game.get()};}
     game->setNames();
     game->start();
 }

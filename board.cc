@@ -24,7 +24,7 @@ const int rows = 20;
 const int cols = 11;
 
 Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
-    : level{level}, score{0}, blockCount{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false},
+    : playerName{""}, level{level}, score{0}, blockCount{0}, trigger{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false},
       seedBool{seedBool}, seed{seed}, L0File{L0File}
 {
     std::vector<std::vector<std::shared_ptr<Cell>>> cells(rows, std::vector<std::shared_ptr<Cell>>(cols, nullptr));

@@ -120,13 +120,14 @@ std::string CommandInterpreter::getCommand() {
     if (cin.eof()) return "ENDGAME";
     // check if a multiplier exists
     if (isDigit(command[0])) {
-        for (int i = 0; i < command.length(); ++i) {
+        int len = command.length();
+        for (int i = 0; i < len; ++i) {
             if (!isDigit(command[i])) {
                 break;
             }
             ++commandIndex;
         }
-        if (commandIndex >= command.length()) {
+        if (commandIndex >= len) {
             return "";
         }
         multiplier = toInt(command.substr(0,commandIndex));

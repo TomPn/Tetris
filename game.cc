@@ -33,6 +33,8 @@ Game::Game(int startLevel, unsigned int seed, bool haveSeed, bool haveScript1, b
     {
         this->scriptfile2 = "sequence2.txt";
     }
+    isOver = 0;
+    hiScore = 0;
     curPlayer = std::make_unique<Board>(startLevel, haveSeed, seed, this->scriptfile1);
     opponent = std::make_unique<Board>(startLevel, haveSeed, seed, this->scriptfile2);
     std::vector<std::string> commands{"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "I", "J", "L", "O", "S", "Z", "T", "restart", "printtext", "printgraphics", "heavy", "force", "blind", "ENDGAME"};

@@ -3,11 +3,12 @@
 #include "observer.h"
 #include "game.h"
 #include "xWindow.h"
+#include <memory>
 
 class GraphicsViewer: public Observer {
     Game *subject;
     const int top, bot, left, right;
-    Xwindow *window;
+    std::unique_ptr<Xwindow> window;
     public:
         GraphicsViewer(Game *subject);
         void printPlayer(int row_start, int row_end,int x, int y, int player);

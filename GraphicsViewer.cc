@@ -9,7 +9,7 @@ const int dim = 20;
 
 GraphicsViewer::GraphicsViewer(Game *subject) : subject{subject}, top{0}, bot{65}, left{0}, right{60}
 {
-    window = new Xwindow{(this->right - this->left + 1) * 10, (this->bot - this->top + 1) * 10};
+    window = std::make_unique<Xwindow>((this->right - this->left + 1) * 10, (this->bot - this->top + 1) * 10);
     subject->attach(this);
 }
 
