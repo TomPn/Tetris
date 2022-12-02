@@ -33,18 +33,13 @@ Game::Game(int startLevel, unsigned int seed, bool haveSeed, bool haveScript1, b
     {
         this->scriptfile2 = "sequence2.txt";
     }
-
-    curPlayer = new Board{startLevel, haveSeed, seed, this->scriptfile1};
-    opponent = new Board{startLevel, haveSeed, seed, this->scriptfile2};
+    curPlayer = std::make_unique<Board>(startLevel, haveSeed, seed, this->scriptfile1);
+    opponent = std::make_unique<Board>(startLevel, haveSeed, seed, this->scriptfile2);
     std::vector<std::string> commands{"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "I", "J", "L", "O", "S", "Z", "T", "restart", "printtext", "printgraphics", "heavy", "force", "blind", "ENDGAME"};
-    cmdInter = new CommandInterpreter{commands};
+    cmdInter = std::make_unique<CommandInterpreter>(commands);
 }
 
-Game::~Game() {
-    delete curPlayer;
-    delete opponent;
-    delete cmdInter;
-}
+Game::~Game() {}
 
 void Game::start()
 {
@@ -465,10 +460,8 @@ void Game::levelDown(int multiplier)
 
 void Game::restart()
 {
-    delete curPlayer;
-    delete opponent;
-    curPlayer = new Board{startLevel, haveSeed, seed, scriptfile1};
-    opponent = new Board{startLevel, haveSeed, seed, scriptfile2};
+    curPlayer = std::make_unique<Board>(startLevel, haveSeed, seed, this->scriptfile1);
+    opponent = std::make_unique<Board>(startLevel, haveSeed, seed, this->scriptfile2);
     playerRound = 0;
     isOver = 0;
     Subject::notifyObservers(false);
@@ -551,5 +544,4 @@ std::string Game::getName(bool player) {
     } else {
         return opponent->getName();
     }
-
 }

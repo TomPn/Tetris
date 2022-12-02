@@ -4,6 +4,8 @@
 #include "graphicsViewer.h"
 #include <sstream>
 #include <iostream>
+#include <memory>
+
 int main(int argc, char **argv) {
     bool textMode = 0;
     bool haveSeed = 0;
@@ -38,14 +40,10 @@ int main(int argc, char **argv) {
             ++argi;
         }
     }
-    std::vector<Observer*> observers;
-    Game * game = new Game{startLevel, seed, haveSeed, haveScript1, haveScript2, scriptfile1, scriptfile2};
-    observers.emplace_back(new TextViewer{game});
-    if (!textMode)  {observers.emplace_back(new GraphicsViewer{game});}
+    std::vector<std::unique_ptr<Observer>> observers;
+    auto game = std::make_unique<Game>(startLevel, seed, haveSeed, haveScript1, haveScript2, scriptfile1, scriptfile2);
+    observers.emplace_back(std::make_unique<TextViewer>(game.get()));
+    if (!textMode)  {observers.emplace_back(std::make_unique<GraphicsViewer>(game.get()));}
     game->setNames();
     game->start();
-    delete game;
-    for (auto it: observers) {
-        delete it;
-    }
 }

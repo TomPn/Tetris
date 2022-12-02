@@ -15,8 +15,7 @@ struct XWindowImpl {
     unsigned long colours[10];
 };
 
-Xwindow::Xwindow(int width, int height): pImpl{new XWindowImpl} {
-
+Xwindow::Xwindow(int width, int height): pImpl{std::make_unique<XWindowImpl>()} {
   pImpl->d = XOpenDisplay(NULL);
   if (pImpl->d == NULL) {
     cerr << "Cannot open display" << endl;

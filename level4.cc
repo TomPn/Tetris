@@ -1,8 +1,7 @@
 #include "level4.h"
+#include "block.h"
 #include <string>
 #include <cstdlib>
-
-class Block;
 
 void Level4::setL0File(std::string L0File) {}
 
@@ -18,9 +17,9 @@ void Level4::setNoRandom(bool noRandom, std::string noRandomFile)
     }
 }
 
-Block *Level4::CreateNextBlock()
+std::unique_ptr<Block> Level4::CreateNextBlock()
 {
-    Block *nextBlock;
+    std::unique_ptr<Block> nextBlock;
     if (noRandomBool)
     {
         if (noRandomFileIndex == noRandomFileContent.size())

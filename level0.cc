@@ -1,10 +1,11 @@
-#include <fstream>
 #include "level0.h"
+#include "block.h"
+#include <fstream>
 #include <string>
 #include <iostream>
 using std::cout;
 using std::endl;
-class Block;
+
 
 void Level0::setL0File(std::string L0File)
 {
@@ -14,14 +15,15 @@ void Level0::setL0File(std::string L0File)
 
 void Level0::setNoRandom(bool noRandom, std::string noRandomFile) {}
 
-Block *Level0::CreateNextBlock()
+std::unique_ptr<Block> Level0::CreateNextBlock()
 {
     // if the index exceeds the length of content, set the index to 0 so that the program will read it again from the beginning
-    if (L0FileIndex == L0FileContent.size())
+    int fileSize = L0FileContent.size();
+    if (L0FileIndex == fileSize)
     {
         L0FileIndex = 0;
     }
-    Block *nextBlock = Level::CreateNextFromFile(L0FileContent, L0FileIndex);
+    auto nextBlock = Level::CreateNextFromFile(L0FileContent, L0FileIndex);
     // increment index
     ++L0FileIndex;
     return nextBlock;

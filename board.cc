@@ -16,6 +16,9 @@
 #include "level3.h"
 #include "level4.h"
 #include <vector>
+#include <iostream>
+using std::cout;
+using std::endl;
 
 const int rows = 20;
 const int cols = 11;
@@ -24,12 +27,12 @@ Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
     : level{level}, score{0}, blockCount{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false},
       seedBool{seedBool}, seed{seed}, L0File{L0File}
 {
-    std::vector<std::vector<Cell *>> cells(rows, std::vector<Cell *>(cols, nullptr));
+    std::vector<std::vector<std::shared_ptr<Cell>>> cells(rows, std::vector<std::shared_ptr<Cell>>(cols, nullptr));
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < cols; j++)
         {
-            cells[i][j] = new Cell{' ', j, i};
+            cells[i][j] = std::make_shared<Cell>(' ', j, i);
         }
     }
     for (int i = 0; i < rows; i++)
@@ -39,71 +42,60 @@ Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
             // check if the cell is at the first row
             if (cells[i][j]->getY() != 0)
             {
-                cells[i][j]->setNeighbour('t', cells[i - 1][j]);
+                cells[i][j]->setNeighbour('t', cells[i - 1][j].get());
             }
             // check if the cell is at the last row
             if (cells[i][j]->getY() != rows - 1)
             {
-                cells[i][j]->setNeighbour('b', cells[i + 1][j]);
+                cells[i][j]->setNeighbour('b', cells[i + 1][j].get());
             }
             // check if the cell is at the leftmost col
             if (cells[i][j]->getX() != 0)
             {
-                cells[i][j]->setNeighbour('l', cells[i][j - 1]);
+                cells[i][j]->setNeighbour('l', cells[i][j - 1].get());
             }
             // check if the cell is at the rightmost col
             if (cells[i][j]->getX() != cols - 1)
             {
-                cells[i][j]->setNeighbour('r', cells[i][j + 1]);
+                cells[i][j]->setNeighbour('r', cells[i][j + 1].get());
             }
         }
     }
     this->cells = cells;
     // initialize currLevel
-    Level *tempLevel;
     if (level == 0)
     {
-        tempLevel = new Level0{seedBool, seed, cells};
-        tempLevel->setL0File(L0File);
-        
+        currLevel = std::make_unique<Level0>(seedBool, seed, cells);
+        currLevel->setL0File(this->L0File);
     }
     else if (level == 1)
     {
-        tempLevel = new Level1{seedBool, seed, cells};
+        auto currLevel = std::make_unique<Level1>(seedBool, seed, cells);
     }
     else if (level == 2)
     {
-        tempLevel = new Level2{seedBool, seed, cells};
+        auto currLevel = std::make_unique<Level2>(seedBool, seed, cells);
     }
     else if (level == 3)
     {
-        tempLevel = new Level3{seedBool, seed, cells};
+        auto currLevel = std::make_unique<Level3>(seedBool, seed, cells);
     }
     else if (level == 4)
     {
-        tempLevel = new Level4{seedBool, seed, cells};
+        auto currLevel = std::make_unique<Level4>(seedBool, seed, cells);
     }
-    currLevel = tempLevel;
     // get a next block and set it as currBlock
-    nextBlock = currLevel->CreateNextBlock();
-    char blockType = nextBlock->getBlockType();
+    char blockType;
+    if (true) {
+        nextBlock = currLevel->CreateNextBlock();
+        blockType = nextBlock->getBlockType();
+    }
     setCurrBlock(blockType);
-    delete nextBlock;
     // then get another next block as nextBlock
-    nextBlock = currLevel->CreateNextBlock();
-    this->nextBlock = nextBlock;
+    this->nextBlock = currLevel->CreateNextBlock();
 }
 
-Board::~Board() {
-    delete currBlock;
-    delete nextBlock;
-    delete currLevel;
-    for (auto it: cells) {
-        for (auto it2: it) {
-            delete it2;
-        }
-    }
-}
+Board::~Board() {}
 
 bool Board::right(int mult)
 {
@@ -190,8 +182,8 @@ bool Board::drop()
     }
 
     // set current block to next block, delete the old next block, and generate a new next block
+    blocksPlaced.emplace_back(std::move(currBlock));
     bool over = !setCurrBlock(nextBlock->getBlockType());
-    delete (nextBlock);
     over = over || checkRowClear(3);
     nextBlock = currLevel->CreateNextBlock();
     return prompt;
@@ -211,7 +203,7 @@ void Board::rotateHelper(bool rectangleType, bool horizontal, std::vector<int> r
 
         for (int i = 0; i < 6; ++i) {
             // search for all 4 rotating cells
-            if (cells[rowsOfOriginal[i]][colsOfOriginal[i]]->getBlock() == currBlock) {
+            if (cells[rowsOfOriginal[i]][colsOfOriginal[i]]->getBlock() == currBlock.get()) {
                 realRotateRows.emplace_back(rowsOfDestination[i]);
                 realRotateCols.emplace_back(colsOfDestination[i]);
             }
@@ -229,7 +221,7 @@ void Board::rotateHelper(bool rectangleType, bool horizontal, std::vector<int> r
 
     for (int i = 0; i < 4; ++i) {
         // if the resulting cell is not empty and is not one of the current block's cell, it means the destination is occupied, hence do nothing
-        if ((cells[realRotateRows[i]][realRotateCols[i]]->getChar(false) != ' ') && (cells[realRotateRows[i]][realRotateCols[i]]->getBlock() != currBlock)) {
+        if ((cells[realRotateRows[i]][realRotateCols[i]]->getChar(false) != ' ') && (cells[realRotateRows[i]][realRotateCols[i]]->getBlock() != currBlock.get())) {
             return;
         }
     }
@@ -247,9 +239,9 @@ void Board::rotateHelper(bool rectangleType, bool horizontal, std::vector<int> r
     for (int i = 0; i < 4; ++i) {
         // initialize and assign new cells
         cells[realRotateRows[i]][realRotateCols[i]]->setChar(blockType);
-        cells[realRotateRows[i]][realRotateCols[i]]->setBlock(currBlock);
+        cells[realRotateRows[i]][realRotateCols[i]]->setBlock(currBlock.get());
         // replace cell
-        components[i] = cells[realRotateRows[i]][realRotateCols[i]];
+        components[i] = cells[realRotateRows[i]][realRotateCols[i]].get();
         // update the minimum row and column
         if (realRotateRows[i] < minRow) {minRow = realRotateRows[i];}
         if (realRotateCols[i] < minCol) {minCol = realRotateCols[i];}
@@ -362,24 +354,23 @@ void Board::levelDown()
     if (level > 0)
     {
         level--;
-        Level *tmp = currLevel;
-        if (level == 1)
+        if (level == 0)
         {
-            currLevel = new Level1{seedBool, seed, cells};
+            currLevel = std::make_unique<Level0>(seedBool, seed, cells);
+
+        }
+        else if (level == 1)
+        {
+            currLevel = std::make_unique<Level1>(seedBool, seed, cells);
         }
         else if (level == 2)
         {
-            currLevel = new Level2{seedBool, seed, cells};
+            currLevel = std::make_unique<Level2>(seedBool, seed, cells);
         }
         else if (level == 3)
         {
-            currLevel = new Level3{seedBool, seed, cells};
+            currLevel = std::make_unique<Level3>(seedBool, seed, cells);
         }
-        else if (level == 4)
-        {
-            currLevel = new Level4{seedBool, seed, cells};
-        }
-        delete tmp;
     }
 }
 
@@ -388,26 +379,24 @@ void Board::levelUp()
     if (level < 4)
     {
         level++;
-        Level *tmp = currLevel;
         if (level == 1)
         {
-            currLevel = new Level1{seedBool, seed, cells};
+            currLevel = std::make_unique<Level1>(seedBool, seed, cells);
         }
         else if (level == 2)
         {
-            currLevel = new Level2{seedBool, seed, cells};
+            currLevel = std::make_unique<Level2>(seedBool, seed, cells);
         }
         else if (level == 3)
         {
             isHeavy = true;
-            currLevel = new Level3{seedBool, seed, cells};
+            currLevel = std::make_unique<Level3>(seedBool, seed, cells);
         }
         else if (level == 4)
         {
             isHeavy = true;
-            currLevel = new Level4{seedBool, seed, cells};
+            currLevel = std::make_unique<Level4>(seedBool, seed, cells);
         }
-        delete tmp;
     }
 }
 
@@ -483,12 +472,11 @@ int Board::checkClear()
                     if (i2 == i)
                     {
                         // for each cell, identify its block
-                        Block *currBlock = cells[i2][j2]->getBlock();
+                        Block* blockOnBoard = cells[i2][j2]->getBlock();
                         // if that's the last living cell in that block, delete that block
-                        if (currBlock->getAlive() == 1)
+                        if (blockOnBoard->getAlive() == 1)
                         {
-                            score += (currBlock->getLevel() + 1) * (currBlock->getLevel() + 1);
-                            delete currBlock;
+                            score += (blockOnBoard->getLevel() + 1) * (blockOnBoard->getLevel() + 1);
                             cells[i2][j2]->setBlock(nullptr);
                         }
                         else
@@ -511,7 +499,6 @@ int Board::checkClear()
     }
     if (clear > 0)
     {
-
         score += (level + clear) * (level + clear);
     }
     // return
@@ -535,104 +522,100 @@ bool Board::checkForCurrBlock(std::vector<Cell *> currCells)
 bool Board::setCurrBlock(char blockType)
 {
     std::vector<Cell *> currCells;
-    Block *curr;
     if (blockType == 'I')
     {
-        currCells.emplace_back(cells[3][0]);
-        currCells.emplace_back(cells[3][1]);
-        currCells.emplace_back(cells[3][2]);
-        currCells.emplace_back(cells[3][3]);
+        currCells.emplace_back(cells[3][0].get());
+        currCells.emplace_back(cells[3][1].get());
+        currCells.emplace_back(cells[3][2].get());
+        currCells.emplace_back(cells[3][3].get());
         if (!checkForCurrBlock(currCells))
         {
             return false;
         }
-        curr = new IBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+        currBlock = std::make_unique<IBlock>(currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType);
     }
     else if (blockType == 'J')
     {
-        currCells.emplace_back(cells[2][0]);
-        currCells.emplace_back(cells[3][0]);
-        currCells.emplace_back(cells[3][1]);
-        currCells.emplace_back(cells[3][2]);
+        currCells.emplace_back(cells[2][0].get());
+        currCells.emplace_back(cells[3][0].get());
+        currCells.emplace_back(cells[3][1].get());
+        currCells.emplace_back(cells[3][2].get());
         if (!checkForCurrBlock(currCells))
         {
             return false;
         }
-        curr = new JBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+        currBlock = std::make_unique<JBlock>(currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType);
     }
     else if (blockType == 'L')
     {
-        currCells.emplace_back(cells[2][2]);
-        currCells.emplace_back(cells[3][0]);
-        currCells.emplace_back(cells[3][1]);
-        currCells.emplace_back(cells[3][2]);
+        currCells.emplace_back(cells[2][2].get());
+        currCells.emplace_back(cells[3][0].get());
+        currCells.emplace_back(cells[3][1].get());
+        currCells.emplace_back(cells[3][2].get());
         if (!checkForCurrBlock(currCells))
         {
             return false;
         }
-        curr = new LBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+        currBlock = std::make_unique<LBlock>(currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType);
     }
     else if (blockType == 'O')
     {
-        currCells.emplace_back(cells[2][0]);
-        currCells.emplace_back(cells[2][1]);
-        currCells.emplace_back(cells[3][0]);
-        currCells.emplace_back(cells[3][1]);
+        currCells.emplace_back(cells[2][0].get());
+        currCells.emplace_back(cells[2][1].get());
+        currCells.emplace_back(cells[3][0].get());
+        currCells.emplace_back(cells[3][1].get());
         if (!checkForCurrBlock(currCells))
         {
             return false;
         }
-        curr = new OBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+        currBlock = std::make_unique<OBlock>(currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType);
     }
     else if (blockType == 'S')
     {
-        currCells.emplace_back(cells[2][1]);
-        currCells.emplace_back(cells[2][2]);
-        currCells.emplace_back(cells[3][0]);
-        currCells.emplace_back(cells[3][1]);
+        currCells.emplace_back(cells[2][1].get());
+        currCells.emplace_back(cells[2][2].get());
+        currCells.emplace_back(cells[3][0].get());
+        currCells.emplace_back(cells[3][1].get());
         if (!checkForCurrBlock(currCells))
         {
             return false;
         }
-        curr = new SBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+        currBlock = std::make_unique<SBlock>(currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType);
     }
     else if (blockType == 'Z')
     {
-        currCells.emplace_back(cells[2][0]);
-        currCells.emplace_back(cells[2][1]);
-        currCells.emplace_back(cells[3][1]);
-        currCells.emplace_back(cells[3][2]);
+        currCells.emplace_back(cells[2][0].get());
+        currCells.emplace_back(cells[2][1].get());
+        currCells.emplace_back(cells[3][1].get());
+        currCells.emplace_back(cells[3][2].get());
         if (!checkForCurrBlock(currCells))
         {
             return false;
         }
-        curr = new ZBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+        currBlock = std::make_unique<ZBlock>(currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType);
     }
     else if (blockType == 'T')
     {
-        currCells.emplace_back(cells[2][0]);
-        currCells.emplace_back(cells[2][1]);
-        currCells.emplace_back(cells[2][2]);
-        currCells.emplace_back(cells[3][1]);
+        currCells.emplace_back(cells[2][0].get());
+        currCells.emplace_back(cells[2][1].get());
+        currCells.emplace_back(cells[2][2].get());
+        currCells.emplace_back(cells[3][1].get());
         if (!checkForCurrBlock(currCells))
         {
             return false;
         }
-        curr = new TBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+        currBlock = std::make_unique<TBlock>(currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType);
     }
-
     for (auto cell : currCells)
     {
         cell->setChar(blockType);
-        cell->setBlock(curr);
+        cell->setBlock(currBlock.get());
     }
-    currBlock = curr;
     return true;
 }
 
 void Board::IJL(char blockType)
 {
-    delete currBlock;
     setCurrBlock(blockType);
 }
 
@@ -664,9 +647,10 @@ void Board::addstar()
     }
     --availableRow;
     // create the star block and update that cell
-    Block *star = new StarBlock{cells[availableRow][centralCol], nullptr, nullptr, nullptr, 1, level, '*'};
+    std::unique_ptr<Block> star = std::make_unique<StarBlock>(cells[availableRow][centralCol].get(), nullptr, nullptr, nullptr, 1, level, '*');
+    blocksPlaced.emplace_back(std::move(star));
     cells[availableRow][centralCol]->setChar('*');
-    cells[availableRow][centralCol]->setBlock(star);
+    cells[availableRow][centralCol]->setBlock(blocksPlaced.back().get());
 }
 
 void Board::setL0File(std::string L0File)
