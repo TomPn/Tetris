@@ -402,6 +402,7 @@ void Board::levelUp()
 
 void Board::setBlind()
 {
+    update();
     isBlind = true;
 }
 
@@ -433,6 +434,7 @@ int Board::getLevel()
 
 char Board::charAt(int row, int col)
 {
+
     return cells[row][col]->getChar(isBlind);
 }
 
@@ -630,7 +632,7 @@ void Board::IJL(char blockType)
 // update for blind
 void Board::update()
 {
-    for (int row = 2; row < 12; ++row)
+    for (int row = 6; row < 15; ++row)
     {
         for (int col = 2; col < 9; ++col)
         {

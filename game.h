@@ -33,7 +33,7 @@ public:
     void right(int multiplier);
     bool down(int multiplier);
     void rotate(bool clockwise, int multiplier);
-    void drop(int multiplier);
+    bool drop(int multiplier);
     void IJL(char blockType, int multiplier);
     char getState(int player, int row, int col) const override;
     int getLevel(int player) const override;
