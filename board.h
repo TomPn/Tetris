@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 class Board;
 class Block;
 class Level;
@@ -19,10 +20,11 @@ class Board
     bool isHeavy;
     bool isForce;
     bool over;
-    Block *currBlock;
-    Block *nextBlock;
-    Level *currLevel;
-    std::vector<std::vector<Cell *>> cells;
+    std::unique_ptr<Block> currBlock;
+    std::unique_ptr<Block> nextBlock;
+    std::unique_ptr<Level> currLevel;
+    std::vector<std::vector<std::shared_ptr<Cell>>> cells;
+    std::vector<std::unique_ptr<Block>> blocksPlaced;
     bool seedBool;
     unsigned int seed;
     std::string L0File;

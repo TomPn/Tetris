@@ -33,12 +33,7 @@ Block::Block(Cell *cell1, Cell *cell2, Cell *cell3, Cell *cell4, int alive, int 
     topLeftRow = tlRow;
 }
 
-Block::~Block() {
-    for (int i = 0; i < 4; ++i) {
-        components[i]->setChar(' ');
-        components[i]->setBlock(nullptr);
-    }
-}
+Block::~Block() {}
 
 // move the block to the desired direction
 bool Block::move(char dir)

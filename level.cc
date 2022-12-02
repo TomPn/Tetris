@@ -10,7 +10,9 @@
 #include "cell.h"
 #include <string>
 #include <fstream>
-
+#include <iostream>
+using std::cout;
+using std::endl;
 // readFile reads the characters in file/sequence/scriptfile store them in a vector of char
 std::vector<char> Level::readFile(std::string fileName)
 {
@@ -26,13 +28,13 @@ std::vector<char> Level::readFile(std::string fileName)
     return content;
 }
 
-Level::Level(bool seedBool, unsigned int seed, std::vector<std::vector<Cell *>> cells)
+Level::Level(bool seedBool, unsigned int seed, std::vector<std::vector<std::shared_ptr<Cell>>> cells)
     : seedBool{seedBool}, seed{seed}, cells{cells} {} // not sure if vector constructor is used correctly here
 
-Block *Level::CreateBlock(int level, char blockType)
+std::unique_ptr<Block> Level::CreateBlock(int level, char blockType)
 {
-    std::vector<Cell *> currCells;
-    Block *nextBlock;
+    std::vector<std::shared_ptr<Cell>> currCells;
+    std::unique_ptr<Block> nextBlock;
 
     // reset the last two rows
     for (int row = 18; row < 20; ++row)
@@ -43,7 +45,6 @@ Block *Level::CreateBlock(int level, char blockType)
             cells[row][col]->setBlock(nullptr);
         }
     }
-
     // for each blockType, insert the corresponding cells to currCells and create a pointer to a new block of the corresponding blockType
     switch (blockType)
     {
@@ -52,57 +53,59 @@ Block *Level::CreateBlock(int level, char blockType)
         currCells.emplace_back(cells[18][1]);
         currCells.emplace_back(cells[18][2]);
         currCells.emplace_back(cells[18][3]);
-        nextBlock = new IBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+        nextBlock = std::make_unique<IBlock>(currCells[0].get(), currCells[1].get(), currCells[2].get(), currCells[3].get(), 4, level, blockType);
         break;
     case 'J':
         currCells.emplace_back(cells[18][0]);
         currCells.emplace_back(cells[19][0]);
         currCells.emplace_back(cells[19][1]);
         currCells.emplace_back(cells[19][2]);
-        nextBlock = new JBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+        nextBlock = std::make_unique<JBlock>(currCells[0].get(), currCells[1].get(), currCells[2].get(), currCells[3].get(), 4, level, blockType);
         break;
     case 'L':
         currCells.emplace_back(cells[18][2]);
         currCells.emplace_back(cells[19][0]);
         currCells.emplace_back(cells[19][1]);
         currCells.emplace_back(cells[19][2]);
-        nextBlock = new LBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+        nextBlock = std::make_unique<LBlock>(currCells[0].get(), currCells[1].get(), currCells[2].get(), currCells[3].get(), 4, level, blockType);        
         break;
     case 'O':
         currCells.emplace_back(cells[18][0]);
         currCells.emplace_back(cells[18][1]);
         currCells.emplace_back(cells[19][0]);
         currCells.emplace_back(cells[19][1]);
-        nextBlock = new OBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+        nextBlock = std::make_unique<OBlock>(currCells[0].get(), currCells[1].get(), currCells[2].get(), currCells[3].get(), 4, level, blockType);        
         break;
     case 'S':
         currCells.emplace_back(cells[18][1]);
         currCells.emplace_back(cells[18][2]);
         currCells.emplace_back(cells[19][0]);
         currCells.emplace_back(cells[19][1]);
-        nextBlock = new SBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+        nextBlock = std::make_unique<SBlock>(currCells[0].get(), currCells[1].get(), currCells[2].get(), currCells[3].get(), 4, level, blockType);        
         break;
     case 'Z':
         currCells.emplace_back(cells[18][0]);
         currCells.emplace_back(cells[18][1]);
         currCells.emplace_back(cells[19][1]);
         currCells.emplace_back(cells[19][2]);
-        nextBlock = new ZBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+        nextBlock = std::make_unique<ZBlock>(currCells[0].get(), currCells[1].get(), currCells[2].get(), currCells[3].get(), 4, level, blockType);
         break;
     case 'T':
         currCells.emplace_back(cells[18][0]);
         currCells.emplace_back(cells[18][1]);
         currCells.emplace_back(cells[18][2]);
         currCells.emplace_back(cells[19][1]);
-        nextBlock = new TBlock{currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType};
+        nextBlock = std::make_unique<TBlock>(currCells[0].get(), currCells[1].get(), currCells[2].get(), currCells[3].get(), 4, level, blockType);
         break;
     }
 
     for (auto cell : currCells)
     {
         cell->setChar(blockType);
-        cell->setBlock(nextBlock);
+        cell->setBlock(nextBlock.get());
+        cell = nullptr;
     }
+    
     return nextBlock;
 }
 
@@ -114,12 +117,11 @@ void Level::setSeed(bool seedBool, unsigned int seed)
 }
 
 // generate a newBlock by taking input from file content
-Block *Level::CreateNextFromFile(std::vector<char> content, int index)
+std::unique_ptr<Block> Level::CreateNextFromFile(std::vector<char> content, int index)
 {
     char c = content[index];
     // create new block according to s;
-    Block *nextBlock = CreateBlock(0, c);
-    return nextBlock;
+    return CreateBlock(0, c);
 }
 
 Level::~Level() {}

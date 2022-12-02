@@ -6,14 +6,23 @@
 #include <sstream>
 #include <iostream>
 #include "commandInterpreter.h"
-#include "commandInterpreterImpl.h"
-
 using std::cin;
+
+struct CommandInterpreterImpl {
+    std::string curCommand;
+    int multiplier;
+    std::vector<std::string>remainCommands;
+    std::vector<std::string>commands;
+    std::map<std::string, std::string>renameMap;
+    std::map<std::string, std::vector<std::string>>macros;
+};
 
 bool CommandInterpreter::isDigit(char c) {
     if (c >= '0' && c <= '9') return true;
     return false;
 }
+
+CommandInterpreter::~CommandInterpreter() {}
 
 std::string CommandInterpreter::toString(int i) {
     std::stringstream os;
@@ -31,7 +40,8 @@ int CommandInterpreter::toInt(std::string s) {
     return i;
 }
 
-CommandInterpreter::CommandInterpreter(std::vector<std::string> commands): pImpl{new CommandInterpreterImpl} {
+CommandInterpreter::CommandInterpreter(std::vector<std::string> commands) {
+    pImpl = std::make_unique<CommandInterpreterImpl>();
     pImpl->commands = commands;
 }
 

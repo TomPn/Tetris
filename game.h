@@ -2,6 +2,7 @@
 #define _GAME_H_
 #include <iostream>
 #include <string>
+#include <memory>
 #include "subject.h"
 class CommandInterpreter;
 class Board;
@@ -18,9 +19,9 @@ class Game : public Subject
     int hiScore;
     std::string scriptfile1;
     std::string scriptfile2;
-    Board *curPlayer;
-    Board *opponent;
-    CommandInterpreter *cmdInter;
+    std::unique_ptr<Board> curPlayer;
+    std::unique_ptr<Board> opponent;
+    std::unique_ptr<CommandInterpreter> cmdInter;
     bool isDigit(char c);
     int toInt(std::string s);
 

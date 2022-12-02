@@ -3,13 +3,15 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <memory>
 
 class CommandInterpreterImpl;
 
 class CommandInterpreter {
-    CommandInterpreterImpl * pImpl;
+    std::unique_ptr<CommandInterpreterImpl> pImpl;
     public:
         CommandInterpreter(std::vector<std::string> commands);
+        ~CommandInterpreter();
         // bool setCM();
         std::string getCommand();
         int getMultiplier();

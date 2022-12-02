@@ -13,11 +13,9 @@ GraphicsViewer::GraphicsViewer(Game *subject) : subject{subject}, top{0}, bot{65
     subject->attach(this);
 }
 
-
 GraphicsViewer::~GraphicsViewer()
 {
     subject->detach(this);
-    delete window;
     window = nullptr;
 }
 

@@ -2,11 +2,12 @@
 #define __XWINDOW_H__
 #include <X11/Xlib.h>
 #include <string>
+#include <memory>
 
 class XWindowImpl;
 
 class Xwindow {
-  XWindowImpl * pImpl;
+  std::unique_ptr<XWindowImpl> pImpl;
 
  public:
   Xwindow(int width=500, int height=500);  // Constructor; displays the window.

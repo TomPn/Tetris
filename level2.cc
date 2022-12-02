@@ -1,15 +1,14 @@
 #include "level2.h"
+#include "block.h"
 #include <string>
 #include <cstdlib>
-
-class Block;
 
 void Level2::setL0File(std::string L0File) {}
 void Level2::setNoRandom(bool noRandom, std::string noRandomFile) {}
 
-Block *Level2::CreateNextBlock()
+std::unique_ptr<Block> Level2::CreateNextBlock()
 {
-    Block *nextBlock;
+    std::unique_ptr<Block> nextBlock;
     // set up the seed
     if (seedBool == true)
     {
