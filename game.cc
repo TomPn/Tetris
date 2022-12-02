@@ -26,18 +26,24 @@ Game::Game(int startLevel, unsigned int seed, bool haveSeed, bool haveScript1, b
 {
     if (!haveScript1)
     {
-        scriptfile1 = "sequence1.txt";
+        this->scriptfile1 = "sequence1.txt";
     }
 
     if (!haveScript2)
     {
-        scriptfile2 = "sequence2.txt";
+        this->scriptfile2 = "sequence2.txt";
     }
 
-    curPlayer = new Board{startLevel, haveSeed, seed, scriptfile1};
-    opponent = new Board{startLevel, haveSeed, seed, scriptfile2};
+    curPlayer = new Board{startLevel, haveSeed, seed, this->scriptfile1};
+    opponent = new Board{startLevel, haveSeed, seed, this->scriptfile2};
     std::vector<std::string> commands{"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "I", "J", "L", "O", "S", "Z", "T", "restart", "printtext", "printgraphics", "heavy", "force", "blind", "ENDGAME"};
     cmdInter = new CommandInterpreter{commands};
+}
+
+Game::~Game() {
+    delete curPlayer;
+    delete opponent;
+    delete cmdInter;
 }
 
 void Game::start()
@@ -58,7 +64,8 @@ void Game::start()
         }
         if (isDigit(command[0]))
         {
-            for (int i = 0; i < command.length(); ++i)
+            int len = command.length();
+            for (int i = 0; i < len; ++i)
             {
                 if (!isDigit(command[i]))
                 {
@@ -72,37 +79,26 @@ void Game::start()
         if (command == "left" && !isOver)
         {
             left(multiplier);
-            Subject::notifyObservers(false);
         }
         else if (command == "right" && !isOver)
         {
             right(multiplier);
-            Subject::notifyObservers(false);
         }
         else if (command == "down" && !isOver)
         {
             down(multiplier);
-            Subject::notifyObservers(false);
         }
         else if (command == "clockwise" && !isOver)
         {
             rotate(1, multiplier);
-            Subject::notifyObservers(false);
         }
         else if (command == "counterclockwise" && !isOver)
         {
             rotate(0, multiplier);
-
-            Subject::notifyObservers(false)
         }
         else if (command == "drop" && !isOver)
         {
             drop(multiplier);
-            if (isOver) {
-                Subject::notifyObservers(true);
-            } else {
-                Subject::notifyObservers(false);
-            }
         }
         else if (command == "levelup" && !isOver)
         {
@@ -127,8 +123,8 @@ void Game::start()
         }
         else if (command == "restart")
         {
-            
             restart();
+
         }
         else if (command == "heavy" && !isOver)
         {
@@ -225,7 +221,7 @@ void Game::left(int multiplier)
     {
         drop(1);
     }
-    Subject::notifyObservers();
+    Subject::notifyObservers(false);
 }
 
 void Game::right(int multiplier)
@@ -243,7 +239,7 @@ void Game::right(int multiplier)
     {
         drop(1);
     }
-    Subject::notifyObservers();
+    Subject::notifyObservers(false);
 }
 
 bool Game::down(int multiplier)
@@ -267,7 +263,7 @@ bool Game::down(int multiplier)
                 break;
             }
         }
-        Subject::notifyObservers();
+        Subject::notifyObservers(false);
     }
     return false;
 }
@@ -286,49 +282,64 @@ void Game::rotate(bool clockwise, int multiplier)
         {
             opponent->rotate(clockwise);
         }
-        Subject::notifyObservers();
+        Subject::notifyObservers(false);
     }
 }
 
-bool Game::drop(int multiplier)
+void Game::drop(int multiplier)
 {
     bool prompt;
     for (int i = 0; i < multiplier; ++i)
     {
+        // player 0 turn
         if (!playerRound)
         {
+            // drop the block and check if the game is over
             prompt = curPlayer->drop();
             isOver = curPlayer->getOver();
-            isOver = true;
             if (isOver)
             {
+                Subject::notifyObservers(false);
                 break;
             }
+            // switch player round
             playerRound = 1;
+            // update the highest score
             if (curPlayer->getScore() > hiScore)
             {
                 hiScore = curPlayer->getScore();
             }
         }
+        // player 1 turn
         else
         {
+            // drop the block and check if the game is over
             prompt = opponent->drop();
-            isOver = curPlayer->getOver();
+            isOver = opponent->getOver();
             if (isOver)
             {
+                Subject::notifyObservers(false);
                 break;
             }
+            // switch player round
             playerRound = 0;
+            // update the highest score
             if (opponent->getScore() > hiScore)
             {
-                hiScore = curPlayer->getScore();
+                hiScore = opponent->getScore();
             }
         }
+        // print the state after the move
         Subject::notifyObservers(false);
+        // if 2+ rows have been cleared, print the prompt and let player choose special actions
         if (prompt)
         {
             Subject::notifyObserversPrompt();
         }
+    }
+    // if the game is over, let the player choose whether end the game or play again
+    if (isOver) {
+        Subject::notifyObservers(true);
     }
 }
 
@@ -344,7 +355,7 @@ void Game::IJL(char blockType, int multiplier)
         {
             opponent->IJL(blockType);
         }
-        Subject::notifyObservers();
+        Subject::notifyObservers(false);
     }
 }
 
@@ -432,7 +443,7 @@ void Game::levelUp(int multiplier)
         {
             opponent->levelUp();
         }
-        Subject::notifyObservers();
+        Subject::notifyObservers(false);
     }
 }
 
@@ -448,7 +459,7 @@ void Game::levelDown(int multiplier)
         {
             opponent->levelDown();
         }
-        Subject::notifyObservers();
+        Subject::notifyObservers(false);
     }
 }
 
@@ -458,6 +469,9 @@ void Game::restart()
     delete opponent;
     curPlayer = new Board{startLevel, haveSeed, seed, scriptfile1};
     opponent = new Board{startLevel, haveSeed, seed, scriptfile2};
+    playerRound = 0;
+    isOver = 0;
+    Subject::notifyObservers(false);
 }
 
 void Game::blind()
@@ -520,8 +534,6 @@ int Game::getHiScore()
 void Game::over() {
     notifyObservers(true);
 }
-
-Game::~Game() {}
 
 void Game::setNames() {
     cout << "Enter Player1 Name: " << endl;

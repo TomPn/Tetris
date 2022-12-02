@@ -1,7 +1,9 @@
 #include <fstream>
 #include "level0.h"
 #include <string>
-
+#include <iostream>
+using std::cout;
+using std::endl;
 class Block;
 
 void Level0::setL0File(std::string L0File)
