@@ -4,17 +4,18 @@
 #include "observer.h"
 #include "game.h"
 
-class TextViewer: public Observer {
+class TextViewer : public Observer
+{
     Game *subject;
     std::ostream &out = std::cout;
 
-    public:
-        TextViewer(Game *subject);
-        void notify(bool over) override;
-        void printData(std::string dataType);
-        void printLine();
-        ~TextViewer();
-}; 
+public:
+    TextViewer(Game *subject);
+    void notify(bool over) override;
+    void prompt() override;
+    void printData(std::string dataType);
+    void printLine();
+    ~TextViewer();
+};
 
 #endif
-

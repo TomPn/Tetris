@@ -23,5 +23,14 @@ void Subject::notifyObservers(bool over)
   for (auto ob : observers)
   {
       ob->notify(over);
+    ob->notify();
+  }
+}
+
+void Subject::notifyObserversPrompt()
+{
+  for (auto ob : observers)
+  {
+    ob->prompt();
   }
 }

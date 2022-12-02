@@ -37,11 +37,11 @@ class Board
 
 public:
     Board(int level, bool seedBool, unsigned int seed, std::string L0File);
-    void right(int mult);
-    void left(int mult);
+    bool right(int mult);
+    bool left(int mult);
     bool down();
     void rotate(bool clockwise);
-    void drop();
+    bool drop();
     void levelDown();
     void levelUp();
     void setBlind();
