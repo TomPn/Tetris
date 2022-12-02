@@ -36,7 +36,7 @@ Game::Game(int startLevel, unsigned int seed, bool haveSeed, bool haveScript1, b
     
     curPlayer = new Board{startLevel, haveSeed, seed, scriptfile1};
     opponent = new Board{startLevel, haveSeed, seed, scriptfile2};
-    std::vector<std::string> commands { "left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "I", "J", "L", "O", "S", "Z", "T", "restart", "printtext", "printgraphics"};
+    std::vector<std::string> commands { "left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "I", "J", "L", "O", "S", "Z", "T", "restart", "printtext", "printgraphics", "ENDGAME"};
     
     cmdInter = new CommandInterpreter{commands};
 }
@@ -44,14 +44,17 @@ Game::Game(int startLevel, unsigned int seed, bool haveSeed, bool haveScript1, b
 void Game::start()
 {
     std::string command;
-    Subject::notifyObservers();
+    Subject::notifyObservers(false);
+
     while (true)
     {
         int multiplier = 1;
         int commandIndex = 0;
         command = cmdInter->getCommand();
-        if (command == "ENDGAME")
+
+        if (command == "ENDGAME") {
             break;
+        }
         if (isDigit(command[0]))
         {
             for (int i = 0; i < command.length(); ++i)
@@ -65,63 +68,69 @@ void Game::start()
             multiplier = toInt(command.substr(0, commandIndex));
             command = command.substr(commandIndex, command.length() - commandIndex);
         }
-        if (command == "left")
+        if (command == "left" && !isOver)
         {
             left(multiplier);
-            Subject::notifyObservers();
+            Subject::notifyObservers(false);
         }
-        else if (command == "right")
+        else if (command == "right" && !isOver)
         {
             right(multiplier);
-            Subject::notifyObservers();
+            Subject::notifyObservers(false);
         }
-        else if (command == "down")
+        else if (command == "down" && !isOver)
         {
             down(multiplier);
-            Subject::notifyObservers();
+            Subject::notifyObservers(false);
         }
-        else if (command == "clockwise")
+        else if (command == "clockwise" && !isOver)
         {
             rotate(1, multiplier);
-            Subject::notifyObservers();
+            Subject::notifyObservers(false);
         }
-        else if (command == "counterclockwise")
+        else if (command == "counterclockwise" && !isOver)
         {
             rotate(0, multiplier);
-            Subject::notifyObservers();
+            Subject::notifyObservers(false);
         }
-        else if (command == "drop")
+        else if (command == "drop" && !isOver)
         {
             drop(multiplier);
-            Subject::notifyObservers();
+            if (isOver) {
+                Subject::notifyObservers(true);
+            } else {
+                Subject::notifyObservers(false);
+            }
         }
-        else if (command == "levelup")
+        else if (command == "levelup" && !isOver)
         {
             levelUp(multiplier);
         }
-        else if (command == "leveldown")
+        else if (command == "leveldown" && !isOver)
         {
             levelDown(multiplier);
         }
-        else if (command == "norandom")
+        else if (command == "norandom" && !isOver)
         {
             cin >> command;
             noRandom(command);
         }
-        else if (command == "random")
+        else if (command == "random" && !isOver)
         {
             random();
         }
-        else if (command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T")
+        else if ((command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T") && !isOver)
         {
             IJL(command[0], multiplier);
         }
         else if (command == "restart")
         {
+            
             restart();
         }
-        else if (command == "heavy")
+        else if (command == "heavy" && !isOver)
         {
+            std::cout << "heavy" << std::endl;
             // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
             if (playerRound)
             {
@@ -141,7 +150,7 @@ void Game::start()
                 }
             }
         }
-        else if (command == "force")
+        else if (command == "force" && !isOver)
         {
             // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
             if (playerRound)
@@ -176,7 +185,7 @@ void Game::start()
                 }
             }
         }
-        else if (command == "blind")
+        else if (command == "blind"  && !isOver)
         {
             // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
             if (playerRound)
@@ -268,11 +277,15 @@ void Game::drop(int multiplier)
         {
             curPlayer->drop();
             isOver = curPlayer->getOver();
+            isOver = true;
             if (isOver)
             {
-                // over()
+                break;
             }
             playerRound = 1;
+            if (curPlayer->getScore() > hiScore) {
+                hiScore = curPlayer->getScore();
+            }
         }
         else
         {
@@ -280,9 +293,12 @@ void Game::drop(int multiplier)
             isOver = curPlayer->getOver();
             if (isOver)
             {
-                // over()
+                break;
             }
             playerRound = 0;
+            if (opponent->getScore() > hiScore) {
+                hiScore = curPlayer->getScore();
+            }
         }
     }
 }
@@ -468,4 +484,28 @@ int Game::getHiScore()
     return hiScore;
 }
 
+
+void Game::over() {
+    notifyObservers(true);
+}
+
 Game::~Game() {}
+
+void Game::setNames() {
+    cout << "Enter Player1 Name: " << endl;
+    std::string name;
+    cin >> name;
+    curPlayer->setName(name);
+    cout << "Enter Player2 Name: " << endl;
+    cin >> name;
+    opponent->setName(name);
+}
+
+std::string Game::getName(bool player) {
+    if (!player) {
+        return curPlayer->getName();
+    } else {
+        return opponent->getName();
+    }
+
+}
