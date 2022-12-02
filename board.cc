@@ -549,7 +549,6 @@ void Board::levelUp()
         else if (level == 4)
         {
             isHeavy = true;
-            blockCount = 0;
             currLevel = new Level4{seedBool, seed, cells};
         }
         delete tmp;
@@ -656,11 +655,13 @@ int Board::checkClear()
     }
     if (clear > 0)
     {
+
         score += (level + clear) * (level + clear);
     }
     // return
     return clear;
 }
+
 
 bool Board::checkForCurrBlock(std::vector<Cell *> currCells)
 {
@@ -836,3 +837,13 @@ bool Board::getOver()
 {
     return over;
 }
+
+
+void Board::setName(std::string name) {
+    playerName = name;
+} 
+
+std::string Board::getName() {
+    return playerName;
+}
+

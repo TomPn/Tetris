@@ -49,6 +49,8 @@ public:
     void force(char blockType);
     void checkOver();
     void over();
+    void setNames();
+    std::string getName(bool player);
     ~Game();
 };
 

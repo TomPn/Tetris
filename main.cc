@@ -42,6 +42,7 @@ int main(int argc, char **argv) {
     Game * game = new Game{startLevel, seed, haveSeed, haveScript1, haveScript2, scriptfile1, scriptfile2};
     observers.emplace_back(new TextViewer{game});
     if (!textMode)  {observers.emplace_back(new GraphicsViewer{game});}
+    game->setNames();
     game->start();
     delete game;
 }

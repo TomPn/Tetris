@@ -11,7 +11,7 @@ class TextViewer : public Observer
 
 public:
     TextViewer(Game *subject);
-    void notify() override;
+    void notify(bool over) override;
     void prompt() override;
     void printData(std::string dataType);
     void printLine();
