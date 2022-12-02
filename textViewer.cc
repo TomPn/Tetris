@@ -76,7 +76,7 @@ void TextViewer::notify(bool over)
         out << "          GAME OVER" << endl;
         out << "Game Summary:" << endl << endl;
         out << " Player: "<< subject->getName(0) << "'s score: " << subject->getScore(0) << endl;
-        out << " Player: "<< subject->getName(0) << "'s score: " << subject->getScore(1) << endl;
+        out << " Player: "<< subject->getName(1) << "'s score: " << subject->getScore(1) << endl;
         if (subject->getScore(0) > subject->getScore(1)) {
             out << "          Player: "<< subject->getName(0) << " won!" << endl << endl;
         } else if (subject->getScore(0) < subject->getScore(1)){
