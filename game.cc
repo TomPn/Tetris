@@ -52,6 +52,8 @@ void Game::start()
         command = cmdInter->getCommand();
 
         if (command == "ENDGAME") {
+            isOver = true;
+            Subject::notifyObservers(true);
             break;
         }
         if (isDigit(command[0]))
