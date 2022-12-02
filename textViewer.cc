@@ -6,7 +6,7 @@ using std::endl;
 const int rows = 20;
 const int cols = 11;
 
-TextViewer::TextViewer(Game *subject) : Observer{true}, subject{subject}
+TextViewer::TextViewer(Game *subject) : subject{subject}
 {
     subject->attach(this);
 }
@@ -14,6 +14,11 @@ TextViewer::TextViewer(Game *subject) : Observer{true}, subject{subject}
 TextViewer::~TextViewer()
 {
     subject->detach(this);
+}
+
+void TextViewer::prompt()
+{
+    cout << "Choose your special actions(heavy, blind, or force):" << endl;
 }
 
 void TextViewer::printLine()

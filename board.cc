@@ -97,7 +97,7 @@ Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
     this->nextBlock = nextBlock;
 }
 
-void Board::right(int mult)
+bool Board::right(int mult)
 {
     bool success = currBlock->right();
     if (mult > 1)
@@ -110,11 +110,15 @@ void Board::right(int mult)
     if (success && isHeavy)
     {
         for (int i = 0; i < 2; i++)
-            currBlock->down();
+            if (!currBlock->down())
+            {
+                return true;
+            }
     }
+    return false;
 }
 
-void Board::left(int mult)
+bool Board::left(int mult)
 {
     bool success = currBlock->left();
     if (mult > 1)
@@ -126,9 +130,14 @@ void Board::left(int mult)
     }
     if (success && isHeavy)
     {
+
         for (int i = 0; i < 2; i++)
-            currBlock->down();
+            if (!currBlock->down())
+            {
+                return true;
+            }
     }
+    return false;
 }
 
 bool Board::down()
@@ -136,8 +145,9 @@ bool Board::down()
     return currBlock->down();
 }
 
-void Board::drop()
+bool Board::drop()
 {
+    bool prompt = false;
     // once drop, the Force and Blind is completed and should be reset to false
     isForce = false;
     isBlind = false;
@@ -151,6 +161,7 @@ void Board::drop()
     // if more than two rows are cleared, trigger special action and clear blockCount
     if (clearResult >= 2)
     {
+        prompt = true;
         setTrigger(true);
         blockCount = 0;
     }
@@ -164,10 +175,11 @@ void Board::drop()
     {
         blockCount = 0;
     }
+    std::cerr << blockCount << std::endl;
     // if it's level 4, and blockCount is 5, 10 ,15, etc, then drop a star block to the central col
     if (blockCount % 5 == 0 && blockCount != 0 && level == 4)
     {
-        addstar();
+        addstar(); // bool for losing condition
     }
 
     // set current block to next block, delete the old next block, and generate a new next block
@@ -176,6 +188,7 @@ void Board::drop()
     over = over || checkRowClear(3);
 
     nextBlock = currLevel->CreateNextBlock();
+    return prompt;
 }
 
 //
@@ -206,11 +219,11 @@ void Board::moveForRotate(Cell *cellPtr, int newRow, int newCol, std::vector<int
     std::cerr << "before:" << endl;
     if (cells[newRow][newCol]->getBlock() == currBlock)
     {
-        std::cerr << newRow << "   " << newCol << std::endl;
+        // std::cerr << newRow << "   " << newCol << std::endl;
     }
     if (cells[newRow][newCol]->getBlock() == nullptr)
     {
-        std::cerr << newRow << "              " << newCol << std::endl;
+        // std::cerr << newRow << "              " << newCol << std::endl;
     }
 
     // std::cerr << "new row: " << newRow << "new col: " << newCol << std::endl;
@@ -292,11 +305,11 @@ void Board::moveForRotate(Cell *cellPtr, int newRow, int newCol, std::vector<int
     std::cerr << "after:" << endl;
     if (cells[newRow][newCol]->getBlock() == currBlock)
     {
-        std::cerr << newRow << "   " << newCol << std::endl;
+        // std::cerr << newRow << "   " << newCol << std::endl;
     }
     if (cells[newRow][newCol]->getBlock() == nullptr)
     {
-        std::cerr << newRow << "              " << newCol << std::endl;
+        // std::cerr << newRow << "              " << newCol << std::endl;
     }
 }
 
@@ -328,7 +341,7 @@ void Board::rotateHelper(bool twoThree, bool horizontal, std::vector<std::pair<i
     }
     for (int i = 0; i < range; ++i)
     {
-        std::cerr << originalChar[i] << std::endl;
+        // std::cerr << originalChar[i] << std::endl;
     }
     for (int i = 0; i < range; ++i)
     {
@@ -384,15 +397,12 @@ void Board::rotate(bool clockwise)
     std::vector<Cell *> components = currBlock->getComponents();
     for (int i = 0; i < 4; ++i)
     {
-        std::cerr << "row: " << components[i]->getY() << "  col: " << components[i]->getX() << std::endl;
+        // std::cerr << "row: " << components[i]->getY() << "  col: " << components[i]->getX() << std::endl;
     }
 
-    std::cerr << "tlrow: " << tlRow << "  tlcol: " << tlCol << std::endl;
-    std::string h = "horizontal";
-    if (!horizontal)
-        h = "v";
-    std::cerr << "horizontal: " << h << std::endl;
-    // if the rectangle is 2*3
+    // std::cerr << "tlrow: " << tlRow << "  tlcol: " << tlCol << std::endl;
+    // std::cerr << "horizontal: " << h << std::endl;
+    //  if the rectangle is 2*3
     if (blockType == 'J' || blockType == 'L' || blockType == 'S' || blockType == 'Z' || blockType == 'T')
     {
         if (horizontal)
@@ -472,9 +482,9 @@ void Board::rotate(bool clockwise)
         rotateHelper(false, horizontal, Original, Desination);
     }
 
-    std::cerr << "after " << std::endl;
+    // std::cerr << "after " << std::endl;
     components = currBlock->getComponents();
-    std::cerr << components.size() << std::endl;
+    // std::cerr << components.size() << std::endl;
     for (int i = 0; i < 4; ++i)
     {
         // std::cerr << "row: " << components[i]->getY() << "  col: " << components[i]->getX() << std::endl;
@@ -539,6 +549,7 @@ void Board::levelUp()
         else if (level == 4)
         {
             isHeavy = true;
+            blockCount = 0;
             currLevel = new Level4{seedBool, seed, cells};
         }
         delete tmp;
@@ -643,13 +654,13 @@ int Board::checkClear()
             }
         }
     }
-    if (clear > 0) {
+    if (clear > 0)
+    {
         score += (level + clear) * (level + clear);
     }
     // return
     return clear;
 }
-
 
 bool Board::checkForCurrBlock(std::vector<Cell *> currCells)
 {
@@ -784,10 +795,14 @@ void Board::addstar()
 {
     const int centralCol = 5;
     // find out where the star block should locate(should be located on the downmost cell on the central col)
-    int availableRow = 3;
+    int availableRow = 2;
     while (cells[availableRow][centralCol]->getChar(false) == ' ')
     {
         ++availableRow;
+        if (availableRow == 18)
+        {
+            break;
+        }
     }
     --availableRow;
     // create the star block and update that cell
@@ -821,6 +836,3 @@ bool Board::getOver()
 {
     return over;
 }
-
-
-

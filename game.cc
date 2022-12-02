@@ -33,11 +33,11 @@ Game::Game(int startLevel, unsigned int seed, bool haveSeed, bool haveScript1, b
     {
         scriptfile2 = "sequence2.txt";
     }
-    
+
     curPlayer = new Board{startLevel, haveSeed, seed, scriptfile1};
     opponent = new Board{startLevel, haveSeed, seed, scriptfile2};
-    std::vector<std::string> commands { "left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "I", "J", "L", "O", "S", "Z", "T", "restart", "printtext", "printgraphics"};
-    
+    std::vector<std::string> commands{"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "I", "J", "L", "O", "S", "Z", "T", "restart", "printtext", "printgraphics", "heavy", "force", "blind"};
+
     cmdInter = new CommandInterpreter{commands};
 }
 
@@ -68,32 +68,26 @@ void Game::start()
         if (command == "left")
         {
             left(multiplier);
-            Subject::notifyObservers();
         }
         else if (command == "right")
         {
             right(multiplier);
-            Subject::notifyObservers();
         }
         else if (command == "down")
         {
             down(multiplier);
-            Subject::notifyObservers();
         }
         else if (command == "clockwise")
         {
             rotate(1, multiplier);
-            Subject::notifyObservers();
         }
         else if (command == "counterclockwise")
         {
             rotate(0, multiplier);
-            Subject::notifyObservers();
         }
         else if (command == "drop")
         {
             drop(multiplier);
-            Subject::notifyObservers();
         }
         else if (command == "levelup")
         {
@@ -122,7 +116,7 @@ void Game::start()
         }
         else if (command == "heavy")
         {
-            // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
+            // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.if (playerRound)
             if (playerRound)
             {
                 if (curPlayer->getTrigger())
@@ -202,26 +196,38 @@ void Game::start()
 
 void Game::left(int multiplier)
 {
+    int callDrop;
     if (!playerRound)
     {
-        curPlayer->left(multiplier);
+        callDrop = curPlayer->left(multiplier);
     }
     else
     {
-        opponent->left(multiplier);
+        callDrop = opponent->left(multiplier);
     }
+    if (callDrop)
+    {
+        drop(1);
+    }
+    Subject::notifyObservers();
 }
 
 void Game::right(int multiplier)
 {
+    int callDrop;
     if (!playerRound)
     {
-        curPlayer->right(multiplier);
+        callDrop = curPlayer->right(multiplier);
     }
     else
     {
-        opponent->right(multiplier);
+        callDrop = opponent->right(multiplier);
     }
+    if (callDrop)
+    {
+        drop(1);
+    }
+    Subject::notifyObservers();
 }
 
 bool Game::down(int multiplier)
@@ -232,13 +238,20 @@ bool Game::down(int multiplier)
         if (!playerRound)
         {
             ifBot = curPlayer->down();
-            if (!ifBot) {break;}
+            if (!ifBot)
+            {
+                break;
+            }
         }
         else
         {
             ifBot = opponent->down();
-            if (!ifBot) {break;}
+            if (!ifBot)
+            {
+                break;
+            }
         }
+        Subject::notifyObservers();
     }
     return false;
 }
@@ -246,7 +259,7 @@ bool Game::down(int multiplier)
 void Game::rotate(bool clockwise, int multiplier)
 {
 
-    multiplier = multiplier % 4;
+    // multiplier = multiplier % 4;
     for (int i = 0; i < multiplier; ++i)
     {
         if (!playerRound)
@@ -257,38 +270,47 @@ void Game::rotate(bool clockwise, int multiplier)
         {
             opponent->rotate(clockwise);
         }
+        Subject::notifyObservers();
     }
 }
 
-void Game::drop(int multiplier)
+bool Game::drop(int multiplier)
 {
+    bool prompt;
     for (int i = 0; i < multiplier; ++i)
     {
         if (!playerRound)
         {
-            curPlayer->drop();
+            prompt = curPlayer->drop();
             isOver = curPlayer->getOver();
             if (isOver)
             {
                 // over()
             }
             playerRound = 1;
-            if (curPlayer->getScore() > hiScore) {
+            if (curPlayer->getScore() > hiScore)
+            {
                 hiScore = curPlayer->getScore();
             }
         }
         else
         {
-            opponent->drop();
+            prompt = opponent->drop();
             isOver = curPlayer->getOver();
             if (isOver)
             {
                 // over()
             }
             playerRound = 0;
-            if (opponent->getScore() > hiScore) {
+            if (opponent->getScore() > hiScore)
+            {
                 hiScore = curPlayer->getScore();
             }
+        }
+        Subject::notifyObservers();
+        if (prompt)
+        {
+            Subject::notifyObserversPrompt();
         }
     }
 }
@@ -305,6 +327,7 @@ void Game::IJL(char blockType, int multiplier)
         {
             opponent->IJL(blockType);
         }
+        Subject::notifyObservers();
     }
 }
 
@@ -340,7 +363,7 @@ int Game::getLevel(int player) const
     }
     else
     {
-        return  opponent->getLevel();
+        return opponent->getLevel();
     }
 }
 
@@ -392,6 +415,7 @@ void Game::levelUp(int multiplier)
         {
             opponent->levelUp();
         }
+        Subject::notifyObservers();
     }
 }
 
@@ -407,6 +431,7 @@ void Game::levelDown(int multiplier)
         {
             opponent->levelDown();
         }
+        Subject::notifyObservers();
     }
 }
 
@@ -423,11 +448,11 @@ void Game::blind()
     // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
     if (playerRound)
     {
-        curPlayer->setBlind();
+        opponent->setBlind();
     }
     else
     {
-        opponent->setBlind();
+        curPlayer->setBlind();
     }
 }
 
@@ -436,11 +461,11 @@ void Game::heavy()
     // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
     if (playerRound)
     {
-        curPlayer->setHeavy();
+        opponent->setHeavy();
     }
     else
     {
-        opponent->setHeavy();
+        curPlayer->setHeavy();
     }
 }
 

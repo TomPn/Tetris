@@ -22,6 +22,14 @@ void Subject::notifyObservers()
 {
   for (auto ob : observers)
   {
-      ob->notify();
+    ob->notify();
+  }
+}
+
+void Subject::notifyObserversPrompt()
+{
+  for (auto ob : observers)
+  {
+    ob->prompt();
   }
 }
