@@ -10,6 +10,7 @@ class Cell;
 
 class Board
 {
+    std::string playerName;
     int level;
     int score;
     int blockCount;
@@ -58,6 +59,8 @@ public:
     void setL0File(std::string L0File = "");
     void setNoRandom(bool noRandom, std::string noRandomFile = "");
     bool getOver();
+    void setName(std::string name);
+    std::string getName();
 };
 
 #endif

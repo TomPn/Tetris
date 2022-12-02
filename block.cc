@@ -197,3 +197,5 @@ std::vector<Cell *> Block::getComponents()
 {
     return components;
 }
+
+
