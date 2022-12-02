@@ -18,10 +18,10 @@ void Subject::detach(Observer *o)
   }
 }
 
-void Subject::notifyObservers()
+void Subject::notifyObservers(bool over)
 {
   for (auto ob : observers)
   {
-      ob->notify();
+      ob->notify(over);
   }
 }
