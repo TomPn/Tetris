@@ -519,8 +519,16 @@ bool Board::checkForCurrBlock(std::vector<Cell *> currCells)
     return true;
 }
 
-bool Board::setCurrBlock(char blockType)
+
+
+bool Board::setCurrBlock(char blockType,bool IJL)
 {
+    if(IJL){
+        for(auto cell:currBlock->getComponents()){
+            cell->setChar(' ');
+            cell->setBlock(nullptr);
+        }
+    }
     std::vector<Cell *> currCells;
     if (blockType == 'I')
     {
@@ -616,7 +624,7 @@ bool Board::setCurrBlock(char blockType)
 
 void Board::IJL(char blockType)
 {
-    setCurrBlock(blockType);
+    setCurrBlock(blockType,true);
 }
 
 // update for blind
