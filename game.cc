@@ -54,7 +54,8 @@ void Game::start()
         int commandIndex = 0;
         command = cmdInter->getCommand();
 
-        if (command == "ENDGAME") {
+        if (command == "ENDGAME")
+        {
             isOver = true;
             Subject::notifyObservers(true);
             break;
@@ -96,12 +97,11 @@ void Game::start()
         else if (command == "drop" && !isOver)
         {
             bool prompt = drop(multiplier);
-            cout << prompt << endl;
-            if (!prompt) {
+            if (!prompt)
+            {
                 continue;
             }
             command = cmdInter->getCommand().erase(0, 1);
-            cout << command << endl;
             if (command == "heavy" && !isOver)
             {
                 if (playerRound)
@@ -124,7 +124,7 @@ void Game::start()
             }
             else if (command == "force" && !isOver)
             {
-            // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
+                // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
                 if (playerRound)
                 {
                     if (curPlayer->getTrigger())
@@ -160,7 +160,7 @@ void Game::start()
                 }
                 Subject::notifyObservers(false);
             }
-            else if (command == "blind"  && !isOver)
+            else if (command == "blind" && !isOver)
             {
                 // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
                 if (playerRound)
@@ -200,16 +200,26 @@ void Game::start()
         {
             random();
         }
-        else if ((command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T") && !isOver)
+        else if ((command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T" || command == "*") && !isOver)
         {
             IJL(command[0], multiplier);
         }
         else if (command == "restart")
         {
             restart();
-
         }
     }
+}
+
+bool Game::checkAndCallOver()
+{
+    isOver = curPlayer->getOver();
+    if (isOver)
+    {
+        Subject::notifyObservers(false);
+        return true;
+    }
+    return false;
 }
 
 void Game::left(int multiplier)
@@ -303,12 +313,8 @@ bool Game::drop(int multiplier)
             // drop the block and check if the game is over
             prompt = curPlayer->drop();
             isOver = curPlayer->getOver();
-            if (isOver)
-            {
-                
-                Subject::notifyObservers(false);
+            if (checkAndCallOver())
                 break;
-            }
             // switch player round
             playerRound = 1;
             // update the highest score
@@ -320,15 +326,11 @@ bool Game::drop(int multiplier)
         // player 1 turn
         else
         {
-            cout << "second player" << endl;
             // drop the block and check if the game is over
             prompt = opponent->drop();
             isOver = opponent->getOver();
-            if (isOver)
-            {
-                Subject::notifyObservers(false);
+            if (checkAndCallOver())
                 break;
-            }
             // switch player round
             playerRound = 0;
             // update the highest score
@@ -346,7 +348,8 @@ bool Game::drop(int multiplier)
         }
     }
     // if the game is over, let the player choose whether end the game or play again
-    if (isOver) {
+    if (isOver)
+    {
         Subject::notifyObservers(true);
     }
     return prompt;
@@ -486,7 +489,8 @@ void Game::blind()
     // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
     if (playerRound)
     {
-        cout << "here" << "endl";
+        cout << "here"
+             << "endl";
         opponent->setBlind();
     }
     else
@@ -513,13 +517,13 @@ void Game::force(char blockType)
     // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
     if (playerRound)
     {
-        cout << "here" << endl;
         opponent->setForce(blockType);
     }
     else
     {
         curPlayer->setForce(blockType);
     }
+    checkAndCallOver();
 }
 
 void Game::setHiScore()
@@ -539,12 +543,13 @@ int Game::getHiScore()
     return hiScore;
 }
 
-
-void Game::over() {
+void Game::over()
+{
     notifyObservers(true);
 }
 
-void Game::setNames() {
+void Game::setNames()
+{
     cout << "Enter Player1 Name: " << endl;
     std::string name;
     cin >> name;
@@ -554,10 +559,14 @@ void Game::setNames() {
     opponent->setName(name);
 }
 
-std::string Game::getName(bool player) {
-    if (!player) {
+std::string Game::getName(bool player)
+{
+    if (!player)
+    {
         return curPlayer->getName();
-    } else {
+    }
+    else
+    {
         return opponent->getName();
     }
 }

@@ -24,6 +24,7 @@ class Game : public Subject
     std::unique_ptr<CommandInterpreter> cmdInter;
     bool isDigit(char c);
     int toInt(std::string s);
+    bool checkAndCallOver();
 
 public:
     explicit Game(int startLevel, unsigned int seed, bool haveSeed, bool haveScript1, bool haveScript2, std::string scriptfile1, std::string scriptfile2);
