@@ -12,17 +12,20 @@ Block::Block(Cell *cell1, Cell *cell2, Cell *cell3, Cell *cell4, int alive, int 
     components.emplace_back(cell3);
     components.emplace_back(cell4);
 
-    int tlRow = 19;
-    int tlCol = 10;
+    int tlRow = components[0]->getY();
+    int tlCol = components[0]->getX();
     for (int i = 0; i < 4; ++i)
     {
-        if (components[i]->getX() < tlCol)
+        if (blockType != '*')
         {
-            tlCol = components[i]->getX();
-        }
-        if (components[i]->getY() < tlRow)
-        {
-            tlRow = components[i]->getY();
+            if (components[i]->getX() < tlCol)
+            {
+                tlCol = components[i]->getX();
+            }
+            if (components[i]->getY() < tlRow)
+            {
+                tlRow = components[i]->getY();
+            }
         }
     }
 
@@ -44,47 +47,123 @@ bool Block::move(char dir)
     // move the block to the desired direction
     switch (dir)
     {
-    case ('t'):
-        --topLeftRow;
-        break;
     case ('d'):
-        for (int i = 3; i >= 0; i--)
+    {
+        std::vector<Cell *> orderedComponents;
+        int downmostRow = components[0]->getY();
+        // loop to find the downmost row
+        for (int i = 0; i < 4; ++i)
         {
-            Cell *neighbour = components[i]->getCell(dir);
-            neighbour->setChar(components[i]->getChar(false));
-            neighbour->setBlock(components[i]->getBlock());
-            components[i]->setChar(' ');
-            components[i]->setBlock(nullptr);
-            components[i] = neighbour;
+            if (components[i]->getY() > downmostRow)
+            {
+                downmostRow = components[i]->getY();
+            }
         }
+        //  insert components to orderedComponents according to their distance to the downmost row
+        for (int i = 0; i < 4; ++i)
+        {
+            for (int j = 0; j < 4; ++j) // for every component
+            {
+                if (components[j]->getY() == downmostRow)
+                {
+                    // std::cerr << "count:  ";
+                    // std::cerr << components[j]->getY() << "    " << components[j]->getX() << std::endl;
+                    orderedComponents.emplace_back(components[j]);
+                }
+            }
+            --downmostRow;
+        }
+        for (int i = 0; i < 4; ++i)
+        {
+            Cell *neighbour = orderedComponents[i]->getCell(dir);
+            neighbour->setChar(orderedComponents[i]->getChar(false));
+            neighbour->setBlock(orderedComponents[i]->getBlock());
+            orderedComponents[i]->setChar(' ');
+            orderedComponents[i]->setBlock(nullptr);
+            orderedComponents[i] = neighbour;
+        }
+        components = orderedComponents;
         ++topLeftRow;
-        ;
         break;
+    }
     case ('l'):
+    {
+        std::vector<Cell *> orderedComponents;
+        int leftMostCol = components[0]->getX();
+        // loop to find the downmost row
+        for (int i = 0; i < 4; ++i)
+        {
+            if (components[i]->getX() < leftMostCol)
+            {
+                leftMostCol = components[i]->getX();
+            }
+        }
+        // insert components to orderedComponents according to their distance to the downmost row
+        for (int i = 0; i < 4; ++i)
+        {
+            for (int j = 0; j < 4; ++j) // for every component
+            {
+                if (components[j]->getX() == leftMostCol)
+                {
+                    // std::cerr << "count:  ";
+                    // std::cerr << components[j]->getY() << "    " << components[j]->getX() << std::endl;
+                    orderedComponents.emplace_back(components[j]);
+                }
+            }
+            ++leftMostCol;
+        }
         for (int i = 0; i < cellNum; i++)
         {
-            Cell *neighbour = components[i]->getCell(dir);
-            neighbour->setChar(components[i]->getChar(false));
-            neighbour->setBlock(components[i]->getBlock());
-            components[i]->setChar(' ');
-            components[i]->setBlock(nullptr);
-            components[i] = neighbour;
+            Cell *neighbour = orderedComponents[i]->getCell(dir);
+            neighbour->setChar(orderedComponents[i]->getChar(false));
+            neighbour->setBlock(orderedComponents[i]->getBlock());
+            orderedComponents[i]->setChar(' ');
+            orderedComponents[i]->setBlock(nullptr);
+            orderedComponents[i] = neighbour;
         }
+        components = orderedComponents;
         --topLeftCol;
         break;
+    }
     case ('r'):
-        for (int i = 3; i >= 0; i--)
+    {
+        std::vector<Cell *> orderedComponents;
+        int rightMostCol = components[0]->getX();
+        // loop to find the downmost row
+        for (int i = 0; i < 4; ++i)
         {
-            Cell *neighbour = components[i]->getCell(dir);
-            neighbour->setChar(components[i]->getChar(false));
-            neighbour->setBlock(components[i]->getBlock());
-            components[i]->setChar(' ');
-            components[i]->setBlock(nullptr);
-            components[i] = neighbour;
+            if (components[i]->getX() > rightMostCol)
+            {
+                rightMostCol = components[i]->getX();
+            }
         }
+        for (int i = 0; i < 4; ++i)
+        {
+            for (int j = 0; j < 4; ++j) // for every component
+            {
+                if (components[j]->getX() == rightMostCol)
+                {
+                    // std::cerr << "count:  ";
+                    // std::cerr << components[j]->getY() << "    " << components[j]->getX() << std::endl;
+                    orderedComponents.emplace_back(components[j]);
+                }
+            }
+            --rightMostCol;
+        }
+        for (int i = 0; i < 4; ++i)
+        {
+            Cell *neighbour = orderedComponents[i]->getCell(dir);
+            neighbour->setChar(orderedComponents[i]->getChar(false));
+            neighbour->setBlock(orderedComponents[i]->getBlock());
+            orderedComponents[i]->setChar(' ');
+            orderedComponents[i]->setBlock(nullptr);
+            orderedComponents[i] = neighbour;
+        }
+        components = orderedComponents;
         ++topLeftCol;
         ;
         break;
+    }
     }
     return true;
 }

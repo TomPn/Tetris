@@ -7,12 +7,11 @@ const int rows = 20;
 const int cols = 11;
 const int dim = 20;
 
-GraphicsViewer::GraphicsViewer(Game *subject) : Observer{false}, subject{subject}, top{0}, bot{65}, left{0}, right{60}
+GraphicsViewer::GraphicsViewer(Game *subject) : subject{subject}, top{0}, bot{65}, left{0}, right{60}
 {
     window = new Xwindow{(this->right - this->left + 1) * 10, (this->bot - this->top + 1) * 10};
     subject->attach(this);
 }
-
 
 GraphicsViewer::~GraphicsViewer()
 {
@@ -21,8 +20,8 @@ GraphicsViewer::~GraphicsViewer()
     window = nullptr;
 }
 
-
-void GraphicsViewer::printTitle() {
+void GraphicsViewer::printTitle()
+{
     window->fillRectangle(200, 10, 10, 30, window->White);
     window->drawString(200, 10, "Highest Score: " + std::to_string(subject->getHiScore()));
     window->fillRectangle(20, 40, 10, 30, window->White);
@@ -35,6 +34,12 @@ void GraphicsViewer::printTitle() {
     window->drawString(300, 70, "Level: " + std::to_string(subject->getLevel(1)));
 }
 
+void GraphicsViewer::prompt()
+{
+    std::string promptStr = "Choose your special actions(heavy, blind, or force) and enter it on the command line:";
+    window->fillRectangle(2500, 70, 10, 30, window->White);
+    window->drawString(2500, 70, promptStr);
+}
 
 void GraphicsViewer::printPlayer(int row_start, int row_end, int x, int y, int player)
 {
@@ -86,9 +91,12 @@ void GraphicsViewer::printPlayer(int row_start, int row_end, int x, int y, int p
                 }
                 else if (output == ' ')
                 {
-                    if (i >= 18) {
+                    if (i >= 18)
+                    {
                         color = window->White;
-                    } else {
+                    }
+                    else
+                    {
                         color = window->Black;
                     }
                 }
@@ -97,7 +105,6 @@ void GraphicsViewer::printPlayer(int row_start, int row_end, int x, int y, int p
         }
     }
 }
-
 
 void GraphicsViewer::notify()
 {
@@ -109,4 +116,3 @@ void GraphicsViewer::notify()
     printPlayer(18, 19, 20, 510, 0);
     printPlayer(18, 19, 300, 510, 1);
 }
-
