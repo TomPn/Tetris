@@ -105,7 +105,6 @@ std::unique_ptr<Block> Level::CreateBlock(int level, char blockType)
         cell->setBlock(nextBlock.get());
         cell = nullptr;
     }
-    
     return nextBlock;
 }
 

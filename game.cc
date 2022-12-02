@@ -95,7 +95,93 @@ void Game::start()
         }
         else if (command == "drop" && !isOver)
         {
-            drop(multiplier);
+            bool prompt = drop(multiplier);
+            cout << prompt << endl;
+            if (!prompt) {
+                continue;
+            }
+            command = cmdInter->getCommand().erase(0, 1);
+            cout << command << endl;
+            if (command == "heavy" && !isOver)
+            {
+                if (playerRound)
+                {
+                    if (curPlayer->getTrigger())
+                    {
+                        heavy();
+                        curPlayer->setTrigger(0);
+                    }
+                    // could give a note of invalid command here
+                }
+                else
+                {
+                    if (opponent->getTrigger())
+                    {
+                        heavy();
+                        opponent->setTrigger(0);
+                    }
+                }
+            }
+            else if (command == "force" && !isOver)
+            {
+            // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
+                if (playerRound)
+                {
+                    if (curPlayer->getTrigger())
+                    {
+                        cout << "PLease enter I, J, L, O, S, Z or T" << endl;
+                        while (cin >> command)
+                        {
+                            if (command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T")
+                            {
+                                force(command[0]);
+                                curPlayer->setTrigger(0);
+                                break;
+                            }
+                        }
+                    }
+                    // could give a note of invalid command here
+                }
+                else
+                {
+                    if (opponent->getTrigger())
+                    {
+                        cout << "PLease enter I, J, L, O, S, Z or T" << endl;
+                        while (cin >> command)
+                        {
+                            if (command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T")
+                            {
+                                force(command[0]);
+                                opponent->setTrigger(0);
+                                break;
+                            }
+                        }
+                    }
+                }
+                Subject::notifyObservers(false);
+            }
+            else if (command == "blind"  && !isOver)
+            {
+                // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
+                if (playerRound)
+                {
+                    if (curPlayer->getTrigger())
+                    {
+                        blind();
+                        curPlayer->setTrigger(0);
+                    }
+                    // could give a note of invalid command here
+                }
+                else
+                {
+                    if (opponent->getTrigger())
+                    {
+                        blind();
+                        opponent->setTrigger(0);
+                    }
+                }
+                Subject::notifyObservers(false);
+            }
         }
         else if (command == "levelup" && !isOver)
         {
@@ -122,83 +208,6 @@ void Game::start()
         {
             restart();
 
-        }
-        else if (command == "heavy" && !isOver)
-        {
-            // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.if (playerRound)
-            if (playerRound)
-            {
-                if (curPlayer->getTrigger())
-                {
-                    heavy();
-                    curPlayer->setTrigger(0);
-                }
-                // could give a note of invalid command here
-            }
-            else
-            {
-                if (opponent->getTrigger())
-                {
-                    heavy();
-                    opponent->setTrigger(0);
-                }
-            }
-        }
-        else if (command == "force" && !isOver)
-        {
-            // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
-            if (playerRound)
-            {
-                if (curPlayer->getTrigger())
-                {
-                    while (cin >> command)
-                    {
-                        if (command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T")
-                        {
-                            force(command[0]);
-                            curPlayer->setTrigger(0);
-                            break;
-                        }
-                    }
-                }
-                // could give a note of invalid command here
-            }
-            else
-            {
-                if (opponent->getTrigger())
-                {
-                    while (cin >> command)
-                    {
-                        if (command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T")
-                        {
-                            force(command[0]);
-                            opponent->setTrigger(0);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        else if (command == "blind"  && !isOver)
-        {
-            // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
-            if (playerRound)
-            {
-                if (curPlayer->getTrigger())
-                {
-                    blind();
-                    curPlayer->setTrigger(0);
-                }
-                // could give a note of invalid command here
-            }
-            else
-            {
-                if (opponent->getTrigger())
-                {
-                    blind();
-                    opponent->setTrigger(0);
-                }
-            }
         }
     }
 }
@@ -283,7 +292,7 @@ void Game::rotate(bool clockwise, int multiplier)
     }
 }
 
-void Game::drop(int multiplier)
+bool Game::drop(int multiplier)
 {
     bool prompt;
     for (int i = 0; i < multiplier; ++i)
@@ -296,6 +305,7 @@ void Game::drop(int multiplier)
             isOver = curPlayer->getOver();
             if (isOver)
             {
+                
                 Subject::notifyObservers(false);
                 break;
             }
@@ -310,6 +320,7 @@ void Game::drop(int multiplier)
         // player 1 turn
         else
         {
+            cout << "second player" << endl;
             // drop the block and check if the game is over
             prompt = opponent->drop();
             isOver = opponent->getOver();
@@ -338,6 +349,7 @@ void Game::drop(int multiplier)
     if (isOver) {
         Subject::notifyObservers(true);
     }
+    return prompt;
 }
 
 void Game::IJL(char blockType, int multiplier)
@@ -474,6 +486,7 @@ void Game::blind()
     // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
     if (playerRound)
     {
+        cout << "here" << "endl";
         opponent->setBlind();
     }
     else
@@ -500,6 +513,7 @@ void Game::force(char blockType)
     // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
     if (playerRound)
     {
+        cout << "here" << endl;
         opponent->setForce(blockType);
     }
     else

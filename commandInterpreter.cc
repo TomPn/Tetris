@@ -51,7 +51,7 @@ std::string CommandInterpreter::isValid(std::string name, int multiplier) {
     std::string extCommand;
     for (auto it: pImpl->commands) {
         if (name == it) {
-            if (name == "restart" || name == "norandom" || name == "random") {
+            if (name == "restart" || name == "norandom" || name == "random" || name == "ENDGAME") {
                 return name;
             }
             return toString(multiplier) + name;
