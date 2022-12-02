@@ -20,6 +20,7 @@ protected:
 
 public:
     Block(Cell *cell1, Cell *cell2, Cell *cell3, Cell *cell4, int level, int alive, char blockType);
+    virtual ~Block() = 0;
     bool left();
     bool right();
     bool down();

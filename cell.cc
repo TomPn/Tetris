@@ -173,4 +173,4 @@ void Cell::setChange(bool change)
     this->change = change;
 }
 
-Cell::~Cell() {}
+Cell::~Cell() {delete myBlock;}

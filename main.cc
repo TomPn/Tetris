@@ -45,4 +45,7 @@ int main(int argc, char **argv) {
     game->setNames();
     game->start();
     delete game;
+    for (auto it: observers) {
+        delete it;
+    }
 }

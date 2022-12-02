@@ -21,8 +21,6 @@ GraphicsViewer::~GraphicsViewer()
     window = nullptr;
 }
 
-
-
 void GraphicsViewer::printTitle() {
     window->fillRectangle(200, 10, 10, 30, window->White);
     window->drawString(200, 10, "Highest Score: " + std::to_string(subject->getHiScore()));

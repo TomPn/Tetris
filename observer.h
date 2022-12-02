@@ -7,7 +7,7 @@ class Observer
 {
 
 public:
-    virtual void notify() = 0;
+    virtual void notify(bool over) = 0;
     virtual void prompt() = 0;
     virtual ~Observer() = default;
 };

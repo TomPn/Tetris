@@ -14,6 +14,7 @@ class GraphicsViewer: public Observer {
         void printTitle();
         void notify(bool over) override;
         void printOver();
+        void prompt();
         void printSummary();
         ~GraphicsViewer();
 };

@@ -33,6 +33,13 @@ Block::Block(Cell *cell1, Cell *cell2, Cell *cell3, Cell *cell4, int alive, int 
     topLeftRow = tlRow;
 }
 
+Block::~Block() {
+    for (int i = 0; i < 4; ++i) {
+        components[i]->setChar(' ');
+        components[i]->setBlock(nullptr);
+    }
+}
+
 // move the block to the desired direction
 bool Block::move(char dir)
 {
@@ -66,8 +73,6 @@ bool Block::move(char dir)
             {
                 if (components[j]->getY() == downmostRow)
                 {
-                    // std::cerr << "count:  ";
-                    // std::cerr << components[j]->getY() << "    " << components[j]->getX() << std::endl;
                     orderedComponents.emplace_back(components[j]);
                 }
             }

@@ -1,6 +1,6 @@
 #include "observer.h"
 
-bool Observer::getText()
-{
-     return text;
-}
+// bool Observer::getText()
+// {
+//      return text;
+// }

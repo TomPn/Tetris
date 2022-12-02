@@ -26,12 +26,13 @@ class Game : public Subject
 
 public:
     explicit Game(int startLevel, unsigned int seed, bool haveSeed, bool haveScript1, bool haveScript2, std::string scriptfile1, std::string scriptfile2);
+    ~Game();
     void start();
     void left(int multiplier);
     void right(int multiplier);
     bool down(int multiplier);
     void rotate(bool clockwise, int multiplier);
-    bool drop(int multiplier);
+    void drop(int multiplier);
     void IJL(char blockType, int multiplier);
     char getState(int player, int row, int col) const override;
     int getLevel(int player) const override;
@@ -51,7 +52,6 @@ public:
     void over();
     void setNames();
     std::string getName(bool player);
-    ~Game();
 };
 
 #endif
