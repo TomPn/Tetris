@@ -9,6 +9,7 @@ class CommandInterpreterImpl;
 
 class CommandInterpreter {
     std::unique_ptr<CommandInterpreterImpl> pImpl;
+    std::vector<std::string> breakCommand(std::string command);
     public:
         CommandInterpreter(std::vector<std::string> commands);
         ~CommandInterpreter();
