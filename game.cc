@@ -200,7 +200,7 @@ void Game::start()
         {
             random();
         }
-        else if ((command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T" || command == "*") && !isOver)
+        else if ((command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T") && !isOver)
         {
             IJL(command[0], multiplier);
         }
@@ -209,17 +209,6 @@ void Game::start()
             restart();
         }
     }
-}
-
-bool Game::checkAndCallOver()
-{
-    isOver = curPlayer->getOver();
-    if (isOver)
-    {
-        Subject::notifyObservers(false);
-        return true;
-    }
-    return false;
 }
 
 void Game::left(int multiplier)
@@ -313,8 +302,12 @@ bool Game::drop(int multiplier)
             // drop the block and check if the game is over
             prompt = curPlayer->drop();
             isOver = curPlayer->getOver();
-            if (checkAndCallOver())
+            if (isOver)
+            {
+
+                Subject::notifyObservers(false);
                 break;
+            }
             // switch player round
             playerRound = 1;
             // update the highest score
@@ -329,8 +322,11 @@ bool Game::drop(int multiplier)
             // drop the block and check if the game is over
             prompt = opponent->drop();
             isOver = opponent->getOver();
-            if (checkAndCallOver())
+            if (isOver)
+            {
+                Subject::notifyObservers(false);
                 break;
+            }
             // switch player round
             playerRound = 0;
             // update the highest score
@@ -421,25 +417,37 @@ int Game::getScore(int player) const
 
 void Game::noRandom(std::string file)
 {
-    if (curPlayer->getLevel() == 3 || curPlayer->getLevel() == 4)
+    if (!playerRound)
     {
-        curPlayer->setNoRandom(true, file);
+        if (curPlayer->getLevel() == 3 || curPlayer->getLevel() == 4)
+        {
+            curPlayer->setNoRandom(true, file);
+        }
     }
-    if (opponent->getLevel() == 3 || opponent->getLevel() == 3)
+    else
     {
-        opponent->setNoRandom(true, file);
+        if (opponent->getLevel() == 3 || opponent->getLevel() == 3)
+        {
+            opponent->setNoRandom(true, file);
+        }
     }
 }
 
 void Game::random()
 {
-    if (curPlayer->getLevel() == 3 || curPlayer->getLevel() == 4)
+    if (!playerRound)
     {
-        curPlayer->setNoRandom(false, "");
+        if (curPlayer->getLevel() == 3 || curPlayer->getLevel() == 4)
+        {
+            curPlayer->setNoRandom(false, "");
+        }
     }
-    if (opponent->getLevel() == 3 || opponent->getLevel() == 3)
+    else
     {
-        opponent->setNoRandom(false, "");
+        if (opponent->getLevel() == 3 || opponent->getLevel() == 3)
+        {
+            opponent->setNoRandom(false, "");
+        }
     }
 }
 
@@ -489,8 +497,6 @@ void Game::blind()
     // the special effects are triggered after a player drops, which means the round is already over, so the playerRound condition is reversed.
     if (playerRound)
     {
-        cout << "here"
-             << "endl";
         opponent->setBlind();
     }
     else
@@ -523,7 +529,6 @@ void Game::force(char blockType)
     {
         curPlayer->setForce(blockType);
     }
-    checkAndCallOver();
 }
 
 void Game::setHiScore()
