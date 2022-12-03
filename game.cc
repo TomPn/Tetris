@@ -96,12 +96,11 @@ void Game::start()
         else if (command == "drop" && !isOver)
         {
             bool prompt = drop(multiplier);
-            cout << prompt << endl;
             if (!prompt) {
                 continue;
             }
-            command = cmdInter->getCommand().erase(0, 1);
-            cout << command << endl;
+            // command = cmdInter->getCommand().erase(0, 1);
+            // cout << command << endl;
             if (command == "heavy" && !isOver)
             {
                 if (playerRound)
@@ -193,7 +192,7 @@ void Game::start()
         }
         else if (command == "norandom" && !isOver)
         {
-            cin >> command;
+            command = cmdInter->getCommand();
             noRandom(command);
         }
         else if (command == "random" && !isOver)
@@ -320,7 +319,6 @@ bool Game::drop(int multiplier)
         // player 1 turn
         else
         {
-            cout << "second player" << endl;
             // drop the block and check if the game is over
             prompt = opponent->drop();
             isOver = opponent->getOver();
