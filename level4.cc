@@ -29,11 +29,6 @@ std::unique_ptr<Block> Level4::CreateNextBlock()
     }
     else
     {
-        // set up the seed
-        if (seedBool == true)
-        {
-            std::srand(seed);
-        }
         // random is a random int from 1 to 9
         int random = 1 + std::rand() / ((RAND_MAX + 1u) / 9);
 

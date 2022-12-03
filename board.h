@@ -20,8 +20,6 @@ class Board
     bool isHeavy;
     bool isForce;
     bool over;
-    bool seedBool;
-    unsigned int seed;
     std::string L0File;
     std::unique_ptr<Block> currBlock;
     std::unique_ptr<Block> nextBlock;

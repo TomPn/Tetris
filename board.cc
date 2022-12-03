@@ -25,7 +25,7 @@ const int cols = 11;
 
 Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
     : playerName{""}, level{level}, score{0}, blockCount{0}, trigger{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false},
-      seedBool{seedBool}, seed{seed}, L0File{L0File}
+      L0File{L0File}
 {
     std::vector<std::vector<std::shared_ptr<Cell>>> cells(rows, std::vector<std::shared_ptr<Cell>>(cols, nullptr));
     for (int i = 0; i < rows; i++)
@@ -65,24 +65,28 @@ Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
     // initialize currLevel
     if (level == 0)
     {
-        currLevel = std::make_unique<Level0>(seedBool, seed, cells);
+        currLevel = std::make_unique<Level0>(cells);
         currLevel->setL0File(this->L0File);
     }
     else if (level == 1)
     {
-        auto currLevel = std::make_unique<Level1>(seedBool, seed, cells);
+        currLevel = std::make_unique<Level1>(cells);
     }
     else if (level == 2)
     {
-        auto currLevel = std::make_unique<Level2>(seedBool, seed, cells);
+        currLevel = std::make_unique<Level2>(cells);
     }
     else if (level == 3)
     {
-        auto currLevel = std::make_unique<Level3>(seedBool, seed, cells);
+        currLevel = std::make_unique<Level3>(cells);
     }
     else if (level == 4)
     {
-        auto currLevel = std::make_unique<Level4>(seedBool, seed, cells);
+        currLevel = std::make_unique<Level4>(cells);
+    }
+    if (seedBool)
+    {
+        currLevel->setSeed(seed);
     }
     // get a next block and set it as currBlock
     char blockType;
@@ -152,10 +156,12 @@ bool Board::drop()
     // once drop, the Force and Blind is completed and should be reset to false
     isForce = false;
     isBlind = false;
+
     // keep going down until it returns false(that means currBlock is already at the bottom)
     while (down())
     {
     }
+
     int clearResult = checkClear();
     // if more than two rows are cleared, trigger special action and clear blockCount
     if (clearResult >= 2)
@@ -174,19 +180,17 @@ bool Board::drop()
     {
         blockCount = 0;
     }
-
-    // set current block to next block, delete the old next block, and generate a new next block
-    blocksPlaced.emplace_back(std::move(currBlock));
-    bool over = !setCurrBlock(nextBlock->getBlockType());
-    over = over || checkRowClear(3);
-    nextBlock = currLevel->CreateNextBlock();
-
     // if it's level 4, and blockCount is 5, 10 ,15, etc, then drop a star block to the central col
     if (blockCount % 5 == 0 && blockCount != 0 && level == 4)
     {
         addstar(); // bool for losing condition
     }
 
+    // set current block to next block, delete the old next block, and generate a new next block
+    blocksPlaced.emplace_back(std::move(currBlock));
+    bool over = !setCurrBlock(nextBlock->getBlockType());
+    over = over || checkRowClear(3);
+    nextBlock = currLevel->CreateNextBlock();
     return prompt;
 }
 
@@ -377,19 +381,19 @@ void Board::levelDown()
         level--;
         if (level == 0)
         {
-            currLevel = std::make_unique<Level0>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level0>(cells);
         }
         else if (level == 1)
         {
-            currLevel = std::make_unique<Level1>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level1>(cells);
         }
         else if (level == 2)
         {
-            currLevel = std::make_unique<Level2>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level2>(cells);
         }
         else if (level == 3)
         {
-            currLevel = std::make_unique<Level3>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level3>(cells);
         }
     }
 }
@@ -401,21 +405,21 @@ void Board::levelUp()
         level++;
         if (level == 1)
         {
-            currLevel = std::make_unique<Level1>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level1>(cells);
         }
         else if (level == 2)
         {
-            currLevel = std::make_unique<Level2>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level2>(cells);
         }
         else if (level == 3)
         {
             isHeavy = true;
-            currLevel = std::make_unique<Level3>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level3>(cells);
         }
         else if (level == 4)
         {
             isHeavy = true;
-            currLevel = std::make_unique<Level4>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level4>(cells);
         }
     }
 }
@@ -433,9 +437,7 @@ void Board::setHeavy()
 
 void Board::setForce(char blockType)
 {
-    std::cerr << "in Board::setForce" << std::endl;
     setCurrBlock(blockType, true);
-    std::cerr << "after setCurrBlock" << std::endl;
     isForce = true;
 }
 
@@ -480,9 +482,8 @@ int Board::checkClear()
     // rowClear indicates whether a row should be cleared
     bool rowClear;
 
-    std::cerr << "checkclear1" << std::endl;
     // for each row(except for the "Next"), check if the row should be clear
-    for (int i = 3; i < rows - 2; i++)
+    for (int i = 3; i < rows - 2; i++) // HERE
     {
         rowClear = checkRowClear(i);
         // if the row should be cleared
@@ -496,17 +497,13 @@ int Board::checkClear()
                     // if we're at the row that should be cleared
                     if (i2 == i)
                     {
-                        std::cerr << "checkclear2" << std::endl;
                         // for each cell, identify its block
                         Block *blockOnBoard = cells[i2][j2]->getBlock();
-                        std::cerr << "checkclear3" << std::endl;
                         // if that's the last living cell in that block, delete that block
                         if (blockOnBoard->getAlive() == 1)
                         {
                             score += (blockOnBoard->getLevel() + 1) * (blockOnBoard->getLevel() + 1);
                             cells[i2][j2]->setBlock(nullptr);
-
-                            std::cerr << "checkclear4" << std::endl;
                         }
                         else
                         // otherwise if that's not the last living cell, just decrease alive by 1
@@ -515,14 +512,12 @@ int Board::checkClear()
                         }
                         // set the cell to blank
                         cells[i2][j2]->setChar(' ');
-                        std::cerr << "checkclear5" << std::endl;
                     }
                     // for each cell that is above the row that should be cleared(except)
                     if (i2 != 0) // should it be 3?
                     {            // just move them down by 1 cell
                         cells[i2][j2]->setBlock(cells[i2 - 1][j2]->getBlock());
                         cells[i2][j2]->setChar(cells[i2 - 1][j2]->getChar(false));
-                        std::cerr << "checkclear6" << std::endl;
                     }
                 }
             }
@@ -549,9 +544,9 @@ bool Board::checkForCurrBlock(std::vector<Cell *> currCells)
     return true;
 }
 
-bool Board::setCurrBlock(char blockType, bool IJL)
+bool Board::setCurrBlock(char blockType, bool clearCurBlock)
 {
-    if (IJL)
+    if (clearCurBlock)
     {
         for (auto cell : currBlock->getComponents())
         {
@@ -644,10 +639,6 @@ bool Board::setCurrBlock(char blockType, bool IJL)
         }
         currBlock = std::make_unique<TBlock>(currCells[0], currCells[1], currCells[2], currCells[3], 4, level, blockType);
     }
-    else if (blockType == '*')
-    {
-        addstar();
-    }
     for (auto cell : currCells)
     {
         cell->setChar(blockType);
@@ -664,7 +655,7 @@ void Board::IJL(char blockType)
 // update for blind
 void Board::update()
 {
-    for (int row = 5; row < 15; ++row)
+    for (int row = 6; row < 15; ++row)
     {
         for (int col = 2; col < 9; ++col)
         {
