@@ -28,8 +28,8 @@ std::vector<char> Level::readFile(std::string fileName)
     return content;
 }
 
-Level::Level(bool seedBool, unsigned int seed, std::vector<std::vector<std::shared_ptr<Cell>>> cells)
-    : seedBool{seedBool}, seed{seed}, cells{cells} {} // not sure if vector constructor is used correctly here
+Level::Level(std::vector<std::vector<std::shared_ptr<Cell>>> cells)
+    : cells{cells} {} // not sure if vector constructor is used correctly here
 
 std::unique_ptr<Block> Level::CreateBlock(int level, char blockType)
 {
@@ -67,21 +67,21 @@ std::unique_ptr<Block> Level::CreateBlock(int level, char blockType)
         currCells.emplace_back(cells[19][0]);
         currCells.emplace_back(cells[19][1]);
         currCells.emplace_back(cells[19][2]);
-        nextBlock = std::make_unique<LBlock>(currCells[0].get(), currCells[1].get(), currCells[2].get(), currCells[3].get(), 4, level, blockType);        
+        nextBlock = std::make_unique<LBlock>(currCells[0].get(), currCells[1].get(), currCells[2].get(), currCells[3].get(), 4, level, blockType);
         break;
     case 'O':
         currCells.emplace_back(cells[18][0]);
         currCells.emplace_back(cells[18][1]);
         currCells.emplace_back(cells[19][0]);
         currCells.emplace_back(cells[19][1]);
-        nextBlock = std::make_unique<OBlock>(currCells[0].get(), currCells[1].get(), currCells[2].get(), currCells[3].get(), 4, level, blockType);        
+        nextBlock = std::make_unique<OBlock>(currCells[0].get(), currCells[1].get(), currCells[2].get(), currCells[3].get(), 4, level, blockType);
         break;
     case 'S':
         currCells.emplace_back(cells[18][1]);
         currCells.emplace_back(cells[18][2]);
         currCells.emplace_back(cells[19][0]);
         currCells.emplace_back(cells[19][1]);
-        nextBlock = std::make_unique<SBlock>(currCells[0].get(), currCells[1].get(), currCells[2].get(), currCells[3].get(), 4, level, blockType);        
+        nextBlock = std::make_unique<SBlock>(currCells[0].get(), currCells[1].get(), currCells[2].get(), currCells[3].get(), 4, level, blockType);
         break;
     case 'Z':
         currCells.emplace_back(cells[18][0]);
@@ -109,10 +109,9 @@ std::unique_ptr<Block> Level::CreateBlock(int level, char blockType)
 }
 
 // mutate seedBool and seed
-void Level::setSeed(bool seedBool, unsigned int seed)
+void Level::setSeed(unsigned int seed)
 {
-    this->seedBool = seedBool;
-    this->seed = seed;
+    srand(seed);
 }
 
 // generate a newBlock by taking input from file content

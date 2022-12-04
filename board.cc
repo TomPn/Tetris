@@ -25,7 +25,7 @@ const int cols = 11;
 
 Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
     : playerName{""}, level{level}, score{0}, blockCount{0}, trigger{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false},
-      seedBool{seedBool}, seed{seed}, L0File{L0File}
+      L0File{L0File}
 {
     std::vector<std::vector<std::shared_ptr<Cell>>> cells(rows, std::vector<std::shared_ptr<Cell>>(cols, nullptr));
     for (int i = 0; i < rows; i++)
@@ -65,28 +65,33 @@ Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
     // initialize currLevel
     if (level == 0)
     {
-        currLevel = std::make_unique<Level0>(seedBool, seed, cells);
+        currLevel = std::make_unique<Level0>(cells);
         currLevel->setL0File(this->L0File);
     }
     else if (level == 1)
     {
-        auto currLevel = std::make_unique<Level1>(seedBool, seed, cells);
+        currLevel = std::make_unique<Level1>(cells);
     }
     else if (level == 2)
     {
-        auto currLevel = std::make_unique<Level2>(seedBool, seed, cells);
+        currLevel = std::make_unique<Level2>(cells);
     }
     else if (level == 3)
     {
-        auto currLevel = std::make_unique<Level3>(seedBool, seed, cells);
+        currLevel = std::make_unique<Level3>(cells);
     }
     else if (level == 4)
     {
-        auto currLevel = std::make_unique<Level4>(seedBool, seed, cells);
+        currLevel = std::make_unique<Level4>(cells);
+    }
+    if (seedBool)
+    {
+        currLevel->setSeed(seed);
     }
     // get a next block and set it as currBlock
     char blockType;
-    if (true) {
+    if (true)
+    {
         nextBlock = currLevel->CreateNextBlock();
         blockType = nextBlock->getBlockType();
     }
@@ -189,29 +194,39 @@ bool Board::drop()
     return prompt;
 }
 
-void Board::rotateHelper(bool rectangleType, bool horizontal, std::vector<int> rowsOfOriginal, std::vector<int> colsOfOriginal, std::vector<int> rowsOfDestination, std::vector<int> colsOfDestination, char blockType) {
+void Board::rotateHelper(bool rectangleType, bool horizontal, std::vector<int> rowsOfOriginal, std::vector<int> colsOfOriginal, std::vector<int> rowsOfDestination, std::vector<int> colsOfDestination, char blockType)
+{
     std::vector<int> realRotateRows;
     std::vector<int> realRotateCols;
     // if the block is 2*3
-    if (rectangleType) {
-        for (int i = 0; i < 6; ++i) {
+    if (rectangleType)
+    {
+        for (int i = 0; i < 6; ++i)
+        {
             // check for out of bound. If it is out of bound, then we can't rotate, so do nothing
-            if (rowsOfOriginal[i] < 0 || rowsOfOriginal[i] > 17 || rowsOfDestination[i] < 0 || rowsOfDestination[i] > 17 || colsOfOriginal[i] < 0 || colsOfOriginal[i] > 10 || colsOfDestination[i] < 0 || colsOfDestination[i] > 10) {
+            if (rowsOfOriginal[i] < 0 || rowsOfOriginal[i] > 17 || rowsOfDestination[i] < 0 || rowsOfDestination[i] > 17 || colsOfOriginal[i] < 0 || colsOfOriginal[i] > 10 || colsOfDestination[i] < 0 || colsOfDestination[i] > 10)
+            {
                 return;
             }
         }
 
-        for (int i = 0; i < 6; ++i) {
+        for (int i = 0; i < 6; ++i)
+        {
             // search for all 4 rotating cells
-            if (cells[rowsOfOriginal[i]][colsOfOriginal[i]]->getBlock() == currBlock.get()) {
+            if (cells[rowsOfOriginal[i]][colsOfOriginal[i]]->getBlock() == currBlock.get())
+            {
                 realRotateRows.emplace_back(rowsOfDestination[i]);
                 realRotateCols.emplace_back(colsOfDestination[i]);
             }
         }
-    } else { // if the block is 1*4
-        for (int i = 0; i < 4; ++i) {
+    }
+    else
+    { // if the block is 1*4
+        for (int i = 0; i < 4; ++i)
+        {
             // check for out of bound. If it is out of bound, then we can't rotate, so do nothing
-            if (rowsOfOriginal[i] < 0 || rowsOfOriginal[i] > 17 || rowsOfDestination[i] < 0 || rowsOfDestination[i] > 17 || colsOfOriginal[i] < 0 || colsOfOriginal[i] > 10 || colsOfDestination[i] < 0 || colsOfDestination[i] > 10) {
+            if (rowsOfOriginal[i] < 0 || rowsOfOriginal[i] > 17 || rowsOfDestination[i] < 0 || rowsOfDestination[i] > 17 || colsOfOriginal[i] < 0 || colsOfOriginal[i] > 10 || colsOfDestination[i] < 0 || colsOfDestination[i] > 10)
+            {
                 return;
             }
         }
@@ -219,9 +234,11 @@ void Board::rotateHelper(bool rectangleType, bool horizontal, std::vector<int> r
         realRotateCols = colsOfDestination;
     }
 
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i)
+    {
         // if the resulting cell is not empty and is not one of the current block's cell, it means the destination is occupied, hence do nothing
-        if ((cells[realRotateRows[i]][realRotateCols[i]]->getChar(false) != ' ') && (cells[realRotateRows[i]][realRotateCols[i]]->getBlock() != currBlock.get())) {
+        if ((cells[realRotateRows[i]][realRotateCols[i]]->getChar(false) != ' ') && (cells[realRotateRows[i]][realRotateCols[i]]->getBlock() != currBlock.get()))
+        {
             return;
         }
     }
@@ -231,20 +248,28 @@ void Board::rotateHelper(bool rectangleType, bool horizontal, std::vector<int> r
     int minRow = 18;
     int minCol = 12;
     // clear all cells in current block
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i)
+    {
         components[i]->setChar(' ');
         components[i]->setBlock(nullptr);
     }
     // replace cells in current block
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i)
+    {
         // initialize and assign new cells
         cells[realRotateRows[i]][realRotateCols[i]]->setChar(blockType);
         cells[realRotateRows[i]][realRotateCols[i]]->setBlock(currBlock.get());
         // replace cell
         components[i] = cells[realRotateRows[i]][realRotateCols[i]].get();
         // update the minimum row and column
-        if (realRotateRows[i] < minRow) {minRow = realRotateRows[i];}
-        if (realRotateCols[i] < minCol) {minCol = realRotateCols[i];}
+        if (realRotateRows[i] < minRow)
+        {
+            minRow = realRotateRows[i];
+        }
+        if (realRotateCols[i] < minCol)
+        {
+            minCol = realRotateCols[i];
+        }
     }
     // update the current block with new elements
     currBlock->setComponents(components);
@@ -276,28 +301,28 @@ void Board::rotate(bool clockwise)
             colsOfOriginal = std::vector<int>{tlCol, tlCol + 1, tlCol + 2, tlCol, tlCol + 1, tlCol + 2};
             if (clockwise)
             {
-                rowsOfDestination = std::vector<int>{rowsOfOriginal[0]-1, rowsOfOriginal[1], rowsOfOriginal[2]+1, rowsOfOriginal[3]-2, rowsOfOriginal[4]-1, rowsOfOriginal[5]};
-                colsOfDestination = std::vector<int>{colsOfOriginal[0]+1, colsOfOriginal[1], colsOfOriginal[2]-1, colsOfOriginal[3], colsOfOriginal[4]-1, colsOfOriginal[5]-2};
+                rowsOfDestination = std::vector<int>{rowsOfOriginal[0] - 1, rowsOfOriginal[1], rowsOfOriginal[2] + 1, rowsOfOriginal[3] - 2, rowsOfOriginal[4] - 1, rowsOfOriginal[5]};
+                colsOfDestination = std::vector<int>{colsOfOriginal[0] + 1, colsOfOriginal[1], colsOfOriginal[2] - 1, colsOfOriginal[3], colsOfOriginal[4] - 1, colsOfOriginal[5] - 2};
             }
             else
             {
-                rowsOfDestination = std::vector<int>{rowsOfOriginal[0]+1, rowsOfOriginal[1], rowsOfOriginal[2]-1, rowsOfOriginal[3], rowsOfOriginal[4]-1, rowsOfOriginal[5]-2};
-                colsOfDestination = std::vector<int>{colsOfOriginal[0], colsOfOriginal[1]-1, colsOfOriginal[2]-2, colsOfOriginal[3]+1, colsOfOriginal[4], colsOfOriginal[5]-1};
+                rowsOfDestination = std::vector<int>{rowsOfOriginal[0] + 1, rowsOfOriginal[1], rowsOfOriginal[2] - 1, rowsOfOriginal[3], rowsOfOriginal[4] - 1, rowsOfOriginal[5] - 2};
+                colsOfDestination = std::vector<int>{colsOfOriginal[0], colsOfOriginal[1] - 1, colsOfOriginal[2] - 2, colsOfOriginal[3] + 1, colsOfOriginal[4], colsOfOriginal[5] - 1};
             }
         }
         else
         {
-            rowsOfOriginal = std::vector<int>{tlRow, tlRow+1, tlRow+2, tlRow, tlRow+1, tlRow+2};
-            colsOfOriginal = std::vector<int>{tlCol, tlCol, tlCol, tlCol+1, tlCol+1, tlCol+1};
+            rowsOfOriginal = std::vector<int>{tlRow, tlRow + 1, tlRow + 2, tlRow, tlRow + 1, tlRow + 2};
+            colsOfOriginal = std::vector<int>{tlCol, tlCol, tlCol, tlCol + 1, tlCol + 1, tlCol + 1};
             if (clockwise)
             {
-                rowsOfDestination = std::vector<int>{rowsOfOriginal[0]+1, rowsOfOriginal[1], rowsOfOriginal[2]-1, rowsOfOriginal[3]+2, rowsOfOriginal[4]+1, rowsOfOriginal[5]};
-                colsOfDestination = std::vector<int>{colsOfOriginal[0]+2, colsOfOriginal[1]+1, colsOfOriginal[2], colsOfOriginal[3]+1, colsOfOriginal[4], colsOfOriginal[5]-1};
+                rowsOfDestination = std::vector<int>{rowsOfOriginal[0] + 1, rowsOfOriginal[1], rowsOfOriginal[2] - 1, rowsOfOriginal[3] + 2, rowsOfOriginal[4] + 1, rowsOfOriginal[5]};
+                colsOfDestination = std::vector<int>{colsOfOriginal[0] + 2, colsOfOriginal[1] + 1, colsOfOriginal[2], colsOfOriginal[3] + 1, colsOfOriginal[4], colsOfOriginal[5] - 1};
             }
             else
             {
-                rowsOfDestination = std::vector<int>{rowsOfOriginal[0]+2, rowsOfOriginal[1]+1, rowsOfOriginal[2], rowsOfOriginal[3]+1, rowsOfOriginal[4], rowsOfOriginal[5]-1};
-                colsOfDestination = std::vector<int>{colsOfOriginal[0], colsOfOriginal[1]+1, colsOfOriginal[2]+2, colsOfOriginal[3]-1, colsOfOriginal[4], colsOfOriginal[5]+1};
+                rowsOfDestination = std::vector<int>{rowsOfOriginal[0] + 2, rowsOfOriginal[1] + 1, rowsOfOriginal[2], rowsOfOriginal[3] + 1, rowsOfOriginal[4], rowsOfOriginal[5] - 1};
+                colsOfDestination = std::vector<int>{colsOfOriginal[0], colsOfOriginal[1] + 1, colsOfOriginal[2] + 2, colsOfOriginal[3] - 1, colsOfOriginal[4], colsOfOriginal[5] + 1};
             }
         }
         rotateHelper(true, horizontal, rowsOfOriginal, colsOfOriginal, rowsOfDestination, colsOfDestination, blockType);
@@ -311,13 +336,13 @@ void Board::rotate(bool clockwise)
             colsOfOriginal = std::vector<int>{tlCol, tlCol + 1, tlCol + 2, tlCol + 3};
             if (clockwise)
             {
-                rowsOfDestination = std::vector<int>{rowsOfOriginal[0]-3, rowsOfOriginal[1]-2, rowsOfOriginal[2]-1, rowsOfOriginal[3]};
-                colsOfDestination = std::vector<int>{colsOfOriginal[0], colsOfOriginal[1]-1, colsOfOriginal[2]-2, colsOfOriginal[3]-3};
+                rowsOfDestination = std::vector<int>{rowsOfOriginal[0] - 3, rowsOfOriginal[1] - 2, rowsOfOriginal[2] - 1, rowsOfOriginal[3]};
+                colsOfDestination = std::vector<int>{colsOfOriginal[0], colsOfOriginal[1] - 1, colsOfOriginal[2] - 2, colsOfOriginal[3] - 3};
             }
             else
             {
-                rowsOfDestination = std::vector<int>{rowsOfOriginal[0], rowsOfOriginal[1]-1, rowsOfOriginal[2]-2, rowsOfOriginal[3]-3};
-                colsOfDestination = std::vector<int>{colsOfOriginal[0], colsOfOriginal[1]-1, colsOfOriginal[2]-2, colsOfOriginal[3]-3};
+                rowsOfDestination = std::vector<int>{rowsOfOriginal[0], rowsOfOriginal[1] - 1, rowsOfOriginal[2] - 2, rowsOfOriginal[3] - 3};
+                colsOfDestination = std::vector<int>{colsOfOriginal[0], colsOfOriginal[1] - 1, colsOfOriginal[2] - 2, colsOfOriginal[3] - 3};
             }
         }
         else
@@ -326,13 +351,13 @@ void Board::rotate(bool clockwise)
             colsOfOriginal = std::vector<int>{tlCol, tlCol, tlCol, tlCol};
             if (clockwise)
             {
-                rowsOfDestination = std::vector<int>{rowsOfOriginal[0]+3, rowsOfOriginal[1]+2, rowsOfOriginal[2]+1, rowsOfOriginal[3]};
-                colsOfDestination = std::vector<int>{colsOfOriginal[0]+3, colsOfOriginal[1]+2, colsOfOriginal[2]+1, colsOfOriginal[3]};
+                rowsOfDestination = std::vector<int>{rowsOfOriginal[0] + 3, rowsOfOriginal[1] + 2, rowsOfOriginal[2] + 1, rowsOfOriginal[3]};
+                colsOfDestination = std::vector<int>{colsOfOriginal[0] + 3, colsOfOriginal[1] + 2, colsOfOriginal[2] + 1, colsOfOriginal[3]};
             }
             else
             {
-                rowsOfDestination = std::vector<int>{rowsOfOriginal[0]+3, rowsOfOriginal[1]+2, rowsOfOriginal[2]+1, rowsOfOriginal[3]};
-                colsOfDestination = std::vector<int>{colsOfOriginal[0], colsOfOriginal[1]+1, colsOfOriginal[2]+2, colsOfOriginal[3]+3};
+                rowsOfDestination = std::vector<int>{rowsOfOriginal[0] + 3, rowsOfOriginal[1] + 2, rowsOfOriginal[2] + 1, rowsOfOriginal[3]};
+                colsOfDestination = std::vector<int>{colsOfOriginal[0], colsOfOriginal[1] + 1, colsOfOriginal[2] + 2, colsOfOriginal[3] + 3};
             }
         }
         rotateHelper(false, horizontal, rowsOfOriginal, colsOfOriginal, rowsOfDestination, colsOfDestination, blockType);
@@ -356,20 +381,19 @@ void Board::levelDown()
         level--;
         if (level == 0)
         {
-            currLevel = std::make_unique<Level0>(seedBool, seed, cells);
-
+            currLevel = std::make_unique<Level0>(cells);
         }
         else if (level == 1)
         {
-            currLevel = std::make_unique<Level1>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level1>(cells);
         }
         else if (level == 2)
         {
-            currLevel = std::make_unique<Level2>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level2>(cells);
         }
         else if (level == 3)
         {
-            currLevel = std::make_unique<Level3>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level3>(cells);
         }
     }
 }
@@ -381,21 +405,21 @@ void Board::levelUp()
         level++;
         if (level == 1)
         {
-            currLevel = std::make_unique<Level1>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level1>(cells);
         }
         else if (level == 2)
         {
-            currLevel = std::make_unique<Level2>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level2>(cells);
         }
         else if (level == 3)
         {
             isHeavy = true;
-            currLevel = std::make_unique<Level3>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level3>(cells);
         }
         else if (level == 4)
         {
             isHeavy = true;
-            currLevel = std::make_unique<Level4>(seedBool, seed, cells);
+            currLevel = std::make_unique<Level4>(cells);
         }
     }
 }
@@ -413,7 +437,7 @@ void Board::setHeavy()
 
 void Board::setForce(char blockType)
 {
-    setCurrBlock(blockType);
+    setCurrBlock(blockType, true);
     isForce = true;
 }
 
@@ -474,7 +498,7 @@ int Board::checkClear()
                     if (i2 == i)
                     {
                         // for each cell, identify its block
-                        Block* blockOnBoard = cells[i2][j2]->getBlock();
+                        Block *blockOnBoard = cells[i2][j2]->getBlock();
                         // if that's the last living cell in that block, delete that block
                         if (blockOnBoard->getAlive() == 1)
                         {
@@ -507,7 +531,6 @@ int Board::checkClear()
     return clear;
 }
 
-
 bool Board::checkForCurrBlock(std::vector<Cell *> currCells)
 {
     for (auto cell : currCells)
@@ -521,12 +544,12 @@ bool Board::checkForCurrBlock(std::vector<Cell *> currCells)
     return true;
 }
 
-
-
-bool Board::setCurrBlock(char blockType,bool IJL)
+bool Board::setCurrBlock(char blockType, bool clearCurBlock)
 {
-    if(IJL){
-        for(auto cell:currBlock->getComponents()){
+    if (clearCurBlock)
+    {
+        for (auto cell : currBlock->getComponents())
+        {
             cell->setChar(' ');
             cell->setBlock(nullptr);
         }
@@ -626,7 +649,7 @@ bool Board::setCurrBlock(char blockType,bool IJL)
 
 void Board::IJL(char blockType)
 {
-    setCurrBlock(blockType,true);
+    setCurrBlock(blockType, true);
 }
 
 // update for blind
@@ -661,6 +684,7 @@ void Board::addstar()
     blocksPlaced.emplace_back(std::move(star));
     cells[availableRow][centralCol]->setChar('*');
     cells[availableRow][centralCol]->setBlock(blocksPlaced.back().get());
+    checkClear();
 }
 
 void Board::setL0File(std::string L0File)
@@ -689,12 +713,12 @@ bool Board::getOver()
     return over;
 }
 
-
-void Board::setName(std::string name) {
+void Board::setName(std::string name)
+{
     playerName = name;
-} 
-
-std::string Board::getName() {
-    return playerName;
 }
 
+std::string Board::getName()
+{
+    return playerName;
+}

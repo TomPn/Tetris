@@ -9,11 +9,7 @@ void Level1::setNoRandom(bool noRandom, std::string noRandomFile) {}
 std::unique_ptr<Block> Level1::CreateNextBlock()
 {
     std::unique_ptr<Block> nextBlock;
-    // set up the seed
-    if (seedBool == true)
-    {
-        std::srand(seed);
-    }
+
     // random is a random int from 1 to 12
     int random = 1 + std::rand() / ((RAND_MAX + 1u) / 12);
 
