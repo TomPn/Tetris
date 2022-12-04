@@ -193,7 +193,7 @@ void Game::start()
         }
         else if (command == "norandom" && !isOver)
         {
-            cin >> command;
+            command = cmdInter->getCommand();
             noRandom(command);
         }
         else if (command == "random" && !isOver)

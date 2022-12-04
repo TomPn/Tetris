@@ -7,6 +7,8 @@
 #include <iostream>
 #include "commandInterpreter.h"
 using std::cin;
+using std::cout;
+using std::endl;
 
 struct CommandInterpreterImpl {
     std::string curCommand;
@@ -49,9 +51,11 @@ std::string CommandInterpreter::isValid(std::string name, int multiplier) {
     int duplicate = 0;
     int nameLen = name.length();
     std::string extCommand;
+    // loop through the commands pool to see any of them matches the name
     for (auto it: pImpl->commands) {
         if (name == it) {
-            if (name == "restart" || name == "norandom" || name == "random" || name == "ENDGAME") {
+            // few commands do not need multiplier
+            if (name == "restart" || name == "norandom" || name == "random" || name == "ENDGAME" || name == "done") {
                 return name;
             }
             return toString(multiplier) + name;
@@ -102,23 +106,34 @@ void CommandInterpreter::addMacro() {
     // read in the name of the macro
     std::string name, macroCommand;
     std::vector<std::string> macroCommands;
-    cin >> name;
+    if (pImpl->remainCommands.size() != 0) {
+        name = pImpl->remainCommands.front();
+        pImpl->remainCommands.erase(pImpl->remainCommands.begin());
+    } else {
+        cin >> name;
+    }
     // read in the sequence of commands
-    while (cin >> macroCommand) {
-        if (macroCommand == "done") break;
+    while (true) {
+        if (pImpl->remainCommands.size() != 0) {
+            macroCommand = pImpl->remainCommands.front();
+            pImpl->remainCommands.erase(pImpl->remainCommands.begin());
+        } else {
+            cin >> macroCommand;
+        }
+        if (macroCommand == "done") {
+            cout << "macro: " << name << " added" << endl;
+            break;
+        }
         macroCommands.emplace_back(macroCommand);
     }
     // add the new macro pair to macro map
     pImpl->macros[name] = macroCommands;
 }
 
-std::string CommandInterpreter::getCommand() {
-    std::string command;
-    int multiplier = 1;
+std::vector<std::string> CommandInterpreter::breakCommand(std::string command) {
+    std::vector<std::string> breakedCommand;
+    std::string multiplier;
     int commandIndex = 0;
-    cin >> command;
-    if (cin.eof()) return "ENDGAME";
-    // check if a multiplier exists
     if (isDigit(command[0])) {
         int len = command.length();
         for (int i = 0; i < len; ++i) {
@@ -128,52 +143,146 @@ std::string CommandInterpreter::getCommand() {
             ++commandIndex;
         }
         if (commandIndex >= len) {
-            return "";
+            return breakedCommand;
         }
-        multiplier = toInt(command.substr(0,commandIndex));
+        multiplier = command.substr(0,commandIndex);
         command = command.substr(commandIndex,command.length()-commandIndex);
+        breakedCommand.emplace_back(command);
+        breakedCommand.emplace_back(multiplier);
+        return breakedCommand;
     }
+    breakedCommand.emplace_back(command);
+    return breakedCommand;
+}
+
+std::string CommandInterpreter::getCommand() {
+    std::string command = "";
+    int multiplier = 1;
+
+    // if there is any remaining commands from previous actions, return them first
+    if (pImpl->remainCommands.size() != 0) {
+        std::string nextCommand = pImpl->remainCommands.front();
+        pImpl->remainCommands.erase(pImpl->remainCommands.begin());
+        
+        std::vector<std::string> breakedCommand = breakCommand(nextCommand);
+        if (breakedCommand.size() == 0) {
+            return "";
+        } else if (breakedCommand.size() == 1) {
+            command = breakedCommand[0];
+            multiplier = 1;
+        } else {
+            command = breakedCommand[0];
+            multiplier = toInt(breakedCommand[1]);
+        }
+    } else {
+        // read in the command
+        cin >> command;
+        // if eof, end the game
+        if (cin.eof()) return "ENDGAME";
+        // check if a multiplier exists
+        std::vector<std::string> brokeCommand = breakCommand(command);
+        if (brokeCommand.size() == 0) {
+            return "";
+        } else if (brokeCommand.size() == 1) { // if size-one vector is return, it means there is no multiplier
+            command = brokeCommand[0];
+            multiplier = 1;
+        } else {
+            command = brokeCommand[0];
+            multiplier = toInt(brokeCommand[1]);
+        }
+    }
+
     // rename command
     if (command == "rename") {
         rename();
-    } // macro command
-    else if (command == "macro") {
+    } else if (command == "macro") { // macro command
         addMacro();
-    } // sequence command
-    else if (command == "sequence") {
+    } else if (command == "sequence") { // sequence command
         std::string fileName;
         bool firstCommand = 0;
         std::string command1;
+        std::vector<std::string> newRemainCommands;
+
         // read in the file name
-        cin >> fileName;
+        if (pImpl->remainCommands.size() != 0) {
+            fileName = pImpl->remainCommands.front();
+            pImpl->remainCommands.erase(pImpl->remainCommands.begin());
+        } else {
+            cin >> fileName;
+        }
         std::ifstream infile{ fileName };
+        
+        // read all commands in the file. Store the first command locally and store the other ones in remainCommands.
         while(infile >> command) {
             if (!firstCommand) {
                 command1 = command;
                 firstCommand = 1;
+            } else {
+                cout << command << endl;
+                // if there are other remaining commands not executed, prioritize the current sequence commands
+                newRemainCommands.emplace_back(command);
             }
-            pImpl->remainCommands.emplace_back(command);
         }
-        return isValid(command1, multiplier);
-    } else {
+
+        for (auto &it: pImpl->remainCommands) {
+            newRemainCommands.emplace_back(it);
+        }
+        pImpl->remainCommands = newRemainCommands;
+
+        // convert the command to the format of command + multiplier vector
+        std::vector<std::string> breakedCommand = breakCommand(command1);
+        // if no command is return, it means the command is composed of only number, hence not a valid command
+        if (breakedCommand.size() == 0) {
+            return "";
+        } else if (breakedCommand.size() == 1) { // if size-one vector is return, it means there is no multiplier
+            return isValid(breakedCommand[0], 1);
+        }
+        // if none of the above happens, it means its a command with a multiplier
+        return isValid(breakedCommand[0], toInt(breakedCommand[1]));   
+    }
+    else {
+
         // check if command is a rename of command
-        pImpl->multiplier = 0;
         for (auto const &p: pImpl->renameMap) {
             if (command == p.first) {
-                return isValid(pImpl->renameMap[command], multiplier);
+                return isValid(p.second, multiplier);   
             }
         }
+
         // check if command is the name of a macro
         std::string newCommand;
+        std::vector<std::string> tmpMacro;
+        std::vector<std::string> newRemainCommands;
         for (auto &p: pImpl->macros) {
             if (command == p.first) {
-                if (pImpl->macros[command].size() == 1) {
-                    return isValid(pImpl->macros[command][0], multiplier);
-                }
+                // if command is the name of a macro, run the first command in the macro and store the rest in the remainCommands
                 newCommand = pImpl->macros[command][0];
-                pImpl->macros[command].erase(pImpl->macros[command].begin());
-                pImpl->remainCommands = pImpl->macros[command];
-                return isValid(pImpl->macros[command][0], multiplier);
+                tmpMacro = pImpl->macros[command];
+                tmpMacro.erase(tmpMacro.begin());
+
+                newRemainCommands = tmpMacro;
+                // if multiple macros are called, add all of them to newRemainCommands
+                for (int i = 1; i < multiplier; ++i) {
+                    for (auto &it: pImpl->macros[command]) {
+                        newRemainCommands.emplace_back(it);
+                    }
+                }
+                
+                // if there are any commands left not executed from the previous actions, add them to the back of newRemainCommands
+                for (auto &it: pImpl->remainCommands) {
+                    newRemainCommands.emplace_back(it);
+                }
+
+                pImpl->remainCommands = newRemainCommands;
+
+                // execute the first command
+                std::vector<std::string> breakedCommand = breakCommand(newCommand);
+                if (breakedCommand.size() == 0) {
+                    return "";
+                } else if (breakedCommand.size() == 1) {
+                    return isValid(breakedCommand[0], 1);
+                }
+                return isValid(breakedCommand[0], toInt(breakedCommand[1]));   
             }
         }
     }
