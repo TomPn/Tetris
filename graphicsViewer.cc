@@ -18,18 +18,33 @@ GraphicsViewer::~GraphicsViewer()
 }
 
 void GraphicsViewer::printTitle() {
-    window->fillRectangle(200, 10, 10, 30, window->White);
+    //print highest score
+    window->fillRectangle(25, 10, 600, 70, window->White);
     window->drawString(200, 10, "Highest Score: " + std::to_string(subject->getHiScore()));
-    window->drawString(20, 30, "Player1:  " + subject->getName(0));
-    window->drawString(300, 30, "Player2:  " + subject->getName(1));
-    window->fillRectangle(20, 50, 10, 30, window->White);
-    window->drawString(20, 50, "Score: " + std::to_string(subject->getScore(0)));
-    window->fillRectangle(300, 50, 10, 30, window->White);
-    window->drawString(300, 50, "Score: " + std::to_string(subject->getScore(1)));
-    window->fillRectangle(20, 70, 10, 30, window->White);
-    window->drawString(20, 70, "Level: " + std::to_string(subject->getLevel(0)));
-    window->fillRectangle(300, 70, 10, 30, window->White);
-    window->drawString(300, 70, "Level: " + std::to_string(subject->getLevel(1)));
+
+    //print player names
+    window->drawString(20, 25, "Player1:  " + subject->getName(0));
+    window->drawString(300, 25, "Player2:  " + subject->getName(1));
+
+    //print player scores
+    window->drawString(20, 40, "Score: " + std::to_string(subject->getScore(0)));
+    window->drawString(300, 40, "Score: " + std::to_string(subject->getScore(1)));
+
+    //print player level
+    window->drawString(20, 55, "Level: " + std::to_string(subject->getLevel(0)));
+    window->drawString(300, 55, "Level: " + std::to_string(subject->getLevel(1)));
+
+    //print player status
+    if (subject->getOver(0)) {
+        window->drawString(20, 70, "Status: Dead");
+    } else {
+        window->drawString(20, 70, "Status: Alive");
+    }
+    if (subject->getOver(1)) {
+        window->drawString(300, 70, "Status: Dead");
+    } else {
+        window->drawString(300, 70, "Status: Alive");
+    }
 }
 
 void GraphicsViewer::prompt()
@@ -105,11 +120,9 @@ void GraphicsViewer::printPlayer(int row_start, int row_end, int x, int y, int p
     }
 }
 
-void GraphicsViewer::printOver() {
-    //finish later
-}
 
 void GraphicsViewer::printSummary() {
+    window->drawString(255, 10 ,"Game Over");
     window->drawString(250, 30 ,"Game Summary");
     window->drawString(150, 50, subject->getName(0) + "'s score: " + std::to_string(subject->getScore(0)));
     window->drawString(350, 50, subject->getName(1) + "'s score: " + std::to_string(subject->getScore(1)));
@@ -122,11 +135,14 @@ void GraphicsViewer::printSummary() {
     }
 }
 
+void GraphicsViewer::clear() {
+    window->fillRectangle(0, 0, 600, 600, window->White);
+}
+
 void GraphicsViewer::notify(bool over)
 {
     if (over) {
         window->fillRectangle(0, 0, 600, 600, window->White);
-        printOver();
         printSummary();
         window->drawString(100, 200, "Enter ENDGAME to end the game or restart to restart the game");
         

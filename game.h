@@ -38,6 +38,7 @@ public:
     char getState(int player, int row, int col) const override;
     int getLevel(int player) const override;
     int getScore(int player) const override;
+    bool getOver(int player) const;
     void setHiScore();
     int getHiScore();
     bool getChange(int player, int row, int col) const override;
