@@ -19,7 +19,7 @@ GraphicsViewer::~GraphicsViewer()
 
 void GraphicsViewer::printTitle() {
     //print highest score
-    window->fillRectangle(25, 10, 600, 70, window->White);
+    window->fillRectangle(25, 0, 600, 70, window->White);
     window->drawString(200, 10, "Highest Score: " + std::to_string(subject->getHiScore()));
 
     //print player names
