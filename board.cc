@@ -518,6 +518,7 @@ int Board::checkClear()
                     {            // just move them down by 1 cell
                         cells[i2][j2]->setBlock(cells[i2 - 1][j2]->getBlock());
                         cells[i2][j2]->setChar(cells[i2 - 1][j2]->getChar(false));
+                        setChange(i2, j2, true);
                     }
                 }
             }
@@ -706,6 +707,10 @@ void Board::setNoRandom(bool noRandom, std::string noRandomFile)
 bool Board::getChange(int row, int col)
 {
     return cells[row][col]->getChange();
+}
+
+void Board::setChange(int row, int col, bool change) {
+    cells[row][col]->setChange(change);
 }
 
 bool Board::getOver()

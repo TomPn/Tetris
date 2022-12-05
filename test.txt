@@ -1,0 +1,12 @@
+drop
+drop
+4right
+drop
+macro test 4right 3drop done
+test
+drop
+rename right rag
+4rag
+drop
+macro upup 2levelup 8right 4drop done
+2upup

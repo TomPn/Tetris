@@ -1,14 +1,1 @@
 O O O O O L O S T Z
-
-
-2drop
-2right
-2drop
-4right
-2drop
-6right
-2drop
-8right
-2drop
-counterclockwise
-10right

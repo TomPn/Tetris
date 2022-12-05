@@ -78,7 +78,12 @@ void CommandInterpreter::rename() {
     int nameUsed = 0;
     std::string oldCommand;
     // read in the command name
-    cin >> oldCommand;
+    if (pImpl->remainCommands.size() != 0) {
+        oldCommand = pImpl->remainCommands.front();
+        pImpl->remainCommands.erase(pImpl->remainCommands.begin());
+    } else {
+        cin >> oldCommand;
+    }
     // check if the command name is a valid command
     for (auto &it: pImpl->commands) {
         if (oldCommand == it) {
@@ -88,7 +93,12 @@ void CommandInterpreter::rename() {
     // if it is, read the name used for renaming
     if (commandInCommands) {
         std::string name;
-        cin >> name;
+        if (pImpl->remainCommands.size() != 0) {
+            name = pImpl->remainCommands.front();
+            pImpl->remainCommands.erase(pImpl->remainCommands.begin());
+        } else {
+            cin >> name;
+        }
         // check if the name is already used
         for (auto &p: pImpl->renameMap) {
             if (p.first == name && p.second != oldCommand) {
@@ -163,7 +173,9 @@ std::string CommandInterpreter::getCommand() {
     if (pImpl->remainCommands.size() != 0) {
         std::string nextCommand = pImpl->remainCommands.front();
         pImpl->remainCommands.erase(pImpl->remainCommands.begin());
-        
+
+        cout << "Command entered was: " << nextCommand << endl;
+
         std::vector<std::string> breakedCommand = breakCommand(nextCommand);
         if (breakedCommand.size() == 0) {
             return "";
@@ -179,6 +191,7 @@ std::string CommandInterpreter::getCommand() {
         cin >> command;
         // if eof, end the game
         if (cin.eof()) return "ENDGAME";
+        
         // check if a multiplier exists
         std::vector<std::string> brokeCommand = breakCommand(command);
         if (brokeCommand.size() == 0) {
@@ -191,7 +204,7 @@ std::string CommandInterpreter::getCommand() {
             multiplier = toInt(brokeCommand[1]);
         }
     }
-
+    
     // rename command
     if (command == "rename") {
         rename();
@@ -239,12 +252,11 @@ std::string CommandInterpreter::getCommand() {
         }
         // if none of the above happens, it means its a command with a multiplier
         return isValid(breakedCommand[0], toInt(breakedCommand[1]));   
-    }
-    else {
-
+    } else {
         // check if command is a rename of command
         for (auto const &p: pImpl->renameMap) {
             if (command == p.first) {
+                cout << "Command applied was: " << p.first << ", " << "a rename of command" << p.second << endl;
                 return isValid(p.second, multiplier);   
             }
         }
@@ -278,6 +290,7 @@ std::string CommandInterpreter::getCommand() {
                 // execute the first command
                 std::vector<std::string> breakedCommand = breakCommand(newCommand);
                 if (breakedCommand.size() == 0) {
+                    cout << "Invalid Command" << endl;
                     return "";
                 } else if (breakedCommand.size() == 1) {
                     return isValid(breakedCommand[0], 1);
