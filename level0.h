@@ -11,8 +11,8 @@ class Level0 : public Level
     std::vector<char> L0FileContent;
 
 public:
-    Level0(bool seedBool, unsigned int seed, std::vector<std::vector<std::shared_ptr<Cell>>> cells)
-        : Level{seedBool, seed, cells}, L0File{""}, L0FileIndex{0}, L0FileContent{std::vector<char>{' '}}
+    Level0(std::vector<std::vector<std::shared_ptr<Cell>>> cells)
+        : Level{cells}, L0File{""}, L0FileIndex{0}, L0FileContent{std::vector<char>{' '}}
     {
     }
     std::unique_ptr<Block> CreateNextBlock() override;

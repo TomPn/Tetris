@@ -17,11 +17,11 @@ protected:
     std::unique_ptr<Block> CreateNextFromFile(std::vector<char> content, int index);
 
 public:
-    Level(bool seedBool, unsigned int seed, std::vector<std::vector<std::shared_ptr<Cell>>> cells);
+    Level(std::vector<std::vector<std::shared_ptr<Cell>>> cells);
     virtual ~Level() = 0;
     virtual void setL0File(std::string L0File = "") = 0;
     virtual void setNoRandom(bool noRandom, std::string noRandomFile = "") = 0;
-    void setSeed(bool seedBool, unsigned int seed = 0);
+    void setSeed(unsigned int seed);
     virtual std::unique_ptr<Block> CreateNextBlock() = 0;
     std::unique_ptr<Block> CreateBlock(int level, char blockType);
 };

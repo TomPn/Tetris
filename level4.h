@@ -12,8 +12,8 @@ class Level4 : public Level
     std::vector<char> noRandomFileContent;
 
 public:
-    Level4(bool seedBool, unsigned int seed, std::vector<std::vector<std::shared_ptr<Cell>>> cells)
-        : Level{seedBool, seed, cells}, noRandomBool{false}, noRandomFile{""}, noRandomFileIndex{0}, noRandomFileContent{std::vector<char>{' '}}
+    Level4(std::vector<std::vector<std::shared_ptr<Cell>>> cells)
+        : Level{cells}, noRandomBool{false}, noRandomFile{""}, noRandomFileIndex{0}, noRandomFileContent{std::vector<char>{' '}}
     {
     }
     void setL0File(std::string L0File = "") override;
