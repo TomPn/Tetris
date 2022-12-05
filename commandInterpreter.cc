@@ -173,9 +173,6 @@ std::string CommandInterpreter::getCommand() {
     if (pImpl->remainCommands.size() != 0) {
         std::string nextCommand = pImpl->remainCommands.front();
         pImpl->remainCommands.erase(pImpl->remainCommands.begin());
-
-        cout << "Command entered was: " << nextCommand << endl;
-
         std::vector<std::string> breakedCommand = breakCommand(nextCommand);
         if (breakedCommand.size() == 0) {
             return "";
