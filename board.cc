@@ -418,6 +418,7 @@ void Board::levelUp()
         }
         else if (level == 4)
         {
+            blockCount = 0;
             isHeavy = true;
             currLevel = std::make_unique<Level4>(cells);
         }
