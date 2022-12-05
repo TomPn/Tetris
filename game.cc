@@ -57,7 +57,7 @@ void Game::start()
         if (command == "ENDGAME")
         {
             isOver = true;
-            cout << "eof detected: END OF GAME" << endl;
+            cout << "GG WELL PLAYED" << endl;
             break;
         }
         if (isDigit(command[0]))
