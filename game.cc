@@ -284,11 +284,6 @@ bool Game::drop(int multiplier)
         if ((!playerRound && !curPlayer->getOver()) || (playerRound && opponent->getOver())) {
             // drop the block and check if the game is over
             prompt = curPlayer->drop();
-            isOver = curPlayer->getOver();
-            if (isOver)
-            {
-                break;
-            }
             // switch player round
             playerRound = 1;
             // update the highest score
@@ -299,11 +294,6 @@ bool Game::drop(int multiplier)
         } else { // player 1 turn
             // drop the block and check if the game is over
             prompt = opponent->drop();
-            isOver = opponent->getOver();
-            if (isOver)
-            {
-                break;
-            }
             // switch player round
             playerRound = 0;
             // update the highest score
@@ -320,12 +310,13 @@ bool Game::drop(int multiplier)
         {
             Subject::notifyObserversPrompt();
         }
-    }
-    isOver = opponent->getOver() && curPlayer->getOver();
-    // if the game is over, let the player choose whether end the game or play again
-    if (isOver)
-    {
-        Subject::notifyObservers(true);
+        isOver = opponent->getOver() && curPlayer->getOver();
+        // if the game is over, let the player choose whether end the game or play again
+        if (isOver)
+        {
+            Subject::notifyObservers(true);
+            break;
+        }
     }
     return prompt;
 }
