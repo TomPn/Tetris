@@ -18,6 +18,13 @@ void Subject::detach(Observer *o)
   }
 }
 
+void Subject::clear() {
+  for (auto ob : observers)
+  {
+    ob->clear();
+  }
+}
+
 void Subject::notifyObservers(bool over)
 {
   for (auto ob : observers)

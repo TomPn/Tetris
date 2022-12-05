@@ -13,6 +13,7 @@ public:
     TextViewer(Game *subject);
     void notify(bool over) override;
     void prompt() override;
+    void clear() override;
     void printData(std::string dataType);
     void printLine();
     ~TextViewer();

@@ -14,7 +14,7 @@ class GraphicsViewer: public Observer {
         void printPlayer(int row_start, int row_end,int x, int y, int player);
         void printTitle();
         void notify(bool over) override;
-        void printOver();
+        void clear() override;
         void prompt();
         void printSummary();
         ~GraphicsViewer();

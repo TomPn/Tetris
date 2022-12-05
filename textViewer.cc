@@ -50,12 +50,19 @@ void TextViewer::printData(std::string dataType)
     {
         output = dataType + ": " + subject->getName(0);
     }
-    int wsLength = cols - output.length();
+    else if (dataType == "Status") {
+        if (subject->getOver(0) == 1) {
+            output = dataType + ": Dead";
+        } else {
+            output = dataType + ": Alive";
+        }
+    }
+    int wsLength = cols + 10 - output.length();
     for (int i = 0; i < wsLength; i++)
     {
         output += " ";
     }
-    out << output << "          ";
+    out << output;
     if (dataType == "Score")
     {
         out << dataType << ": " << subject->getScore(1) << endl;
@@ -68,7 +75,16 @@ void TextViewer::printData(std::string dataType)
     {
         out << dataType << ": " << subject->getName(1) << endl;
     }
+    else if (dataType == "Status") {
+        if (subject->getOver(1) == 1) {
+            out << dataType << ": Dead" << endl;
+        } else {
+            out << dataType << ": Alive" << endl;
+        }
+    }
 }
+
+void TextViewer::clear() {}
 
 void TextViewer::notify(bool over)
 {
@@ -97,6 +113,7 @@ void TextViewer::notify(bool over)
         printData("Score");
         printData("Level");
         printData("Player");
+        printData("Status");
         printLine();
         for (int i = 0; i < rows; i++)
         {
