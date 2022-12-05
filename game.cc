@@ -457,6 +457,7 @@ void Game::levelDown(int multiplier)
 
 void Game::restart()
 {
+    Subject::clear();
     curPlayer = std::make_unique<Board>(startLevel, haveSeed, seed, this->scriptfile1);
     opponent = std::make_unique<Board>(startLevel, haveSeed, seed, this->scriptfile2);
     playerRound = 0;
@@ -545,5 +546,13 @@ std::string Game::getName(bool player)
     else
     {
         return opponent->getName();
+    }
+}
+
+bool Game::getOver(int player) const {
+    if (!player) {
+        return curPlayer->getOver();
+    } else {
+        return opponent->getOver();
     }
 }
