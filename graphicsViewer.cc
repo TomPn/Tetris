@@ -1,7 +1,5 @@
 #include <iostream>
 #include "graphicsViewer.h"
-using std::cout;
-using std::endl;
 
 const int rows = 20;
 const int cols = 11;
@@ -44,7 +42,7 @@ void GraphicsViewer::prompt()
 void GraphicsViewer::printPlayer(int row_start, int row_end, int x, int y, int player)
 {
     int color;
-    for (int i = row_start; i <= row_end; ++i)
+    for (int i = row_end; i >= row_start; --i)
     {
         for (int j = 0; j < cols; ++j)
         {
@@ -101,6 +99,7 @@ void GraphicsViewer::printPlayer(int row_start, int row_end, int x, int y, int p
                     }
                 }
                 window->fillRectangle(x + (dim * j), y + dim * (i - row_start), dim, dim, color);
+                subject->setChange(player, i, j, 0);
             }
         }
     }

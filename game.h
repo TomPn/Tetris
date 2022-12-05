@@ -40,7 +40,8 @@ public:
     int getScore(int player) const override;
     void setHiScore();
     int getHiScore();
-    bool getChange(int player, int row, int col) const;
+    bool getChange(int player, int row, int col) const override;
+    void setChange(int player, int row, int col, bool change) override;
     void noRandom(std::string file);
     void random();
     void levelUp(int multiplier);

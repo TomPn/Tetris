@@ -54,6 +54,7 @@ public:
     bool getTrigger();
     int getLevel();
     bool getChange(int row, int col);
+    void setChange(int row, int col, bool change);
     void setScore(int score);
     void setTrigger(bool trigger);
     char charAt(int row, int col);

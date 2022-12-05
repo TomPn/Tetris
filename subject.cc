@@ -33,3 +33,4 @@ void Subject::notifyObserversPrompt()
     ob->prompt();
   }
 }
+
