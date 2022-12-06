@@ -113,13 +113,25 @@ bool Board::right(int mult)
             currBlock->right();
         }
     }
-    if (success && isHeavy)
-    {
-        for (int i = 0; i < 2; i++)
+    if (success && isHeavy && level >= 3) {
+        for (int i = 0; i < 3; i++) {
             if (!currBlock->down())
             {
                 return true;
             }
+        }
+    } else if (success && isHeavy) {
+        for (int i = 0; i < 2; i++) {
+            if (!currBlock->down())
+            {
+                return true;
+            }
+        }
+    } else if (success && level >= 3) {
+        if (!currBlock->down())
+        {
+            return true;
+        }
     }
     return false;
 }
@@ -131,17 +143,28 @@ bool Board::left(int mult)
     {
         for (int i = 1; i < mult; i++)
         {
-            currBlock->left();
+            success = currBlock->left();
         }
     }
-    if (success && isHeavy)
-    {
-
-        for (int i = 0; i < 2; i++)
+    if (success && isHeavy && level >= 3) {
+        for (int i = 0; i < 3; i++) {
             if (!currBlock->down())
             {
                 return true;
             }
+        }
+    } else if (success && isHeavy) {
+        for (int i = 0; i < 2; i++) {
+            if (!currBlock->down())
+            {
+                return true;
+            }
+        }
+    } else if (success && level >= 3) {
+        if (!currBlock->down())
+        {
+            return true;
+        }
     }
     return false;
 }
@@ -363,6 +386,9 @@ void Board::rotate(bool clockwise)
         }
         rotateHelper(false, horizontal, rowsOfOriginal, colsOfOriginal, rowsOfDestination, colsOfDestination, blockType);
     }
+    if (level >= 3) {
+        currBlock->down();
+    }
 }
 
 bool Board::getTrigger()
@@ -414,13 +440,11 @@ void Board::levelUp()
         }
         else if (level == 3)
         {
-            isHeavy = true;
             currLevel = std::make_unique<Level3>(cells);
         }
         else if (level == 4)
         {
             blockCount = 0;
-            isHeavy = true;
             currLevel = std::make_unique<Level4>(cells);
         }
     }
@@ -765,9 +789,10 @@ int Board::updateAndGetBonus()
 {
     for (int i = 0; i < 8; ++i)
     {
-        if (clearedByType[i] >= 5)
+        if (clearedByType[i] == 5)
         {
             bonus += 5;
+            clearedByType[i] += 1;
         }
     }
 

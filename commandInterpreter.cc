@@ -64,7 +64,7 @@ std::string CommandInterpreter::isValid(std::string name, int multiplier)
         if (name == it)
         {
             // few commands do not need multiplier
-            if (name == "restart" || name == "norandom" || name == "random" || name == "ENDGAME" || name == "done" || name == "heavy" || name == "force" || name == "blind")
+            if (name == "restart" || name == "norandom" || name == "random" || name == "ENDGAME" || name == "done" || name == "heavy" || name == "force" || name == "blind" || name == "YES" || name == "NOPE")
             {
                 return name;
             }

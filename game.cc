@@ -37,7 +37,7 @@ Game::Game(int startLevel, unsigned int seed, bool haveSeed, bool haveScript1, b
     hiScore = 0;
     curPlayer = std::make_unique<Board>(startLevel, haveSeed, seed, this->scriptfile1);
     opponent = std::make_unique<Board>(startLevel, haveSeed, seed, this->scriptfile2);
-    std::vector<std::string> commands{"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "I", "J", "L", "O", "S", "Z", "T", "restart", "printtext", "printgraphics", "heavy", "force", "blind", "ENDGAME"};
+    std::vector<std::string> commands{"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "I", "J", "L", "O", "S", "Z", "T", "restart", "printtext", "printgraphics", "heavy", "force", "blind", "ENDGAME", "YES", "NOPE"};
     cmdInter = std::make_unique<CommandInterpreter>(commands);
 }
 
@@ -307,6 +307,24 @@ bool Game::drop(int multiplier)
         {
             // drop the block and check if the game is over
             prompt = curPlayer->drop();
+            // check if player 0 loses but player 1 is still avaliable
+            if (curPlayer->getOver() && !opponent->getOver()) {
+                cout << "Technically, player " << curPlayer->getName() << " already loses, BUT, why stops here? Let's keep the game rolling and compare score in the end!" << endl;
+                cout << "Type YES if you wanna go for it, type NOPE is you don't" << endl;
+                std::string command = cmdInter->getCommand();
+                while (true) {
+                    if (command == "YES") {
+                        cout << "OK WARRIOR!" << endl;
+                        break;
+                    } else if (command == "NOPE") {
+                        cout << "OK COWARD!" << endl;
+                        notifyObservers(true);
+                        break;
+                    }
+                    command = cmdInter->getCommand();
+                }
+                if (command == "NOPE") break;
+            }
             // switch player round
             playerRound = 1;
             // update the highest score
@@ -317,8 +335,27 @@ bool Game::drop(int multiplier)
         }
         else
         { // player 1 turn
-            // drop the block and check if the game is over
+            // drop the block
             prompt = opponent->drop();
+
+            // check if player 1 loses but player 0 is still avaliable
+            if (opponent->getOver() && !curPlayer->getOver()) {
+                cout << "Technically, player " << opponent->getName() << " already loses, BUT, why stops here? Let's keep the game rolling and compare score in the end!" << endl;
+                cout << "Type YES if you wanna go for it, type NOPE is you don't" << endl;
+                std::string command = cmdInter->getCommand();
+                while (true) {
+                    if (command == "YES") {
+                        cout << "OK WARRIOR!" << endl;
+                        break;
+                    } else if (command == "NOPE") {
+                        cout << "OK COWARD!" << endl;
+                        notifyObservers(true);
+                        break;
+                    }
+                    command = cmdInter->getCommand();
+                }
+                if (command == "NOPE") break;
+            }
             // switch player round
             playerRound = 0;
             // update the highest score
@@ -331,14 +368,12 @@ bool Game::drop(int multiplier)
         // print the state after the move
         Subject::notifyObservers(false);
         // if 2+ rows have been cleared, print the prompt and let player choose special actions
-        if (prompt)
-        {
+        if (prompt) {
             Subject::notifyObserversPrompt();
         }
         isOver = opponent->getOver() && curPlayer->getOver();
         // if the game is over, let the player choose whether end the game or play again
-        if (isOver)
-        {
+        if (isOver) {
             over();
             break;
         }
@@ -348,14 +383,11 @@ bool Game::drop(int multiplier)
 
 void Game::IJL(char blockType, int multiplier)
 {
-    for (int i = 0; i < multiplier; ++i)
-    {
-        if ((!playerRound && !curPlayer->getOver()) || (playerRound && curPlayer->getOver()))
-        {
+    for (int i = 0; i < multiplier; ++i) {
+        if ((!playerRound && !curPlayer->getOver()) || (playerRound && curPlayer->getOver())) {
             curPlayer->IJL(blockType);
         }
-        else
-        {
+        else {
             opponent->IJL(blockType);
         }
         Subject::notifyObservers(false);
@@ -364,24 +396,18 @@ void Game::IJL(char blockType, int multiplier)
 
 char Game::getState(int player, int row, int col) const
 {
-    if (!player)
-    {
+    if (!player) {
         return curPlayer->charAt(row, col);
-    }
-    else
-    {
+    } else {
         return opponent->charAt(row, col);
     }
 }
 
 bool Game::getChange(int player, int row, int col) const
 {
-    if (!player)
-    {
+    if (!player) {
         return curPlayer->getChange(row, col);
-    }
-    else
-    {
+    } else {
         return opponent->getChange(row, col);
     }
 }
