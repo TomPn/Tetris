@@ -22,9 +22,9 @@ std::unique_ptr<Block> Level4::CreateNextBlock()
     std::unique_ptr<Block> nextBlock;
     if (noRandomBool)
     {
-        if (noRandomFileIndex == noRandomFileContent.size())
-            noRandomFileIndex = 0;
-        nextBlock = Level::CreateNextFromFile(noRandomFileContent, noRandomFileIndex);
+        int size = noRandomFileContent.size();
+        if (noRandomFileIndex == size)
+            nextBlock = Level::CreateNextFromFile(noRandomFileContent, noRandomFileIndex);
         ++noRandomFileIndex;
     }
     else

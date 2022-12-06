@@ -1,4 +1,7 @@
 #include "zBlock.h"
 #include "block.h"
-#include "cell.h"
 
+char ZBlock::getBlockType() const
+{
+    return blockType;
+}

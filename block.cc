@@ -224,11 +224,6 @@ int Block::setAlive(int alive)
     return this->alive = alive;
 }
 
-char Block::getBlockType()
-{
-    return blockType;
-}
-
 bool Block::getHorizontal()
 {
     return horizontal;
@@ -276,5 +271,3 @@ std::vector<Cell *> Block::getComponents()
 {
     return components;
 }
-
-

@@ -29,7 +29,7 @@ public:
     std::vector<Cell *> getComponents();
     void setHorizontal(bool horizontal);
     // virtual void rotate(bool clockwise) = 0;
-    char getBlockType();
+    virtual char getBlockType() const = 0;
     int getLevel();
     void drop();
     int getAlive();
