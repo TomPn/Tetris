@@ -389,7 +389,6 @@ std::string CommandInterpreter::getCommand()
                 std::vector<std::string> breakedCommand = breakCommand(newCommand);
                 if (breakedCommand.size() == 0)
                 {
-                    cout << "Invalid Command" << endl;
                     return "";
                 }
                 else if (breakedCommand.size() == 1)
