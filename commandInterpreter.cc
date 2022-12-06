@@ -64,7 +64,7 @@ std::string CommandInterpreter::isValid(std::string name, int multiplier)
         if (name == it)
         {
             // few commands do not need multiplier
-            if (name == "restart" || name == "norandom" || name == "random" || name == "ENDGAME" || name == "done")
+            if (name == "restart" || name == "norandom" || name == "random" || name == "ENDGAME" || name == "done" || name == "heavy" || name == "force" || name == "blind")
             {
                 return name;
             }
@@ -229,6 +229,9 @@ std::string CommandInterpreter::getCommand()
         {
             command = breakedCommand[0];
             multiplier = toInt(breakedCommand[1]);
+            if (multiplier == 0) {
+                multiplier = 1;
+            }
         }
     }
     else
@@ -254,6 +257,9 @@ std::string CommandInterpreter::getCommand()
         {
             command = brokeCommand[0];
             multiplier = toInt(brokeCommand[1]);
+            if (multiplier == 0) {
+                multiplier = 1;
+            }
         }
     }
 
@@ -298,17 +304,28 @@ std::string CommandInterpreter::getCommand()
             }
             else
             {
-                cout << command << endl;
                 // if there are other remaining commands not executed, prioritize the current sequence commands
                 newRemainCommands.emplace_back(command);
             }
         }
 
+        std::vector<std::string> tmpNewRemainCommands = newRemainCommands;
+
+        // if multiple macros are called, add all of them to newRemainCommands
+        for (int i = 1; i < multiplier; ++i)
+        {
+            tmpNewRemainCommands.emplace_back(command1);
+            for (auto &it : newRemainCommands)
+            {
+                tmpNewRemainCommands.emplace_back(it);
+            }
+        }
+
         for (auto &it : pImpl->remainCommands)
         {
-            newRemainCommands.emplace_back(it);
+            tmpNewRemainCommands.emplace_back(it);
         }
-        pImpl->remainCommands = newRemainCommands;
+        pImpl->remainCommands = tmpNewRemainCommands;
 
         // convert the command to the format of command + multiplier vector
         std::vector<std::string> breakedCommand = breakCommand(command1);

@@ -101,7 +101,7 @@ void Game::start()
             {
                 continue;
             }
-            command = cmdInter->getCommand().erase(0, 1);
+            command = cmdInter->getCommand();
             if (command == "heavy" && !isOver)
             {
                 if (playerRound)
@@ -109,6 +109,7 @@ void Game::start()
                     if (curPlayer->getTrigger())
                     {
                         heavy();
+                        cout << "heavy is successfully applied" << endl;
                         curPlayer->setTrigger(0);
                     }
                     // could give a note of invalid command here
@@ -118,6 +119,7 @@ void Game::start()
                     if (opponent->getTrigger())
                     {
                         heavy();
+                        cout << "heavy is successfully applied" << endl;
                         opponent->setTrigger(0);
                     }
                 }
@@ -135,6 +137,7 @@ void Game::start()
                             if (command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T")
                             {
                                 force(command[0]);
+                                cout << "force is successfully applied" << endl;
                                 curPlayer->setTrigger(0);
                                 break;
                             }
@@ -152,6 +155,7 @@ void Game::start()
                             if (command == "I" || command == "J" || command == "L" || command == "O" || command == "S" || command == "Z" || command == "T")
                             {
                                 force(command[0]);
+                                cout << "force is successfully applied" << endl;
                                 opponent->setTrigger(0);
                                 break;
                             }
@@ -168,6 +172,7 @@ void Game::start()
                     if (curPlayer->getTrigger())
                     {
                         blind();
+                        cout << "blind is successfully applied" << endl;
                         curPlayer->setTrigger(0);
                     }
                     // could give a note of invalid command here
@@ -177,6 +182,7 @@ void Game::start()
                     if (opponent->getTrigger())
                     {
                         blind();
+                        cout << "blind is successfully applied" << endl;
                         opponent->setTrigger(0);
                     }
                 }
