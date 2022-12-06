@@ -8,14 +8,16 @@ class TextViewer : public Observer
 {
     Game *subject;
     std::ostream &out = std::cout;
+    void printData(std::string dataType);
+    void printLine();
+    void printGrid();
+    void printSummary();
 
 public:
     TextViewer(Game *subject);
     void notify(bool over) override;
     void prompt() override;
     void clear() override;
-    void printData(std::string dataType);
-    void printLine();
     ~TextViewer();
 };
 
