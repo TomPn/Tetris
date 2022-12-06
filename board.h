@@ -26,6 +26,8 @@ class Board
     std::unique_ptr<Level> currLevel;
     std::vector<std::vector<std::shared_ptr<Cell>>> cells;
     std::vector<std::unique_ptr<Block>> blocksPlaced;
+    int bonus;
+    std::vector<int> clearedByType;
     void update();
     int checkClear();
     void addstar();
@@ -53,6 +55,7 @@ public:
     int getLevel();
     bool getChange(int row, int col);
     void setChange(int row, int col, bool change);
+    int updateAndGetBonus();
     void setScore(int score);
     void setTrigger(bool trigger);
     char charAt(int row, int col);

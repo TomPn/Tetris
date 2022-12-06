@@ -17,6 +17,7 @@ public:
   virtual char getState(int player, int row, int col) const = 0;
   virtual int getLevel(int player) const = 0;
   virtual int getScore(int player) const = 0;
+  virtual int getBonus(int player) const = 0;
   virtual bool getChange(int player, int row, int col) const = 0;
   virtual void setChange(int player, int row, int col, bool change) = 0;
   virtual ~Subject() = default;

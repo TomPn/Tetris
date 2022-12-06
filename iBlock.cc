@@ -2,12 +2,7 @@
 #include "block.h"
 #include "cell.h"
 
-void IBlock::rotate(bool clockwise) {
-    if (clockwise) {
-        
-    }
+char IBlock::getBlockType() const
+{
+    return blockType;
 }
-
-
-
-

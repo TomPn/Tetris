@@ -1,3 +1,7 @@
 #include "tBlock.h"
 #include "block.h"
-#include "cell.h"
+
+char TBlock::getBlockType() const
+{
+    return blockType;
+}

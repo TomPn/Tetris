@@ -25,7 +25,8 @@ const int cols = 11;
 
 Board::Board(int level, bool seedBool, unsigned int seed, std::string L0File)
     : playerName{""}, level{level}, score{0}, blockCount{0}, trigger{0}, isBlind{false}, isHeavy{false}, isForce{false}, over{false},
-      L0File{L0File}
+      L0File{L0File}, bonus{0}, clearedByType{std::vector<int>{0, 0, 0, 0, 0, 0, 0, 0}}
+
 {
     std::vector<std::vector<std::shared_ptr<Cell>>> cells(rows, std::vector<std::shared_ptr<Cell>>(cols, nullptr));
     for (int i = 0; i < rows; i++)
@@ -503,13 +504,43 @@ int Board::checkClear()
                         // if that's the last living cell in that block, delete that block
                         if (blockOnBoard->getAlive() == 1)
                         {
+                            char blockType = (cells[i2][j2]->getBlock())->getBlockType();
                             score += (blockOnBoard->getLevel() + 1) * (blockOnBoard->getLevel() + 1);
                             cells[i2][j2]->setBlock(nullptr);
+                            switch (blockType)
+                            {
+                            case 'I':
+                                clearedByType[0] += 1;
+                                break;
+                            case 'J':
+                                clearedByType[1] += 1;
+                                break;
+                            case 'L':
+                                clearedByType[2] += 1;
+                                break;
+                            case 'O':
+                                clearedByType[3] += 1;
+                                break;
+                            case 'S':
+                                clearedByType[4] += 1;
+                                break;
+                            case 'Z':
+                                clearedByType[5] += 1;
+                                break;
+                            case 'T':
+                                clearedByType[6] += 1;
+                                break;
+                            case '*':
+                                clearedByType[7] += 1;
+                                break;
+                            default:
+                                break;
+                            }
                         }
                         else
                         // otherwise if that's not the last living cell, just decrease alive by 1
                         {
-                            currBlock->setAlive(currBlock->getAlive() - 1);
+                            blockOnBoard->setAlive(blockOnBoard->getAlive() - 1);
                         }
                         // set the cell to blank
                         cells[i2][j2]->setChar(' ');
@@ -710,7 +741,8 @@ bool Board::getChange(int row, int col)
     return cells[row][col]->getChange();
 }
 
-void Board::setChange(int row, int col, bool change) {
+void Board::setChange(int row, int col, bool change)
+{
     cells[row][col]->setChange(change);
 }
 
@@ -727,4 +759,17 @@ void Board::setName(std::string name)
 std::string Board::getName()
 {
     return playerName;
+}
+
+int Board::updateAndGetBonus()
+{
+    for (int i = 0; i < 8; ++i)
+    {
+        if (clearedByType[i] >= 5)
+        {
+            bonus += 5;
+        }
+    }
+
+    return bonus;
 }

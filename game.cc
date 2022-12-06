@@ -214,9 +214,12 @@ void Game::start()
 void Game::left(int multiplier)
 {
     int callDrop;
-    if ((!playerRound && !curPlayer->getOver()) || (playerRound && opponent->getOver())) {
+    if ((!playerRound && !curPlayer->getOver()) || (playerRound && opponent->getOver()))
+    {
         callDrop = curPlayer->left(multiplier);
-    } else {
+    }
+    else
+    {
         callDrop = opponent->left(multiplier);
     }
     if (callDrop)
@@ -229,12 +232,16 @@ void Game::left(int multiplier)
 void Game::right(int multiplier)
 {
     int callDrop;
-    if ((!playerRound && !curPlayer->getOver()) || (playerRound && opponent->getOver())) {
+    if ((!playerRound && !curPlayer->getOver()) || (playerRound && opponent->getOver()))
+    {
         callDrop = curPlayer->right(multiplier);
-    } else {
+    }
+    else
+    {
         callDrop = opponent->right(multiplier);
     }
-    if (callDrop) {
+    if (callDrop)
+    {
         drop(1);
     }
     Subject::notifyObservers(false);
@@ -245,14 +252,19 @@ bool Game::down(int multiplier)
     bool ifBot = 0;
     for (int i = 0; i < multiplier; ++i)
     {
-        if ((!playerRound && !curPlayer->getOver()) || (playerRound && curPlayer->getOver())){
+        if ((!playerRound && !curPlayer->getOver()) || (playerRound && curPlayer->getOver()))
+        {
             ifBot = curPlayer->down();
-            if (!ifBot) {
+            if (!ifBot)
+            {
                 break;
             }
-        } else {
+        }
+        else
+        {
             ifBot = opponent->down();
-            if (!ifBot) {
+            if (!ifBot)
+            {
                 break;
             }
         }
@@ -267,9 +279,12 @@ void Game::rotate(bool clockwise, int multiplier)
     // multiplier = multiplier % 4;
     for (int i = 0; i < multiplier; ++i)
     {
-        if ((!playerRound && !curPlayer->getOver()) || (playerRound && opponent->getOver())){
+        if ((!playerRound && !curPlayer->getOver()) || (playerRound && opponent->getOver()))
+        {
             curPlayer->rotate(clockwise);
-        } else {
+        }
+        else
+        {
             opponent->rotate(clockwise);
         }
         Subject::notifyObservers(false);
@@ -279,9 +294,11 @@ void Game::rotate(bool clockwise, int multiplier)
 bool Game::drop(int multiplier)
 {
     bool prompt;
-    for (int i = 0; i < multiplier; ++i) {
+    for (int i = 0; i < multiplier; ++i)
+    {
         // player 0 turn
-        if ((!playerRound && !curPlayer->getOver()) || (playerRound && opponent->getOver())) {
+        if ((!playerRound && !curPlayer->getOver()) || (playerRound && opponent->getOver()))
+        {
             // drop the block and check if the game is over
             prompt = curPlayer->drop();
             // switch player round
@@ -291,7 +308,9 @@ bool Game::drop(int multiplier)
             {
                 hiScore = curPlayer->getScore();
             }
-        } else { // player 1 turn
+        }
+        else
+        { // player 1 turn
             // drop the block and check if the game is over
             prompt = opponent->drop();
             // switch player round
@@ -301,7 +320,7 @@ bool Game::drop(int multiplier)
             {
                 hiScore = opponent->getScore();
             }
-        } 
+        }
 
         // print the state after the move
         Subject::notifyObservers(false);
@@ -314,7 +333,7 @@ bool Game::drop(int multiplier)
         // if the game is over, let the player choose whether end the game or play again
         if (isOver)
         {
-            Subject::notifyObservers(true);
+            over();
             break;
         }
     }
@@ -325,9 +344,12 @@ void Game::IJL(char blockType, int multiplier)
 {
     for (int i = 0; i < multiplier; ++i)
     {
-        if ((!playerRound && !curPlayer->getOver()) || (playerRound && curPlayer->getOver())){
+        if ((!playerRound && !curPlayer->getOver()) || (playerRound && curPlayer->getOver()))
+        {
             curPlayer->IJL(blockType);
-        } else {
+        }
+        else
+        {
             opponent->IJL(blockType);
         }
         Subject::notifyObservers(false);
@@ -358,7 +380,8 @@ bool Game::getChange(int player, int row, int col) const
     }
 }
 
-void Game::setChange(int player, int row, int col, bool change) {
+void Game::setChange(int player, int row, int col, bool change)
+{
     if (!player)
     {
         return curPlayer->setChange(row, col, change);
@@ -390,6 +413,18 @@ int Game::getScore(int player) const
     else
     {
         return opponent->getScore();
+    }
+}
+
+int Game::getBonus(int player) const
+{
+    if (!player)
+    {
+        return curPlayer->updateAndGetBonus();
+    }
+    else
+    {
+        return opponent->updateAndGetBonus();
     }
 }
 
@@ -433,9 +468,12 @@ void Game::levelUp(int multiplier)
 {
     for (int i = 0; i < multiplier; ++i)
     {
-        if ((!playerRound && !curPlayer->getOver()) || (playerRound && curPlayer->getOver())){
+        if ((!playerRound && !curPlayer->getOver()) || (playerRound && curPlayer->getOver()))
+        {
             curPlayer->levelUp();
-        } else {
+        }
+        else
+        {
             opponent->levelUp();
         }
         Subject::notifyObservers(false);
@@ -446,9 +484,12 @@ void Game::levelDown(int multiplier)
 {
     for (int i = 0; i < multiplier; ++i)
     {
-        if ((!playerRound && !curPlayer->getOver()) || (playerRound && curPlayer->getOver())){
+        if ((!playerRound && !curPlayer->getOver()) || (playerRound && curPlayer->getOver()))
+        {
             curPlayer->levelDown();
-        } else {
+        }
+        else
+        {
             opponent->levelDown();
         }
         Subject::notifyObservers(false);
@@ -549,10 +590,14 @@ std::string Game::getName(bool player)
     }
 }
 
-bool Game::getOver(int player) const {
-    if (!player) {
+bool Game::getOver(int player) const
+{
+    if (!player)
+    {
         return curPlayer->getOver();
-    } else {
+    }
+    else
+    {
         return opponent->getOver();
     }
 }
