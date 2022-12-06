@@ -61,9 +61,9 @@ void GraphicsViewer::prompt()
 void GraphicsViewer::printPlayer(int row_start, int row_end, int x, int y, int player)
 {
     int color;
-    for (int i = row_end; i >= row_start; --i)
+    for (int i = row_start; i <= row_end; ++i)
     {
-        for (int j = 0; j < cols; ++j)
+        for (int j = cols-1; j >= 0; --j)
         {
             bool change = subject->getChange(player, i, j);
             char output = subject->getState(player, i, j);
