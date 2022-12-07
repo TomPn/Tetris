@@ -43,7 +43,7 @@ public:
     int getBonus(int player) const override;
     bool getOver(int player) const override;
     void setHiScore();
-    int getHiScore();
+    int getHiScore() const override;
     bool getChange(int player, int row, int col) const override;
     void setChange(int player, int row, int col, bool change) override;
     void noRandom(std::string file);
@@ -57,7 +57,7 @@ public:
     void checkOver();
     void over();
     void setNames();
-    std::string getName(bool player);
+    std::string getName(int player) const override;
 };
 
 #endif
