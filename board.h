@@ -49,7 +49,7 @@ public:
     void setHeavy();
     void setForce(char blockType);
     void IJL(char blockType);
-    bool setCurrBlock(char blockType, bool IJL = false);
+    bool setCurrBlock(char blockType, bool clearCurBlock = false);
     int getScore();
     bool getTrigger();
     int getLevel();

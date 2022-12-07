@@ -113,21 +113,28 @@ bool Board::right(int mult)
             currBlock->right();
         }
     }
-    if (success && isHeavy && level >= 3) {
-        for (int i = 0; i < 3; i++) {
+    if (success && isHeavy && level >= 3)
+    {
+        for (int i = 0; i < 3; i++)
+        {
             if (!currBlock->down())
             {
                 return true;
             }
         }
-    } else if (success && isHeavy) {
-        for (int i = 0; i < 2; i++) {
+    }
+    else if (success && isHeavy)
+    {
+        for (int i = 0; i < 2; i++)
+        {
             if (!currBlock->down())
             {
                 return true;
             }
         }
-    } else if (success && level >= 3) {
+    }
+    else if (success && level >= 3)
+    {
         if (!currBlock->down())
         {
             return true;
@@ -146,21 +153,28 @@ bool Board::left(int mult)
             success = currBlock->left();
         }
     }
-    if (success && isHeavy && level >= 3) {
-        for (int i = 0; i < 3; i++) {
+    if (success && isHeavy && level >= 3)
+    {
+        for (int i = 0; i < 3; i++)
+        {
             if (!currBlock->down())
             {
                 return true;
             }
         }
-    } else if (success && isHeavy) {
-        for (int i = 0; i < 2; i++) {
+    }
+    else if (success && isHeavy)
+    {
+        for (int i = 0; i < 2; i++)
+        {
             if (!currBlock->down())
             {
                 return true;
             }
         }
-    } else if (success && level >= 3) {
+    }
+    else if (success && level >= 3)
+    {
         if (!currBlock->down())
         {
             return true;
@@ -386,7 +400,8 @@ void Board::rotate(bool clockwise)
         }
         rotateHelper(false, horizontal, rowsOfOriginal, colsOfOriginal, rowsOfDestination, colsOfDestination, blockType);
     }
-    if (level >= 3) {
+    if (level >= 3)
+    {
         currBlock->down();
     }
 }
