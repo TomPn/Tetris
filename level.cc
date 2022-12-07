@@ -117,6 +117,11 @@ void Level::setSeed(unsigned int seed)
 // generate a newBlock by taking input from file content
 std::unique_ptr<Block> Level::CreateNextFromFile(std::vector<char> content, int index)
 {
+    int size = content.size();
+    if (index == size)
+    {
+        index = 0;
+    }
     char c = content[index];
     // create new block according to s;
     return CreateBlock(0, c);

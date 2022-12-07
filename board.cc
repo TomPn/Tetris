@@ -424,6 +424,7 @@ void Board::levelDown()
         if (level == 0)
         {
             currLevel = std::make_unique<Level0>(cells);
+            currLevel->setL0File(this->L0File);
         }
         else if (level == 1)
         {

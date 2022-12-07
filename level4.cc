@@ -2,12 +2,14 @@
 #include "block.h"
 #include <string>
 #include <cstdlib>
+#include <iostream>
 
 void Level4::setL0File(std::string L0File) {}
 
 // mutate randomBool
 void Level4::setNoRandom(bool noRandom, std::string noRandomFile)
 {
+
     noRandomBool = noRandom;
     if (noRandom == true)
     {
@@ -24,7 +26,8 @@ std::unique_ptr<Block> Level4::CreateNextBlock()
     {
         int size = noRandomFileContent.size();
         if (noRandomFileIndex == size)
-            nextBlock = Level::CreateNextFromFile(noRandomFileContent, noRandomFileIndex);
+            noRandomFileIndex = 0;
+        nextBlock = Level::CreateNextFromFile(noRandomFileContent, noRandomFileIndex);
         ++noRandomFileIndex;
     }
     else

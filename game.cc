@@ -489,7 +489,6 @@ void Game::noRandom(std::string file)
     {
         if (curPlayer->getLevel() == 3 || curPlayer->getLevel() == 4)
         {
-            cout << file << endl;
             curPlayer->setNoRandom(true, file);
         }
     }
