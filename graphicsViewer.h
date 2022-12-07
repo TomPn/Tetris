@@ -9,14 +9,14 @@ class GraphicsViewer: public Observer {
     Game *subject;
     const int top, bot, left, right;
     std::unique_ptr<Xwindow> window;
+    void printPlayer(int row_start, int row_end,int x, int y, int player);
+    void printTitle();
+    void printSummary();
     public:
         GraphicsViewer(Game *subject);
-        void printPlayer(int row_start, int row_end,int x, int y, int player);
-        void printTitle();
         void notify(bool over) override;
         void clear() override;
-        void prompt();
-        void printSummary();
+        void prompt() override;
         ~GraphicsViewer();
 };
 

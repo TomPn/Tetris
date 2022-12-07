@@ -466,6 +466,7 @@ void Game::noRandom(std::string file)
     {
         if (curPlayer->getLevel() == 3 || curPlayer->getLevel() == 4)
         {
+            cout << file << endl;
             curPlayer->setNoRandom(true, file);
         }
     }
@@ -605,20 +606,22 @@ void Game::setNames()
     std::string name;
     cin >> name;
     curPlayer->setName(name);
+    curPlayerName = name;
     cout << "Enter Player2 Name: " << endl;
     cin >> name;
     opponent->setName(name);
+    opponentName = name;
 }
 
 std::string Game::getName(bool player)
 {
     if (!player)
     {
-        return curPlayer->getName();
+        return curPlayerName;
     }
     else
     {
-        return opponent->getName();
+        return opponentName;
     }
 }
 

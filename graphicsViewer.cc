@@ -53,9 +53,9 @@ void GraphicsViewer::printTitle() {
 
 void GraphicsViewer::prompt()
 {
-    std::string promptStr = "Choose your special actions(heavy, blind, or force) and enter it on the command line:";
-    window->fillRectangle(2500, 70, 10, 30, window->White);
-    window->drawString(2500, 70, promptStr);
+    // std::string promptStr = "Choose your special actions(heavy, blind, or force) and enter it on the command line:";
+    // window->fillRectangle(2500, 70, 10, 30, window->White);
+    // window->drawString(2500, 70, promptStr);
 }
 
 void GraphicsViewer::printPlayer(int row_start, int row_end, int x, int y, int player)
@@ -133,12 +133,21 @@ void GraphicsViewer::printSummary() {
     window->drawString(246, 30 ,"Game Summary");
     window->drawString(180, 90, subject->getName(0) + "'s score: " + std::to_string(subject->getScore(0)) + "  bonus: " + std::to_string(subject->getBonus(0)) + " total: " + std::to_string(p1Total));
     window->drawString(180, 120, subject->getName(1) + "'s score: " + std::to_string(subject->getScore(1)) + "  bonus: " + std::to_string(subject->getBonus(1)) + " total: " + std::to_string(p2Total));
-    if (p1Total > p2Total) {
-        window->drawString(255, 150, subject->getName(0) + " won!");
-    } else if (p1Total < p2Total) {
-        window->drawString(255, 150, subject->getName(1) + " won!");
-    } else {
-        window->drawString(260, 150, " Tie!");
+    if(subject->getOver(0) && subject->getOver(1)){
+        if (p1Total > p2Total) {
+            window->drawString(185, 150, "By comparing score, " + subject->getName(0) + " won!");
+        } else if (p1Total < p2Total) {
+            window->drawString(185, 150, "By comparing score, " + subject->getName(1) + " won!");
+        } else {
+            window->drawString(190, 150, "By comparing score, it's a Tie!");
+        }
+    }
+    else if(subject->getOver(0) || subject->getOver(1)){
+        if(subject->getOver(0)){
+            window->drawString(255, 150, subject->getName(1) + " won!");
+        }else if(subject->getOver(1)){
+            window->drawString(255, 150, subject->getName(0) + " won!");
+        }
     }
 }
 
