@@ -17,6 +17,8 @@ class Game : public Subject
     bool haveScript2;
     bool isOver;
     int hiScore;
+    std::string curPlayerName;
+    std::string opponentName;
     std::string scriptfile1;
     std::string scriptfile2;
     std::unique_ptr<Board> curPlayer;
@@ -39,7 +41,7 @@ public:
     int getLevel(int player) const override;
     int getScore(int player) const override;
     int getBonus(int player) const override;
-    bool getOver(int player) const;
+    bool getOver(int player) const override;
     void setHiScore();
     int getHiScore();
     bool getChange(int player, int row, int col) const override;

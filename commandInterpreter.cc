@@ -83,7 +83,7 @@ std::string CommandInterpreter::isValid(std::string name, int multiplier)
     // if no ambiguious meaning of the current command, return the command
     if (duplicate == 1)
         return toString(multiplier) + extCommand;
-    return "";
+    return name;
 }
 
 void CommandInterpreter::rename()
@@ -267,6 +267,7 @@ std::string CommandInterpreter::getCommand()
     std::string renameCommand = "rename";
     std::string macroCommand = "macro";
     std::string seCommand = "sequence";
+    std::string noRandCommand = "norandom";
     if ((command == renameCommand.substr(0, command.size()) && command.size() > 2))
     {
         rename();
@@ -311,7 +312,7 @@ std::string CommandInterpreter::getCommand()
 
         std::vector<std::string> tmpNewRemainCommands = newRemainCommands;
 
-        // if multiple macros are called, add all of them to newRemainCommands
+        // if multiple sequences are called, add all of them to newRemainCommands
         for (int i = 1; i < multiplier; ++i)
         {
             tmpNewRemainCommands.emplace_back(command1);
@@ -367,7 +368,7 @@ std::string CommandInterpreter::getCommand()
                 tmpMacro = pImpl->macros[command];
                 tmpMacro.erase(tmpMacro.begin());
 
-                newRemainCommands = tmpMacro;
+                newRemainCommands = pImpl->macros[command];
                 // if multiple macros are called, add all of them to newRemainCommands
                 for (int i = 1; i < multiplier; ++i)
                 {

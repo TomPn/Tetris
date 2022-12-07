@@ -149,12 +149,20 @@ void TextViewer::printSummary() {
     int p2Total = subject->getScore(1) + subject->getBonus(1);
     out << " Player: "<< subject->getName(0) << "'s score: " << subject->getScore(0)  << "  bonus: " << subject->getBonus(0)<< "  total: " << p1Total << endl;
     out << " Player: "<< subject->getName(1) << "'s score: " << subject->getScore(1) << "  bonus: " << subject->getBonus(1)<< "  total: " << p2Total << endl;
-    if (p1Total > p2Total) {
-        out << "                 Player: "<< subject->getName(0) << " won!" << endl << endl;
-    } else if (p1Total < p2Total){
-        out << "                 Player: "<< subject->getName(1) << " won!" << endl << endl;
-    } else {
-        out << "                      Tie!" << endl << endl;
+    if(subject->getOver(0) && subject->getOver(1)){
+        if (p1Total > p2Total) {
+            out << "   By comparing score, Player: "<< subject->getName(0) << " won!" << endl << endl;
+        } else if (p1Total < p2Total){
+            out << "   By comparing score, Player: "<< subject->getName(1) << " won!" << endl << endl;
+        } else {
+            out << "   By comparing score, it's a Tie!" << endl << endl;
+        }
+    }else if(subject->getOver(0) || subject->getOver(1)){
+        if(subject->getOver(0)){
+            out << "                 Player: "<< subject->getName(1) << " won!" << endl << endl;
+        }else if(subject->getOver(1)){
+            out << "                 Player: "<< subject->getName(0) << " won!" << endl << endl;
+        }
     }
     out << "Enter ENDGAME to end the game or restart to restart the game" << endl;
 }
